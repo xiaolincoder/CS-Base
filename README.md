@@ -117,6 +117,11 @@
   - [主从复制是怎么实现的？](/redis/cluster/master_slave_replication.md) 	
   - :joy:  正在赶稿的路上。。。。。
 
+### 学习心得
+
+- [计算机基础学习路线](/cs_learn/) ：计算机基础学习书籍 + 视频推荐，全面且清晰。
+- [互联网校招心得](/cs_learn/) ：小林神仙读者们的校招和学习心得，值得学习。
+
 
 ## :thought_balloon: 关于作者
 
