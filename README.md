@@ -3,6 +3,10 @@
 图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 30 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文！🚀
 
 
+##  图解系列 PDF
+
+- [图解网络 + 图解系统 PDF 下载](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)
+
 ## :open_book:《图解网络》
 - **介绍**:point_down:：
   - [图解系统介绍](/network/README.md)
@@ -103,7 +107,7 @@
 - **内存篇** :point_down:
   - :joy: 正在赶稿的路上。。。。。	
 
-## :open_book:《图解Redis》
+## :muscle: 《图解Redis》
 
 - **介绍**:point_down:：
   - [图解Redis介绍](/redis/README.md)
@@ -117,7 +121,7 @@
   - [主从复制是怎么实现的？](/redis/cluster/master_slave_replication.md) 	
   - :joy:  正在赶稿的路上。。。。。
 
-### 学习心得
+## 学习心得
 
 - [计算机基础学习路线](/cs_learn/) ：计算机基础学习书籍 + 视频推荐，全面且清晰。
 - [互联网校招心得](/cs_learn/) ：小林神仙读者们的校招和学习心得，值得学习。
