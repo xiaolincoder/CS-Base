@@ -81,7 +81,7 @@
   - [计算机网络怎么学？](/os/10_learn/learn_os.md) 	
   - [画图经验分享](/os/10_learn/draw.md) 
 
-## 《图解MySQL》
+## :open_book:《图解MySQL》
 - **介绍**:point_down:：
   - [图解MySQL介绍](/mysql/README.md)
 - **索引篇** :point_down:
