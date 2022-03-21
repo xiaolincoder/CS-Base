@@ -1,5 +1,6 @@
 # 小林 x 图解计算机基础
 
+**在线阅读网站**：[https://xiaolincoding.com/](https://xiaolincoding.com/)
 
 本站所有文章都是我[公众号：小林coding](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)的原创文章，内容包含图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 30 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文！🚀
 
@@ -64,7 +65,7 @@
 - **内存管理** :point_down:
   - [为什么要有虚拟内存？](/os/3_memory/vmem.md) 
 - **进程管理** :point_down:
-  - [进程、线程基础知识](/os/4_process/tcp_feature.md) 
+  - [进程、线程基础知识](/os/4_process/process_base.md) 
   - [进程间有哪些通信方式？](/os/4_process/process_commu.md) 
   - [多线程冲突了怎么办？](/os/4_process/multithread_sync.md) 
   - [怎么避免死锁？](/os/4_process/deadlock.md) 
