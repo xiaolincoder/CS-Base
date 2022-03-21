@@ -1,6 +1,6 @@
 # 小林 x 图解计算机基础
 
-**在线阅读网站**：[https://xiaolincoding.com/](https://xiaolincoding.com/)
+👉 推荐[在线阅读网站](https://xiaolincoding.com/)
 
 本站所有文章都是我[公众号：小林coding](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)的原创文章，内容包含图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 30 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文！🚀
 
