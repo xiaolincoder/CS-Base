@@ -1,15 +1,14 @@
 # 小林 x 图解计算机基础
 
-👉 推荐[在线阅读网站](https://xiaolincoding.com/)
+![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网站封面.png)
 
-本站所有文章都是我[公众号：小林coding](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)的原创文章，内容包含图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 30 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文！🚀
+👉 **点击**：[图解计算机基础在线阅读](https://xiaolincoding.com/)
+
+本站所有文章都是我[公众号：小林coding](https://mp.weixin.qq.com/s/FYH1I8CRsuXDSybSGY_AFA)的原创文章，内容包含图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 50 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文！🚀
 
 曾经我也苦恼于那些晦涩难弄的计算机基础知识，但在我啃了一本又一本的书，看了一个又一个的视频后，终于对这些“家伙”有了认识。我想着，这世界上肯定有一些朋友也跟我有一样的苦恼，为此下决心，用图解 + 通熟易懂的讲解来帮助大家理解，利用工作之余，坚持输出图解文章两年之久，这才有了今天的网站!
 
 
-##  :books:  图解系列 PDF 下载
-
-- [图解网络 + 图解系统 PDF 下载](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)
 
 ## :open_book:《图解网络》
 - **介绍**:point_down:：
@@ -125,10 +124,15 @@
   - [主从复制是怎么实现的？](/redis/cluster/master_slave_replication.md) 	
   - :joy:  正在赶稿的路上。。。。。
 
+
 ## :muscle: 学习心得
 
 - [计算机基础学习路线](/cs_learn/) ：计算机基础学习书籍 + 视频推荐，全面且清晰。
 - [互联网校招心得](/reader_nb/) ：小林神仙读者们的校招和学习心得，值得学习。
+
+##  :books:  图解系列 PDF 下载
+
+- [图解网络 + 图解系统 PDF 下载](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)
 
 
 ## :thought_balloon: 公众号
