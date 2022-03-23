@@ -16,9 +16,9 @@ TCP/IP 网络参考模型共有 `4` 层，其中需要我们熟练掌握的是�
 比如， ping 命令可以说在我们判断网络环境的时候，最常使用的了，你可以先把你电脑 ping 你舍友或同事的电脑的过程中发生的事情都搞明白，这样就基本知道一个数据包是怎么转发的了，于是你就知道了网络层、数据链路层和物理层之间是如何工作，如何相互配合的了。
 
 
-搞明白了 [ping 过程](https://mp.weixin.qq.com/s/leE2DgDOl5z90hG2gG1Urw)，我相信你学起 HTTP 请求过程的时候，会很快就能掌握了，因为网络层以下的工作方式，你在学习 ping 的时候就已经明白了，这时就只需要认真掌握传输层中的 TCP 和应用层中的 HTTP 协议，就能搞明白[访问网页的整个过程](https://mp.weixin.qq.com/s/iSZp41SRmh5b2bXIvzemIw)了，这也是面试常见的题目了，毕竟它能考察你网络知识的全面性。
+搞明白了 ping 过程，我相信你学起 HTTP 请求过程的时候，会很快就能掌握了，因为网络层以下的工作方式，你在学习 ping 的时候就已经明白了，这时就只需要认真掌握传输层中的 TCP 和应用层中的 HTTP 协议，就能搞明白[访问网页的整个过程](https://mp.weixin.qq.com/s/iSZp41SRmh5b2bXIvzemIw)了，这也是面试常见的题目了，毕竟它能考察你网络知识的全面性。
 
-重中之重的知识就是 TCP 了，TCP 不管是[建立连接、断开连接](https://mp.weixin.qq.com/s/tH8RFmjrveOmgLvk9hmrkw)的过程，还是数据传输的过程，都不能放过，针对数据可靠传输的特性，又可以拆解为[超时重新、流量控制、滑动窗口、拥塞控制](https://mp.weixin.qq.com/s/Tc09ovdNacOtnMOMeRc_uA)等等知识点，学完这些只能算对 TCP 有个「**感性**」的认识，另外我们还得知道 Linux 提供的 [TCP 内核的参数](https://mp.weixin.qq.com/s/fjnChU3MKNc_x-Wk7evLhg)的作用，这样才能从容地应对工作中遇到的问题。
+重中之重的知识就是 TCP 了，TCP 不管是[建立连接、断开连接](https://mp.weixin.qq.com/s/tH8RFmjrveOmgLvk9hmrkw)的过程，还是数据传输的过程，都不能放过，针对数据可靠传输的特性，又可以拆解为[超时重传、流量控制、滑动窗口、拥塞控制](https://mp.weixin.qq.com/s/Tc09ovdNacOtnMOMeRc_uA)等等知识点，学完这些只能算对 TCP 有个「**感性**」的认识，另外我们还得知道 Linux 提供的 [TCP 内核的参数](https://mp.weixin.qq.com/s/fjnChU3MKNc_x-Wk7evLhg)的作用，这样才能从容地应对工作中遇到的问题。
 
 接下来，推荐我看过并觉得不错的计算机网络相关的书籍和视频。
 

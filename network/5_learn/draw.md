@@ -26,8 +26,6 @@
 
 再来，最右边「属性设置区域」可以设置文字的大小，图片颜色、线条形状等，而我最常用颜色板块是下面这三种，都是比较浅色的，这样看起来舒服些。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/浅色风格.png)
-
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/浅色风格2.png)
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/深浅色风格.png)
