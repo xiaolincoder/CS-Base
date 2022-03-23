@@ -52,12 +52,14 @@ DNS 中的域名都是用**句点**来分隔的，比如 `www.server.com`，这�
 
 毕竟域名是外国人发明，所以思维和中国人相反，比如说一个城市地点的时候，外国喜欢从小到大的方式顺序说起（如 XX 街道 XX 区 XX 市 XX 省），而中国则喜欢从大到小的顺序（如 XX 省 XX 市 XX 区 XX 街道）。
 
-根域是在最顶层，它的下一层就是 com 顶级域，再下面是 server.com。
+实际上域名最后还有一个点，比如 `www.server.com.`，这个最后的一个点代表根域名。
+
+也就是，`.` 根域是在最顶层，它的下一层就是 `.com` 顶级域，再下面是 `server.com`。
 
 所以域名的层级关系类似一个树状结构：
 
-- 根 DNS 服务器
-- 顶级域 DNS 服务器（com）
+- 根 DNS 服务器（.）
+- 顶级域 DNS 服务器（.com）
 - 权威 DNS 服务器（server.com）
 
 ![DNS 树状结构](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E9%94%AE%E5%85%A5%E7%BD%91%E5%9D%80%E8%BF%87%E7%A8%8B/5.jpg)
@@ -86,6 +88,12 @@ DNS 中的域名都是用**句点**来分隔的，比如 `www.server.com`，这�
 ![域名解析的工作流程](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E9%94%AE%E5%85%A5%E7%BD%91%E5%9D%80%E8%BF%87%E7%A8%8B/6.jpg)
 
 DNS 域名解析的过程蛮有意思的，整个过程就和我们日常生活中找人问路的过程类似，**只指路不带路**。
+
+> 那是不是每次解析域名都要经过那么多的步骤呢？
+
+当然不是了，还有缓存这个东西的嘛。
+
+浏览器会先看自身有没有对这个域名的缓存，如果有，就直接返回，如果没有，就去问操作系统，操作系统也会去看自己的缓存，如果有，就直接返回，如果没有，再去 hosts 文件看，也没有，才会去问「本地 DNS 服务器」。
 
 > 数据包表示：“DNS 老大哥厉害呀，找到了目的地了！我还是很迷茫呀，我要发出去，接下来我需要谁的帮助呢?”
 
@@ -142,7 +150,7 @@ HTTP 是基于 TCP 协议传输的，所以在这我们先了解下 TCP 协议�
 
 这个所谓的「连接」，只是双方计算机里维护一个状态机，在连接建立的过程中，双方的状态变化时序图就像这样。
 
-![TCP 三次握手](hhttps://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E9%94%AE%E5%85%A5%E7%BD%91%E5%9D%80%E8%BF%87%E7%A8%8B/9.jpg)
+![TCP 三次握手](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E9%94%AE%E5%85%A5%E7%BD%91%E5%9D%80%E8%BF%87%E7%A8%8B/9.jpg)
 
 - 一开始，客户端和服务端都处于 `CLOSED` 状态。先是服务端主动监听某个端口，处于 `LISTEN` 状态。
 
