@@ -108,7 +108,7 @@
 - **日志篇** :point_down:
   - :joy:  正在赶稿的路上。。。。。
 - **内存篇** :point_down:
-  - :joy: 正在赶稿的路上。。。。。	
+  - [揭开 Buffer Pool 的面纱](/mysql/buffer_pool/buffer_pool.md) 	
 
 ##  :open_book: 《图解Redis》
 
