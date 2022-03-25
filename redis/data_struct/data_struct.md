@@ -195,7 +195,7 @@ C 语言的字符串标准库提供的字符串操作函数，大多数（比如
 
 SDS 结构中有个 flags 成员变量，表示的是 SDS 类型。
 
-Redos 一共设计了 5 种类型，分别是 sdshdr5、sdshdr8、sdshdr16、sdshdr32 和 sdshdr64。
+Redis 一共设计了 5 种类型，分别是 sdshdr5、sdshdr8、sdshdr16、sdshdr32 和 sdshdr64。
 
 这 5 种类型的主要**区别就在于，它们数据结构中的 len 和 alloc 成员变量的数据类型不同**。
 
