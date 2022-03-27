@@ -94,7 +94,7 @@ select * from t_test where id>=8 and id<9 for update;
 
 比如下面这个例子：
 
-![图片](https://img-blog.csdnimg.cn/img_convert/be6818bd1fd22c4e790b989bde11e6b1.png)
+![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/事务隔离/案例5.drawio.png)
 
 会话 1 加锁变化过程如下：
 
