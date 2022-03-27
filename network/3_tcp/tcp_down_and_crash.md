@@ -1,6 +1,7 @@
 # 4.12 TCP 连接，一端断电和进程崩溃有什么区别？
 
 有位读者找我说，他在面试腾讯的时候，遇到了这么个问题：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021061513401120.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM0ODI3Njc0,size_16,color_FFFFFF,t_70)
 
 
@@ -8,13 +9,7 @@
 这个属于 **TCP 异常断开连接**的场景，这部分内容在我的「图解网络」还没有详细介绍过，这次就乘着这次机会补一补。
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210615134020994.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM0ODI3Njc0,size_16,color_FFFFFF,t_70)
-小林在 csdn 写了很多图解网络文章，共输出了 15万字  和画了 500 张图，有csdn的朋友建议我把图解网络文章整理成电子档，方便读者阅读。
 
-那必须的呀，所以小林花了一段时间整理图解网络电子文档，效果如题：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210515230827962.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM0ODI3Njc0,size_16,color_FFFFFF,t_70)
-
-
-大家可以作为面试突击的手册，**现在开源给大家下载**：[点击下载图解网络 PDF](https://wwr.lanzoui.com/iUqoUovm6wf)
 
 好了，继续今天的主题。
 
