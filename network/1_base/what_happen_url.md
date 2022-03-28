@@ -150,7 +150,7 @@ HTTP 是基于 TCP 协议传输的，所以在这我们先了解下 TCP 协议�
 
 这个所谓的「连接」，只是双方计算机里维护一个状态机，在连接建立的过程中，双方的状态变化时序图就像这样。
 
-![TCP 三次握手](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E9%94%AE%E5%85%A5%E7%BD%91%E5%9D%80%E8%BF%87%E7%A8%8B/9.jpg)
+![TCP 三次握手](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4/网络/TCP三次握手.drawio.png)
 
 - 一开始，客户端和服务端都处于 `CLOSED` 状态。先是服务端主动监听某个端口，处于 `LISTEN` 状态。
 
@@ -319,9 +319,9 @@ ARP 协议会在以太网中以**广播**的形式，对以太网所有的设备
 
 负责执行这一操作的是**网卡**，要控制网卡还需要靠**网卡驱动程序**。
 
-网卡驱动从 IP 模块获取到包之后，会将其**复制**到网卡内的缓存区中，接着会在其**开头加上报头和起始帧分界符，在末尾加上用于检测错误的帧校验序列**。
+网卡驱动获取网络包之后，会将其**复制**到网卡内的缓存区中，接着会在其**开头加上报头和起始帧分界符，在末尾加上用于检测错误的帧校验序列**。
 
-![物理层数据包](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E9%94%AE%E5%85%A5%E7%BD%91%E5%9D%80%E8%BF%87%E7%A8%8B/22.jpg)
+![数据包](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4/网络/数据包.drawio.png)
 
 - 起始帧分界符是一个用来表示包起始位置的标记
 - 末尾的 `FCS`（帧校验序列）用来检查包传输过程是否有损坏
