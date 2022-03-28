@@ -194,9 +194,9 @@ UDP 协议真的非常简，头部只有 `8` 个字节（ 64 位），UDP 的头
 
 > TCP 三次握手过程和状态变迁
 
-TCP 是面向连接的协议，所以使用 TCP 前必须先建立连接，而**建立连接是通过三次握手来进行的**。三次握手的过程如下图（PS：图中的 SYS_SENT 状态是 SYN_SENT，偷懒就不重新画图了）：
+TCP 是面向连接的协议，所以使用 TCP 前必须先建立连接，而**建立连接是通过三次握手来进行的**。三次握手的过程如下图：
 
-![TCP 三次握手](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzE0LmpwZw?x-oss-process=image/format,png)
+![TCP 三次握手](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4/网络/tcp三次握手.drawio.png)
 
 - 一开始，客户端和服务端都处于 `CLOSED` 状态。先是服务端主动监听某个端口，处于 `LISTEN` 状态
 
@@ -417,7 +417,7 @@ RFC793 提到初始化序列号 ISN 随机生成算法：ISN = M + F(localhost, 
 因此，当第二次握手丢失了，客户端和服务端都会重传：
 
 - 客户端会重传 SYN 报文，也就是第一次握手，最大重传次数由 `tcp_syn_retries`内核参数决定；
-- 服务端会重传 SYN-AKC 报文，也就是第二次握手，最大重传次数由 `tcp_synack_retries` 内核参数决定。
+- 服务端会重传 SYN-ACK 报文，也就是第二次握手，最大重传次数由 `tcp_synack_retries` 内核参数决定。
 
 > 第三次握手丢失了，会发生什么？
 
@@ -552,6 +552,8 @@ net.ipv4.tcp_syncookies = 1
 对于 close 函数关闭的连接，由于无法再发送和接收数据，所以`FIN_WAIT2` 状态不可以持续太久，而  `tcp_fin_timeout` 控制了这个状态下连接的持续时长，默认值是 60 秒。
 
 这意味着对于调用 close 关闭的连接，如果在 60 秒后还没有收到 FIN 报文，客户端（主动关闭方）的连接就会直接关闭。
+
+但是注意，如果主动关闭方使用 shutdown 函数关闭连接且指定只关闭发送方向，而接收方向并没有关闭，那么意味着主动关闭方还是可以接收数据的。如果主动关闭方一直没收到第三次挥手，那么主动关闭方的连接将会一直处于 `FIN_WAIT2` 状态（`tcp_fin_timeout` 无法控制 shutdown 关闭的连接）。
 
 > 第三次挥手丢失了，会发生什么？
 
@@ -829,7 +831,7 @@ int listen (int socketfd, int backlog)
 
 我们先看看客户端连接服务端时，发送了什么？
 
-![客户端连接服务端](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzM2LmpwZw?x-oss-process=image/format,png)
+![socket 三次握手](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4/网络/socket三次握手.drawio.png)
 
 - 客户端的协议栈向服务器端发送了 SYN 包，并告诉服务器端当前发送序列号 client_isn，客户端进入 SYN_SENT 状态；
 - 服务器端的协议栈收到这个包之后，和客户端进行 ACK 应答，应答的值为 client_isn+1，表示对 SYN 包 client_isn 的确认，同时服务器也发送一个 SYN 包，告诉客户端当前我的发送序列号为 server_isn，服务器端进入 SYN_RCVD 状态；
