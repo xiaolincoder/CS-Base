@@ -123,6 +123,8 @@
   - [什么是缓存雪崩、击穿、穿透？](/redis/cluster/cache_problem.md) 	
   - [主从复制是怎么实现的？](/redis/cluster/master_slave_replication.md) 	
   - :joy:  正在赶稿的路上。。。。。
+- **架构篇** :point_down:
+  -  [数据库和缓存如何保证一致性？](/redis/architecture/mysql_redis_consistency.md) 	 
 
 
 ## :muscle: 学习心得
