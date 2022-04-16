@@ -459,7 +459,7 @@ net.ipv4.tcp_abort_on_overflow
 
 *避免 SYN 攻击方式二*
 
-我们先来看下 Linux 内核的 `SYN` 队列（半连接队列）与 `Accpet` 队列（全连接队列）是如何工作的？
+我们先来看下 Linux 内核的 `SYN` 队列（半连接队列）与 `Accept` 队列（全连接队列）是如何工作的？
 
 ![正常流程](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzI2LmpwZw?x-oss-process=image/format,png)
 
@@ -468,7 +468,7 @@ net.ipv4.tcp_abort_on_overflow
 - 当服务端接收到客户端的 SYN 报文时，会将其加入到内核的「 SYN 队列」；
 - 接着发送 SYN + ACK 给客户端，等待客户端回应 ACK 报文；
 - 服务端接收到 ACK 报文后，从「 SYN 队列」移除放入到「 Accept 队列」；
-- 应用通过调用 `accpet()` socket 接口，从「 Accept 队列」取出连接。
+- 应用通过调用 `accept()` socket 接口，从「 Accept 队列」取出连接。
 
 ![应用程序过慢](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzI3LmpwZw?x-oss-process=image/format,png)
 
@@ -495,7 +495,7 @@ net.ipv4.tcp_syncookies = 1
 - 当 「 SYN 队列」满之后，后续服务器收到 SYN 包，不进入「 SYN 队列」；
 - 计算出一个 `cookie` 值，再以 SYN + ACK 中的「序列号」返回客户端，
 - 服务端接收到客户端的应答报文时，服务器会检查这个 ACK 包的合法性。如果合法，直接放入到「 Accept 队列」。 
-- 最后应用通过调用 `accpet()` socket 接口，从「 Accept 队列」取出的连接。
+- 最后应用通过调用 `accept()` socket 接口，从「 Accept 队列」取出的连接。
 
 ---
 
@@ -808,9 +808,9 @@ TCP 保活的这个机制检测的时间是有点长，我们可以自己在应�
 Linux内核中会维护两个队列：
 
 - 半连接队列（SYN 队列）：接收到一个 SYN 建立连接请求，处于 SYN_RCVD 状态；
-- 全连接队列（Accpet 队列）：已完成 TCP 三次握手过程，处于 ESTABLISHED 状态；
+- 全连接队列（Accept 队列）：已完成 TCP 三次握手过程，处于 ESTABLISHED 状态；
 
-![ SYN 队列 与 Accpet 队列 ](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzM1LmpwZw?x-oss-process=image/format,png)
+![ SYN 队列 与 Accept 队列 ](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzM1LmpwZw?x-oss-process=image/format,png)
 
 ```c
 int listen (int socketfd, int backlog)
@@ -823,7 +823,7 @@ int listen (int socketfd, int backlog)
 
 在 Linux 内核 2.2 之后，backlog 变成 accept 队列，也就是已完成连接建立的队列长度，**所以现在通常认为 backlog 是 accept 队列。**
 
-**但是上限值是内核参数 somaxconn 的大小，也就说 accpet 队列长度 = min(backlog, somaxconn)。**
+**但是上限值是内核参数 somaxconn 的大小，也就说 accept 队列长度 = min(backlog, somaxconn)。**
 
 想详细了解 TCP 半连接队列和全连接队列，可以看这篇：[TCP 半连接队列和全连接队列满了会发生什么？又该如何应对？](https://mp.weixin.qq.com/s/2qN0ulyBtO2I67NB_RnJbg)
 
