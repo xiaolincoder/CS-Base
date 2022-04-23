@@ -577,7 +577,7 @@ TCP 认为这种情况不严重，因为大部分没丢，只丢了一小部分�
 - 如果再收到重复的 ACK，那么 cwnd 增加 1；
 - 如果收到新数据的 ACK 后，把 cwnd 设置为第一步中的 ssthresh 的值，原因是该 ACK 确认了新的数据，说明从 duplicated  ACK 时的数据都已收到，该恢复过程已经结束，可以回到恢复之前的状态了，也即再次进入拥塞避免状态；
 
-![快速重传和快速恢复](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/30.jpg)
+![快速重传和快速恢复](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/拥塞发生-快速重传.drawio.png)
 
 也就是没有像「超时重传」一夜回到解放前，而是还在比较高的值，后续呈线性增长。
 
@@ -635,5 +635,4 @@ https://coolshell.cn/articles/11564.html
 **小林是专为大家图解的工具人，Goodbye，我们下次见！**
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
-
 
