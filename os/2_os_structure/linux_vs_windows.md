@@ -59,14 +59,14 @@ Linux 的开山始祖是来自一位名叫 Linus Torvalds 的芬兰小伙子，�
 
 Linux 内核设计的理念主要有这几个点：
 
-- *MutiTask*，多任务
+- *MultiTask*，多任务
 - *SMP*，对称多处理
 - *ELF*，可执行文件链接格式
 - *Monolithic Kernel*，宏内核
 
-####  MutiTask
+####  MultiTask
 
-MutiTask 的意思是**多任务**，代表着 Linux 是一个多任务的操作系统。
+MultiTask 的意思是**多任务**，代表着 Linux 是一个多任务的操作系统。
 
 多任务意味着可以有多个任务同时执行，这里的「同时」可以是并发或并行：
 
