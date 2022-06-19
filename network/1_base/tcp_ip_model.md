@@ -19,21 +19,21 @@
 
 ## 传输层
 
-应用层的数据包会传给传输层，**传输层**（**Transport Layer**）是为应用层提供网络支持的。
+应用层的数据包会传给传输层，**传输层****（*Transport Layer*）是为应用层提供网络支持的。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/应用层.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/应用层.png)
 
 
 在传输层会有两个传输协议，分别是 TCP 和 UDP。
 
-TCP 的全称叫传输控制协议（**Transmission Control Protocol**），大部分应用使用的正是 TCP 传输层协议，比如 HTTP 应用层协议。TCP 相比  UDP 多了很多特性，比如流量控制、超时重传、拥塞控制等，这些都是为了保证数据包能可靠地传输给对方。 
+TCP 的全称叫传输控制协议（*Transmission Control Protocol*），大部分应用使用的正是 TCP 传输层协议，比如 HTTP 应用层协议。TCP 相比  UDP 多了很多特性，比如流量控制、超时重传、拥塞控制等，这些都是为了保证数据包能可靠地传输给对方。 
 
 UDP 相对来说就很简单，简单到只负责发送数据包，不保证数据包是否能抵达对方，但它实时性相对更好，传输效率也高。当然，UDP 也可以实现可靠传输，把 TCP 的特性在应用层上实现就可以，不过要实现一个商用的可靠 UDP 传输协议，也不是一件简单的事情。
 
 
 应用需要传输的数据可能会非常大，如果直接传输就不好控制，因此当传输层的数据包大小超过 MSS（TCP 最大报文段长度） ，就要将数据包分块，这样即使中途有一个分块丢失或损坏了，只需要重新发送这一个分块，而不用重新发送整个数据包。在 TCP 协议中，我们把每个分块称为一个 **TCP 段**（*TCP Segment*）。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/TCP段.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/TCP段.png)
 
 当设备作为接收方时，传输层则要负责把数据包传给应用，但是一台设备上可能会有很多应用在接收或者传输数据，因此需要用一个编号将应用区分开来，这个编号就是**端口**。
 
@@ -49,13 +49,13 @@ UDP 相对来说就很简单，简单到只负责发送数据包，不保证数�
 
 实际场景中的网络环节是错综复杂的，中间有各种各样的线路和分叉路口，如果一个设备的数据要传输给另一个设备，就需要在各种各样的路径和节点进行选择，而传输层的设计理念是简单、高效、专注，如果传输层还负责这一块功能就有点违背设计原则了。
 
-也就是说，我们不希望传输层协议处理太多的事情，只需要服务好应用即可，让其作为应用间数据传输的媒介，帮助实现应用到应用的通信，而实际的传输功能就交给下一层，也就是**网络层（*Internet Layer***）。
+也就是说，我们不希望传输层协议处理太多的事情，只需要服务好应用即可，让其作为应用间数据传输的媒介，帮助实现应用到应用的通信，而实际的传输功能就交给下一层，也就是**网络层**（*Internet Layer*）。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/网络层.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/网络层.png)
 
 网络层最常使用的是 IP 协议（*Internet Protocol*），IP 协议会将传输层的报文作为数据部分，再加上 IP 包头组装成 IP 报文，如果 IP 报文大小超过 MTU（以太网中一般为 1500 字节）就会**再次进行分片**，得到一个即将发送到网络的 IP 报文。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/键入网址过程/12.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/键入网址过程/12.jpg)
 
 
 网络层负责将数据从一个设备传输到另一个设备，世界上那么多设备，又该如何找到对方呢？因此，网络层需要有区分设备的编号。
@@ -73,13 +73,15 @@ UDP 相对来说就很简单，简单到只负责发送数据包，不保证数�
 
 知道了子网掩码，该怎么计算出网络地址和主机地址呢？
 
-将 10.100.122.2 和 255.255.255.0 进行**按位与运算**，就可以得到网络号和主机号
+将 10.100.122.2 和 255.255.255.0 进行**按位与运算**，就可以得到网络号，如下图：
 
-![img](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/16.jpg)
+![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/16.jpg)
+
+将 255.255.255.0 取反后与IP地址进行进行**按位与运算**，就可以得到主机号。
 
 大家可以去搜索下子网掩码计算器，自己改变下「掩码位」的数值，就能体会到子网掩码的作用了。
 
-![子网掩码计算器](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4/网络/子网掩码计算器.png)
+![子网掩码计算器](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4/网络/子网掩码计算器.png)
 
 那么在寻址的过程中，先匹配到相同的网络号（表示要找到同一个子网），才会去找对应的主机。
 
@@ -87,16 +89,16 @@ UDP 相对来说就很简单，简单到只负责发送数据包，不保证数�
 
 路由器寻址工作中，就是要找到目标地址的子网，找到后进而把数据包转发给对应的网络内。
 
-![IP地址的网络号](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/17.jpg)
+![IP地址的网络号](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/17.jpg)
 
 所以，**IP 协议的寻址作用是告诉我们去往下一个目的地该朝哪个方向走，路由则是根据「下一个目的地」选择路径。寻址更像在导航，路由更像在操作方向盘**。
 
 
 ## 网络接口层
 
-生成了 IP 头部之后，接下来要交给**网络接口层（Link Layer）**在 IP 头部的前面加上 MAC 头部，并封装成数据帧（Data frame）发送到网络上。
+生成了 IP 头部之后，接下来要交给**网络接口层**（*Link Layer*）在 IP 头部的前面加上 MAC 头部，并封装成数据帧（Data frame）发送到网络上。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/网络接口层.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/网络接口层.png)
 
 IP 头部中的接收方 IP 地址表示网络包的目的地，通过这个地址我们就可以判断要将包发到哪里，但在以太网的世界中，这个思路是行不通的。
 
@@ -111,13 +113,13 @@ MAC 头部是以太网使用的头部，它包含了接收方和发送方的 MAC
 ## 总结
 
 
-综上所述，TCP/IP 网络通常是由上到下分成 4 层没，分别是应用层，传输层，网络层和网络接口层。
+综上所述，TCP/IP 网络通常是由上到下分成 4 层，分别是**应用层，传输层，网络层和网络接口层**。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/tcpip参考模型.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/tcpip参考模型.drawio.png)
 
 再给大家贴一下每一层的封装格式：
 
-![img](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%B5%AE%E7%82%B9/%E5%B0%81%E8%A3%85.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%B5%AE%E7%82%B9/%E5%B0%81%E8%A3%85.png)
 
 网络接口层的传输单位是帧（frame），IP 层的传输单位是包（packet），TCP 层的传输单位是段（segment），HTTP 的传输单位则是消息或报文（message）。但这些名词并没有什么本质的区分，可以统称为数据包。
 
@@ -125,5 +127,5 @@ MAC 头部是以太网使用的头部，它包含了接收方和发送方的 MAC
 
 最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 
