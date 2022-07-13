@@ -122,21 +122,23 @@
 
 ##  :open_book: 《图解Redis》
 
-- **介绍**:point_down:：
-  - [图解Redis介绍](https://xiaolincoding.com/redis/)
-- **数据结构篇** :point_down:
-  - [Redis 九种数据类型和应用场景](https://xiaolincoding.com/redis/data_struct/command.html)  
-  - [深入剖析 Redis 数据结构](https://xiaolincoding.com/redis/data_struct/data_struct.html)
+- **面试篇** :point_down:
+   - [Redis 常见面试题](https://xiaolincoding.com/redis/base/redis_interview.md)
+- **数据类型篇** :point_down:
+   - [Redis 数据类型和应用场景](https://xiaolincoding.com/redis/data_struct/command.md)
+   - [图解 Redis 数据结构](https://xiaolincoding.com/redis/data_struct/data_struct.md)
 - **持久化篇** :point_down:
-  - [AOF 日志是怎么实现的？](https://xiaolincoding.com/redis/storage/aof.html) 	
-  - [RDB 快照是怎么实现的？](https://xiaolincoding.com/redis/storage/rdb.html) 	
-- **集群篇** :point_down:
-  - [什么是缓存雪崩、击穿、穿透？](https://xiaolincoding.com/redis/cluster/cache_problem.html) 	
-  - [主从复制是怎么实现的？](https://xiaolincoding.com/redis/cluster/master_slave_replication.html) 	
-  - [为什么要有哨兵？](https://xiaolincoding.com/redis/cluster/sentinel.html)
-  - :joy:  正在赶稿的路上。。。。。
-- **架构篇** :point_down:
-  -  [数据库和缓存如何保证一致性？](https://xiaolincoding.com/redis/architecture/mysql_redis_consistency.html) 	 
+	- [AOF 持久化是怎么实现的？](https://xiaolincoding.com/redis/storage/aof.md) 	
+	- [RDB 快照是怎么实现的？](https://xiaolincoding.com/redis/storage/rdb.md) 
+- **功能篇**:point_down:
+   - [Redis 过期删除策略和内存淘汰策略有什么区别？](https://xiaolincoding.com/redis/module/strategy.md) 
+- **高可用篇** :point_down:
+   - [主从复制是怎么实现的？](https://xiaolincoding.com/redis/cluster/master_slave_replication.md) 	
+   - [为什么要有哨兵？](https://xiaolincoding.com/redis/cluster/sentinel.html)
+   - :joy:  正在赶稿的路上。。。。。
+- **缓存篇** :point_down:
+   - [什么是缓存雪崩、击穿、穿透？](https://xiaolincoding.com/redis/cluster/cache_problem.md) 	
+   - [数据库和缓存如何保证一致性？](https://xiaolincoding.com/redis/architecture/mysql_redis_consistency.md) 
 
 
 ## :muscle: 学习心得
