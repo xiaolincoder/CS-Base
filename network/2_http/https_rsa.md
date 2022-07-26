@@ -200,7 +200,7 @@ CA 签发证书的过程，如上图左边部分：
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/cipherspecmessage.png)
 
-然后，客户端再发一个「**Encrypted Handshake Message（Finishd）**」消息，把之前所有发送的数据做个摘要，再用会话密钥（master secret）加密一下，让服务器做个验证，验证加密通信是否可用和之前握手信息是否有被中途篡改过。
+然后，客户端再发一个「**Encrypted Handshake Message（Finished）**」消息，把之前所有发送的数据做个摘要，再用会话密钥（master secret）加密一下，让服务器做个验证，验证加密通信是否可用和之前握手信息是否有被中途篡改过。
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/encryptd.png)
 
@@ -228,5 +228,4 @@ CA 签发证书的过程，如上图左边部分：
 哈喽，我是小林，就爱图解计算机基础，如果文章对你有帮助，别忘记关注哦！
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
-
 
