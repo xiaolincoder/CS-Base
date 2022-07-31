@@ -163,7 +163,7 @@ old 区域占整个 LRU 链表长度的比例可以通过 `innodb_old_blocks_pc`
 
 接下来，给大家举个例子。
 
-假设有一个长度为 10 的 LRU 链表，其中 young 区域占比 70 %，old 区域占比 20 %。
+假设有一个长度为 10 的 LRU 链表，其中 young 区域占比 70 %，old 区域占比 30 %。
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo.drawio.png)
 
