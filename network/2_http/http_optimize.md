@@ -2,11 +2,7 @@
 
 问你一句：「**你知道 HTTP/1.1 该如何优化吗？**」
 
-我想你第一时间想到的是，使用 KeepAlive 将 HTTP 从短连接改成长链接。
-
-这个确实是一个优化的手段，它是从底层的传输层这一方向入手的，通过减少 TCP 连接建立和断开的次数，来减少了网络传输的延迟，从而提高 HTTP/1.1 协议的传输效率。
-
-但其实还可以从其他方向来优化 HTTP/1.1 协议，比如有如下 3 种优化思路：
+我们可以从下面这三种优化思路来优化 HTTP/1.1 协议：
 
 - *尽量避免发送 HTTP 请求*；
 - *在需要发送 HTTP 请求时，考虑如何减少请求次数*；
@@ -14,14 +10,14 @@
 
 下面，就针对这三种思路具体看看有哪些优化方法。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/优化http1.1提纲.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/优化http1.1提纲.png)
 
 
 ---
 
 ## 如何避免发送 HTTP 请求？
 
-这个思路你看到是不是觉得很奇怪，不发送 HTTP 请求，那还客户端还怎么和服务器交互数据？小林你这不是耍流氓嘛？
+这个思路你看到是不是觉得很奇怪，不发送 HTTP 请求，那客户端还怎么和服务器交互数据？小林你这不是耍流氓嘛？
 
 冷静冷静，你说的没错，客户端当然要向服务器发送请求的。
 
@@ -36,13 +32,13 @@
 
 这样当后续发起相同的请求时，就可以先在本地磁盘上通过 key 查到对应的 value，也就是响应，如果找到了，就直接从本地读取该响应。毋庸置疑，读取本地磁盘的速度肯定比网络请求快得多，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/缓存访问.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/缓存访问.png)
 
 聪明的你可能想到了，万一缓存的响应不是最新的，而客户端并不知情，那么该怎么办呢？
 
 放心，这个问题 HTTP 设计者早已考虑到。
 
-所以，服务器在发送 HTTP 响应时，会估算一个过期的时间，并把这个信息放到响应头部中，这样客户端在查看响应头部的信息时，一旦发现缓存的响应是过期的，则就会重新发送网络请求。HTTP 关于缓存说明的头部字段很多，这部分内容留在下次文章，这次暂时不具体说明。
+所以，服务器在发送 HTTP 响应时，会估算一个过期的时间，并把这个信息放到响应头部中，这样客户端在查看响应头部的信息时，一旦发现缓存的响应是过期的，则就会重新发送网络请求。
 
 如果客户端从第一次请求得到的响应头部中发现该响应过期了，客户端重新发送请求，假设服务器上的资源并没有变更，还是老样子，那么你觉得还要在服务器的响应带上这个资源吗？
 
@@ -54,7 +50,7 @@
 
 如果相同，说明客户端的缓存还是可以继续使用的，那么服务器**仅返回不含有包体的 `304 Not Modified` 响应**，告诉客户端仍然有效，这样就可以减少响应资源在网络中传输的延时，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/缓存etag.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/缓存etag.png)
 
 缓存真的是性能优化的一把万能钥匙，小到 CPU Cache、Page Cache、Redis Cache，大到 HTTP 协议的缓存。
 
@@ -79,20 +75,20 @@
 
 另外，服务端这一方往往不只有一台服务器，比如源服务器上一级是代理服务器，然后代理服务器才与客户端通信，这时客户端重定向就会导致客户端与代理服务器之间需要 2 次消息传递，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/客户端重定向.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/客户端重定向.png)
 
 
 如果**重定向的工作交由代理服务器完成，就能减少 HTTP 请求次数了**，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/代理服务器重定向.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/代理服务器重定向.png)
 
 而且当代理服务器知晓了重定向规则后，可以进一步减少消息传递次数，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/代理服务器重定向2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/代理服务器重定向2.png)
 
 除了 `302` 重定向响应码，还有其他一些重定向的响应码，你可以从下图看到：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/重定向响应码.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/重定向响应码.png)
 
 其中，`301` 和 `308` 响应码是告诉客户端可以将重定向响应缓存到本地磁盘，之后客户端就自动用 url2 替代 url1 访问服务器的资源。
 
@@ -109,14 +105,14 @@
 
 有的网页会含有很多小图片、小图标，有多少个小图片，客户端就要发起多少次请求。那么对于这些小图片，我们可以考虑使用 `CSS Image Sprites` 技术把它们合成一个大图片，这样浏览器就可以用一次请求获得一个大图片，然后再根据 CSS 数据把大图片切割成多张小图片。
 
-![图来源于：墨染枫林的CSDN](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/css精灵.png)
+![图来源于：墨染枫林的CSDN](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/css精灵.png)
 
 这种方式就是**通过将多个小图片合并成一个大图片来减少 HTTP 请求的次数，以减少 HTTP 请求的次数，从而减少网络的开销**。
 
 
 除了将小图片合并成大图片的方式，还有服务端使用 `webpack` 等打包工具将 js、css 等资源合并打包成大文件，也是能达到类似的效果。
 
-另外，还可以将图片的二进制数据用 `base64` 编码后，以 URL 的形式潜入到 HTML 文件，跟随 HTML 文件一并发送.
+另外，还可以将图片的二进制数据用 `base64` 编码后，以 URL 的形式嵌入到 HTML 文件，跟随 HTML 文件一并发送.
 
 
 ```
@@ -127,7 +123,7 @@
 
 这样客户端收到 HTML 后，就可以直接解码出数据，然后直接显示图片，就不用再发起图片相关的请求，这样便减少了请求的次数。
 
-![图来源于：陈健平的CSDN ](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/base64图片.png)
+![图来源于：陈健平的CSDN ](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/base64图片.png)
 
 
 
@@ -194,7 +190,7 @@ Accept: audio/*; q=0.2, audio/basic
 
 关于图片的压缩，目前压缩比较高的是 Google 推出的 **WebP 格式**，它与常见的 Png 格式图片的压缩比例对比如下图：
 
-![来源于：https://isparta.github.io/compare-webp/index.html](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/webp与png.png)
+![来源于：https://isparta.github.io/compare-webp/index.html](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/webp与png.png)
 
 可以发现，相同图片质量下，WebP 格式的图片大小都比 Png 格式的图片小，所以对于大量图片的网站，可以考虑使用 WebP 格式的图片，这将大幅度提升网络传输的性能。
 
@@ -240,5 +236,5 @@ Accept: audio/*; q=0.2, audio/basic
 
 哈喽，我是小林，就爱图解计算机基础，如果文章对你有帮助，别忘记关注哦！
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 

@@ -7,7 +7,7 @@ HTTPS 常用的密钥交换算法有两种，分别是 RSA 和 ECDHE 算法。
 我在上一篇已经介绍了 [RSA 握手的过程](https://mp.weixin.qq.com/s/U9SRLE7jZTB6lUZ6c8gTKg)，今天这一篇就「从理论再到实战抓包」介绍 **ECDHE 算法**。
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ecdhe提纲.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ecdhe提纲.png)
 
 ---
 
@@ -17,7 +17,7 @@ ECDHE 密钥协商算法是 DH 算法演进过来的，所以我们先从 DH 算
 
 DH 算法是非对称加密算法， 因此它可以用于密钥交换，该算法的核心数学思想是**离散对数**。
 
-是不是听到这个数学概念就怂了？不怕，这次不会说离散对数推到的过程，只简单提一下它的数学公式。
+是不是听到这个数学概念就怂了？不怕，这次不会说离散对数推导的过程，只简单提一下它的数学公式。
 
 离散对数是「离散 + 对数」的两个数学概念的组合，所以我们先来复习一遍对数。
 
@@ -25,17 +25,17 @@ DH 算法是非对称加密算法， 因此它可以用于密钥交换，该算�
 
 举个栗子，如果以 2 作为底数，那么指数和对数运算公式，如下图所示：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/指数与对数.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/指数与对数.png)
 
 那么对于底数为 2 的时候， 32 的对数是 5，64 的对数是 6，计算过程如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/求对数.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/求对数.png)
 
 对数运算的取值是可以连续的，而离散对数的取值是不能连续的，因此也以「离散」得名，
 
 离散对数是在对数运算的基础上加了「模运算」，也就说取余数，对应编程语言的操作符是「%」，也可以用 mod 表示。离散对数的概念如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/离散对数.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/离散对数.png)
 
 上图的，底数 a 和模数 p 是离散对数的公共参数，也就说是公开的，b 是真数，i 是对数。知道了对数，就可以用上面的公式计算出真数。但反过来，知道真数却很难推算出对数。
 
@@ -65,7 +65,7 @@ A 和 B 也是公开的，因为根据离散对数的原理，从真数（A 和 
 
 然后小红执行运算： B ^ a ( mod P )，其结果为 K，因为离散对数的幂运算有交换律，所以小明执行运算： A ^ b ( mod P )，得到的结果也是 K。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/dh算法.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/dh算法.png)
 
 这个 K 就是小红和小明之间用的**对称加密密钥**，可以作为会话密钥使用。
 
@@ -116,7 +116,7 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 
 我用 Wireshark 工具抓了用 ECDHE 密钥协商算法的 TSL 握手过程，可以看到是四次握手：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_tls握手.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_tls握手.png)
 
 细心的小伙伴应该发现了，**使用了 ECDHE，在 TLS 第四次握手前，客户端就已经发送了加密的 HTTP 数据**，而对于 RSA 握手过程，必须要完成 TLS 四次握手，才能传输应用数据。
 
@@ -128,14 +128,14 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 
 客户端首先会发一个「**Client Hello**」消息，消息里面有客户端使用的 TLS 版本号、支持的密码套件列表，以及生成的**随机数（*Client Random*）**。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_clinethello.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_clinethello.png)
 
 
 ### TLS 第二次握手
 
 服务端收到客户端的「打招呼」，同样也要回礼，会返回「**Server Hello**」消息，消息面有服务器确认的 TLS 版本号，也给出了一个**随机数（*Server Random*）**，然后从客户端的密码套件列表选择了一个合适的密码套件。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_serverhello.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_serverhello.png)
 
 不过，这次选择的密码套件就和 RSA 不一样了，我们来分析一下这次的密码套件的意思。
 
@@ -148,17 +148,17 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 
 接着，服务端为了证明自己的身份，发送「**Certificate**」消息，会把证书也发给客户端。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_certificate.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_certificate.png)
 
 
 这一步就和 RSA 握手过程有很大到区别了，因为服务端选择了 ECDHE 密钥协商算法，所以会在发送完证书后，发送「**Server Key Exchange**」消息。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_serverkey.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_serverkey.png)
 
 
 这个过程服务器做了三件事：
 
-- 选择了**名为 named_curve 的椭圆曲线**，选好了椭圆曲线相当于椭圆曲线基点 G 也定好了，这些都会公开给客户端；
+- 选择了**名为 x25519 的椭圆曲线**，选好了椭圆曲线相当于椭圆曲线基点 G 也定好了，这些都会公开给客户端；
 - 生成随机数作为服务端椭圆曲线的私钥，保留到本地；
 - 根据基点 G 和私钥计算出**服务端的椭圆曲线公钥**，这个会公开给客户端。
 
@@ -167,7 +167,7 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 
 随后，就是「**Server Hello Done**」消息，服务端跟客户端表明：“这些就是我提供的信息，打招呼完毕”。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_serverhellodone.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_serverhellodone.png)
 
 
 至此，TLS 两次握手就已经完成了，目前客户端和服务端通过明文共享了这几个信息：**Client Random、Server Random 、使用的椭圆曲线、椭圆曲线基点 G、服务端椭圆曲线的公钥**，这几个信息很重要，是后续生成会话密钥的材料。
@@ -178,7 +178,7 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 
 客户端会生成一个随机数作为客户端椭圆曲线的私钥，然后再根据服务端前面给的信息，生成**客户端的椭圆曲线公钥**，然后用「**Client Key Exchange**」消息发给服务端。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_clientkeyexchange.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_clientkeyexchange.png)
 
 
 至此，双方都有对方的椭圆曲线公钥、自己的椭圆曲线私钥、椭圆曲线基点 G。于是，双方都就计算出点（x，y），其中 x 坐标值双方都是一样的，前面说 ECDHE 算法时候，说  x 是会话密钥，**但实际应用中，x 还不是最终的会话密钥**。
@@ -192,12 +192,12 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 
 算好会话密钥后，客户端会发一个「**Change Cipher Spec**」消息，告诉服务端后续改用对称算法加密通信。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_schangecipherspec.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_schangecipherspec.png)
 
 
 接着，客户端会发「**Encrypted Handshake Message**」消息，把之前发送的数据做一个摘要，再用对称密钥加密一下，让服务端做个验证，验证下本次生成的对称密钥是否可以正常使用。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https/ech_encryptedhandshakemessage.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/ech_encryptedhandshakemessage.png)
 
 
 ### TLS 第四次握手
@@ -211,7 +211,7 @@ ECDHE 算法是在 DHE 算法的基础上利用了 ECC 椭圆曲线特性，可�
 RSA  和 ECDHE 握手过程的区别：
 
 - RSA 密钥协商算法「不支持」前向保密，ECDHE 密钥协商算法「支持」前向保密；
-- 使用了 RSA 密钥协商算法，TLS 完成四次握手后，才能进行应用数据传输，而对于 ECDHE 算法，客户端可以不用等服务端的最后一次 TLS 握手，就可以提前发出加密的 HTTP 数据，节省了一个消息的往返时间；
+- 使用了 RSA 密钥协商算法，TLS 完成四次握手后，才能进行应用数据传输，而对于 ECDHE 算法，客户端可以不用等服务端的最后一次 TLS 握手，就可以提前发出加密的 HTTP 数据，节省了一个消息的往返时间（这个是 RFC 文档规定的，具体原因文档没有说明，所以这点我也不太明白）；
 - 使用 ECDHE， 在 TLS 第 2 次握手中，会出现服务器端发出的「Server Key Exchange」消息，而 RSA 握手过程没有该消息；
 
 ---
@@ -228,5 +228,5 @@ RSA  和 ECDHE 握手过程的区别：
 
 哈喽，我是小林，就爱图解计算机基础，如果文章对你有帮助，别忘记关注哦！
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 
