@@ -36,7 +36,7 @@
 
 我不卖关子，先直接说答案。
 
-![](https://img-blog.csdnimg.cn/ac087152e9d94fddb8468696c65b11b0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/est_syn.png)
 
 
 **处于 establish 状态的服务端如果收到了客户端的 SYN 报文（注意此时的 SYN 报文其实是乱序的，因为 SYN 报文的初始化序列号其实是一个随机数），会回复一个携带了正确序列号和确认号的 ACK 报文，这个 ACK 被称之为 Challenge ACK。**
@@ -129,7 +129,14 @@ killcx 工具的工作原理，如下图。
 
 这里给大家贴一个使用 killcx 工具关闭连接的抓包图，大家多看看序列号和确认号的变化。
 
-![](https://img-blog.csdnimg.cn/71cbefee5ab741018386b6a37f492614.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_17,color_FFFFFF,t_70,g_se,x_16)
+![](https://img-blog.csdnimg.cn/71cbefee5ab741018386b6a37f492614.png?)
+
 所以，以后抓包中，如果莫名奇妙出现一个 SYN 包，有可能对方接下来想要对你发起的 RST 攻击，直接将你的 TCP 连接断开！
 
 怎么样，很巧妙吧！
+
+---
+
+最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
+
+![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)

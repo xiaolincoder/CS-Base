@@ -5,12 +5,14 @@
 收到个读者的问题，他在面试鹅厂的时候，被搞懵了，因为面试官问了他这么一个网络问题：
 
 ![](https://img-blog.csdnimg.cn/39f790ee7a45473587c8fe3e08e01ba4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_17,color_FFFFFF,t_70,g_se,x_16)
+
 不得不说，鹅厂真的很喜欢问网络问题，而且爱问异常情况下的网络问题，之前也有篇另外一个读者面试鹅厂的网络问题：「[被鹅厂面怕了！](https://blog.csdn.net/qq_34827674/article/details/117922761)」。
 
 
 不过这道鹅厂的网络题可能是提问的读者表述有问题，**因为如果 FIN 报文比数据包先抵达客户端，此时 FIN 报文其实是一个乱序的报文，此时客户端的 TCP 连接并不会从 FIN_WAIT_2 状态转换到 TIME_WAIT 状态**。
 
 ![](https://img-blog.csdnimg.cn/ccabc2f21b014c6c9118cd29ae11c18c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+
 因此，我们要关注到点是看「**在 FIN_WAIT_2 状态下，是如何处理收到的乱序到 FIN 报文，然后 TCP 连接又是什么时候才进入到 TIME_WAIT 状态?**」。
 
 我这里先直接说结论：
@@ -65,6 +67,7 @@
 最后，我们来看看 tcp_fin 函数的处理。
 
 ![](https://img-blog.csdnimg.cn/67b33007fcd04d2fa98e79d19823fc95.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+
 可以看到，如果当前的 TCP 状态为 TCP_FIN_WAIT2，就会发送第四次挥手 ack，然后调用 tcp_time_wait 函数，这个函数里会将 TCP 状态变更为 TIME_WAIT，并启动 TIME_WAIT 的定时器。
 
 ## 怎么看 TCP 源码？
@@ -99,4 +102,6 @@ https://elixir.bootlin.com/linux/latest/source
 
 ---
 
-这次就说到这啦，我们下次见！
+最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)

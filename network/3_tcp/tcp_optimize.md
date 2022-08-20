@@ -4,7 +4,7 @@ TCP 性能的提升不仅考察 TCP 的理论知识，还考察了对于操作�
 
 TCP 协议是由操作系统实现，所以操作系统提供了不少调节 TCP 的参数。
 
-![Linux TCP 参数](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/2.jpg)
+![Linux TCP 参数](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/2.jpg)
 
 
 如何正确有效的使用这些参数，来提高 TCP 性能是一个不那么简单事情。我们需要针对 TCP 每个阶段的问题来对症下药，而不是病急乱投医。
@@ -15,7 +15,7 @@ TCP 协议是由操作系统实现，所以操作系统提供了不少调节 TCP
 - TCP 四次挥手的性能提升；
 - TCP 数据传输的性能提升；
 
-![本节提纲](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/3.jpg)
+![本节提纲](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/3.jpg)
 
 ---
 
@@ -23,13 +23,13 @@ TCP 协议是由操作系统实现，所以操作系统提供了不少调节 TCP
 
 TCP 是面向连接的、可靠的、双向传输的传输层通信协议，所以在传输数据之前需要经过三次握手才能建立连接。
 
-![三次握手与数据传输](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/4.jpg)
+![三次握手与数据传输](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/4.jpg)
 
 那么，三次握手的过程在一个 HTTP 请求的平均时间占比 10% 以上，在网络状态不佳、高并发或者遭遇 SYN 攻击等场景中，如果不能有效正确的调节三次握手中的参数，就会对性能产生很多的影响。
 
 如何正确有效的使用这些参数，来提高 TCP 三次握手的性能，这就需要理解「三次握手的状态变迁」，这样当出现问题时，先用 `netstat` 命令查看是哪个握手阶段出现了问题，再来对症下药，而不是病急乱投医。
 
-![TCP 三次握手的状态变迁](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/5.jpg)
+![TCP 三次握手的状态变迁](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/5.jpg)
 
 客户端和服务端都可以针对三次握手优化性能。主动发起连接的客户端优化相对简单些，而服务端需要监听端口，属于被动连接方，其间保持许多的中间状态，优化方法相对复杂一些。
 
@@ -41,7 +41,7 @@ TCP 是面向连接的、可靠的、双向传输的传输层通信协议，所�
 
 只有同步了序列号才有可靠传输，TCP 许多特性都依赖于序列号实现，比如流量控制、丢包重传等，这也是三次握手中的报文称为 SYN 的原因，SYN 的全称就叫 *Synchronize Sequence Numbers*（同步序列号）。
 
-![TCP 头部](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/6.jpg)
+![TCP 头部](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/6.jpg)
 
 > SYN_SENT 状态的优化
 
@@ -49,7 +49,7 @@ TCP 是面向连接的、可靠的、双向传输的传输层通信协议，所�
 
 客户端在等待服务端回复的 ACK 报文，正常情况下，服务器会在几毫秒内返回 SYN+ACK ，但如果客户端长时间没有收到 SYN+ACK 报文，则会重发 SYN 包，**重发的次数由 tcp_syn_retries 参数控制**，默认是 5 次：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/7.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/7.jpg)
 
 通常，第一次超时重传是在 1 秒后，第二次超时重传是在 2 秒，第三次超时重传是在 4 秒后，第四次超时重传是在 8 秒后，第五次是在超时重传 16 秒后。没错，**每次超时的时间是上一次的 2 倍**。
 
@@ -57,7 +57,7 @@ TCP 是面向连接的、可靠的、双向传输的传输层通信协议，所�
 
 所以，总耗时是 1+2+4+8+16+32=63 秒，大约 1 分钟左右。
 
-![SYN 超时重传](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/8.jpg)
+![SYN 超时重传](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/8.jpg)
 
 你可以根据网络的稳定性和目标服务器的繁忙程度修改 SYN 的重传次数，调整客户端的三次握手时间上限。比如内网中通讯时，就可以适当调低重试次数，尽快把错误暴露给应用程序。
 
@@ -68,7 +68,7 @@ TCP 是面向连接的、可靠的、双向传输的传输层通信协议，所�
 
 此时，服务端出现了新连接，状态是 `SYN_RCV`。在这个状态下，Linux 内核就会建立一个「半连接队列」来维护「未完成」的握手信息，当半连接队列溢出后，服务端就无法再建立新的连接。
 
-![半连接队列与全连接队列](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/9.jpg)
+![半连接队列与全连接队列](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/9.jpg)
 
 SYN 攻击，攻击的是就是这个半连接队列。
 
@@ -76,7 +76,7 @@ SYN 攻击，攻击的是就是这个半连接队列。
 
 我们可以通过该 `netstat -s` 命令给出的统计结果中，  可以得到由于半连接队列已满，引发的失败次数：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/10.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/10.jpg)
 
 上面输出的数值是**累计值**，表示共有多少个 TCP 连接因为半连接队列溢出而被丢弃。**隔几秒执行几次，如果有上升的趋势，说明当前存在半连接队列溢出的现象**。
 
@@ -86,11 +86,11 @@ SYN 攻击，攻击的是就是这个半连接队列。
 
 增大 tcp_max_syn_backlog 和 somaxconn 的方法是修改 Linux 内核参数：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/11.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/11.jpg)
 
 增大 backlog 的方式，每个 Web 服务都不同，比如 Nginx 增大 backlog 的方法如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/12.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/12.jpg)
 
 最后，改变了如上这些参数后，要重启 Nginx 服务，因为 SYN 半连接队列和 accept 队列都是在 `listen()` 初始化的。
 
@@ -100,7 +100,7 @@ SYN 攻击，攻击的是就是这个半连接队列。
 
 syncookies 的工作原理：服务器根据当前状态计算出一个值，放在己方发出的 SYN+ACK 报文中发出，当客户端返回 ACK 报文时，取出该值验证，如果合法，就认为连接建立成功，如下图所示。
 
-![开启 syncookies 功能](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/13.jpg)
+![开启 syncookies 功能](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/13.jpg)
 
 syncookies 参数主要有以下三个值：
 
@@ -110,7 +110,7 @@ syncookies 参数主要有以下三个值：
 
 那么在应对 SYN 攻击时，只需要设置为 1 即可：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/14.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/14.jpg)
 
 > SYN_RCV 状态的优化
 
@@ -122,7 +122,7 @@ syncookies 参数主要有以下三个值：
 
 当网络繁忙、不稳定时，报文丢失就会变严重，此时应该调大重发次数。反之则可以调小重发次数。**修改重发次数的方法是，调整 tcp_synack_retries 参数**：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/15.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/15.jpg)
 
 tcp_synack_retries 的默认重试次数是 5 次，与客户端重传 SYN 类似，它的重传会经历 1、2、4、8、16 秒，最后一次重传后会继续等待 32 秒，如果服务端仍然没有收到 ACK，才会关闭连接，故共需要等待 63 秒。
 
@@ -130,13 +130,13 @@ tcp_synack_retries 的默认重试次数是 5 次，与客户端重传 SYN 类�
 
 如果进程不能及时地调用 accept 函数，就会造成 accept 队列（也称全连接队列）溢出，最终导致建立好的 TCP 连接被丢弃。
 
-![ accept 队列溢出](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/16.jpg)
+![ accept 队列溢出](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/16.jpg)
 
 > accept 队列已满，只能丢弃连接吗？
 
 丢弃连接只是 Linux 的默认行为，我们还可以选择向客户端发送 RST 复位报文，告诉客户端连接已经建立失败。打开这一功能需要将 tcp_abort_on_overflow 参数设置为 1。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/17.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/17.jpg)
 
 tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 
@@ -149,7 +149,7 @@ tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 
 举个例子，当 accept 队列满导致服务器丢掉了 ACK，与此同时，客户端的连接状态却是 ESTABLISHED，客户端进程就在建立好的连接上发送请求。只要服务器没有为请求回复 ACK，客户端的请求就会被多次「重发」。**如果服务器上的进程只是短暂的繁忙造成 accept 队列满，那么当 accept 队列有空位时，再次接收到的请求报文由于含有 ACK，仍然会触发服务器端成功建立连接。**
 
-![tcp_abort_on_overflow 为 0 可以应对突发流量](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/18.jpg)
+![tcp_abort_on_overflow 为 0 可以应对突发流量](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/18.jpg)
 
 
 所以，tcp_abort_on_overflow 设为 0 可以提高连接建立的成功率，只有你非常肯定 TCP 全连接队列会长期溢出时，才能设置为 1 以尽快通知客户端。
@@ -168,7 +168,7 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 可以通过 `ss -ltn` 命令查看：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/19.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/19.jpg)
 
 - Recv-Q：当前 accept 队列的大小，也就是当前已完成三次握手并等待服务端 `accept()` 的 TCP 连接；
 - Send-Q：accept 队列最大长度，上面的输出结果说明监听 8088 端口的 TCP 服务，accept 队列的最大长度为 128；
@@ -177,7 +177,7 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 当超过了 accept 连接队列，服务端则会丢掉后续进来的 TCP 连接，丢掉的 TCP 连接的个数会被统计起来，我们可以使用 netstat -s 命令来查看：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/20.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/20.jpg)
 
 上面看到的 41150 times ，表示 accept 队列溢出的次数，注意这个是累计值。可以隔几秒钟执行下，如果这个数字一直在增加的话，说明 accept 连接队列偶尔满了。
 
@@ -189,13 +189,13 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 三次握手建立连接造成的后果就是，HTTP 请求必须在一个 RTT（从客户端到服务器一个往返的时间）后才能发送。
 
-![常规 HTTP 请求](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/21.jpg)
+![常规 HTTP 请求](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/21.jpg)
 
 在 Linux 3.7 内核版本之后，提供了 TCP Fast Open 功能，这个功能可以减少 TCP 连接建立的时延。
 
 > 接下来说说，TCP Fast Open 功能的工作方式。
 
-![开启 TCP Fast Open 功能](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/22.jpg)
+![开启 TCP Fast Open 功能](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/22.jpg)
 
 在客户端首次建立连接时的过程：
 
@@ -217,7 +217,7 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 开启了 TFO 功能，cookie 的值是存放到 TCP option 字段里的：
 
-![TCP option 字段 - TFO](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%82%E6%95%B0/TCP%20option%E5%AD%97%E6%AE%B5%20-%20TFO.png)
+![TCP option 字段 - TFO](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%82%E6%95%B0/TCP%20option%E5%AD%97%E6%AE%B5%20-%20TFO.png)
 
 注：客户端在请求并存储了 Fast Open Cookie 之后，可以不断重复 TCP Fast Open 直至服务器认为 Cookie 无效（通常为过期）。
 
@@ -225,7 +225,7 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 在 Linux 系统中，可以通过**设置 tcp_fastopn 内核参数，来打开 Fast Open 功能**：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/23.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/23.jpg)
 
 tcp_fastopn 各个值的意义: 
 
@@ -240,7 +240,7 @@ tcp_fastopn 各个值的意义:
 
 本小结主要介绍了关于优化 TCP 三次握手的几个 TCP 参数。
 
-![三次握手优化策略](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/24.jpg)
+![三次握手优化策略](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/24.jpg)
 
 > 客户端的优化
 
@@ -272,7 +272,7 @@ TCP Fast Open 功能可以绕过三次握手，使得 HTTP 请求减少了 1 个
 
 客户端和服务端双方都可以主动断开连接，**通常先关闭连接的一方称为主动方，后关闭连接的一方称为被动方。**
 
-![客户端主动关闭](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/25.jpg)
+![客户端主动关闭](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/25.jpg)
 
 可以看到，**四次挥手过程只涉及了两种报文，分别是 FIN 和 ACK**：
 
@@ -298,7 +298,7 @@ TCP Fast Open 功能可以绕过三次握手，使得 HTTP 请求减少了 1 个
 
 关闭连接的方式通常有两种，分别是 RST 报文关闭和 FIN 报文关闭。
 
-如果进程异常退出了，内核就会发送 RST 报文来关闭，它可以不走四次挥手流程，是一个暴力关闭连接的方式。
+如果进程收到 RST 报文，就直接关闭连接了，不需要走四次挥手流程，是一个暴力关闭连接的方式。
 
 安全关闭连接的方式必须通过四次挥手，它由进程调用 `close` 和 `shutdown` 函数发起 FIN 报文（shutdown 参数须传入 SHUT_WR 或者 SHUT_RDWR 才会发送 FIN）。
 
@@ -308,7 +308,7 @@ TCP Fast Open 功能可以绕过三次握手，使得 HTTP 请求减少了 1 个
 
 使用 close 函数关闭连接是不优雅的。于是，就出现了一种优雅关闭连接的 `shutdown` 函数，**它可以控制只关闭一个方向的连接**：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/26.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/26.jpg)
 
 第二个参数决定断开连接的方式，主要有以下三种方式：
 
@@ -324,11 +324,11 @@ close 和 shutdown 函数都可以关闭连接，但这两种方式关闭的连�
 
 但是当迟迟收不到对方返回的 ACK 时，连接就会一直处于 FIN_WAIT1 状态。此时，**内核会定时重发 FIN 报文，其中重发次数由 tcp_orphan_retries 参数控制**（注意，orphan 虽然是孤儿的意思，该参数却不只对孤儿连接有效，事实上，它对所有 FIN_WAIT1 状态下的连接都有效），默认值是 0。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/27.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/27.jpg)
 
 你可能会好奇，这 0 表示几次？**实际上当为 0 时，特指 8 次**，从下面的内核源码可知：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/28.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/28.jpg)
 
 如果 FIN_WAIT1 状态连接很多，我们就需要考虑降低 tcp_orphan_retries 的值，当重传次数超过 tcp_orphan_retries 时，连接就会直接关闭掉。
 
@@ -339,7 +339,7 @@ close 和 shutdown 函数都可以关闭连接，但这两种方式关闭的连�
 
 解决这种问题的方法，是**调整 tcp_max_orphans 参数，它定义了「孤儿连接」的最大数量**：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/29.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/29.jpg)
 
 当进程调用了 `close` 函数关闭连接，此时连接就会是「孤儿连接」，因为它无法再发送和接收数据。Linux 系统为了防止孤儿连接过多，导致系统资源长时间被占用，就提供了 `tcp_max_orphans` 参数。如果孤儿连接数量大于它，新增的孤儿连接将不再走四次挥手，而是直接发送 RST 复位报文强制关闭。
 
@@ -350,7 +350,7 @@ close 和 shutdown 函数都可以关闭连接，但这两种方式关闭的连�
 这时，**如果连接是用 shutdown 函数关闭的，连接可以一直处于 FIN_WAIT2 状态，因为它可能还可以发送或接收数据。但对于 close 函数关闭的孤儿连接，由于无法再发送和接收数据，所以这个状态不可以持续太久，而 tcp_fin_timeout 控制了这个状态下连接的持续时长**，默认值是 60 秒：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/30.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/30.jpg)
 
 它意味着对于孤儿连接（调用 close 关闭的连接），如果在 60 秒后还没有收到 FIN 报文，连接就会直接关闭。
 
@@ -401,11 +401,11 @@ TIME-WAIT 的一个作用是**防止收到历史数据，从而导致数据错�
 
 服务端收到这个 RST 并将其解释为一个错误（Connection reset by peer），这对于一个可靠的协议来说不是一个优雅的终止方式。
 
-为了防止这种情况出现，客户端必须等待足够长的时间确保对端收到 ACK，如果对端没有收到 ACK，那么就会触发 TCP 重传机制，服务端会重新发送一个 FIN，这样一去一来刚好两个 MSL 的时间。
+为了防止这种情况出现，客户端必须等待足够长的时间，确保服务端能够收到 ACK，如果服务端没有收到 ACK，那么就会触发 TCP 重传机制，服务端会重新发送一个 FIN，这样一去一来刚好两个 MSL 的时间。
 
-![TIME-WAIT 时间正常，确保了连接正常关闭](https://img-blog.csdnimg.cn/img_convert/14f8dc84f7d660ffa06e18a4877707ae.png)
+![TIME-WAIT 时间正常，确保了连接正常关闭](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4/网络/TIME-WAIT连接正常关闭.drawio.png)
 
-但是你可能会说重新发送的 ACK 还是有可能丢失啊，没错，但 TCP 已经等待了那么长的时间了，已经算仁至义尽了。
+客户端在收到服务端重传的 FIN 报文时，TIME_WAIT 状态的等待时间，会重置回 2MSL。
 
 我们再回过头来看看，为什么 TIME_WAIT 状态要保持 60 秒呢？
 
@@ -417,27 +417,21 @@ TIME-WAIT 的一个作用是**防止收到历史数据，从而导致数据错�
 
 **因此，TIME_WAIT 和 FIN_WAIT2 状态的最大时长都是 2 MSL，由于在 Linux 系统中，MSL 的值固定为 30 秒，所以它们都是 60 秒。**
 
-虽然 TIME_WAIT 状态有存在的必要，但它毕竟会消耗系统资源。**如果发起连接一方的 TIME_WAIT 状态过多，占满了所有端口资源，则会导致无法创建新连接。**
+> TIME_WAIT 状态优化方式一
 
-客户端（发起连接方）受端口资源限制：
+**Linux 提供了 tcp_max_tw_buckets 参数，当 TIME_WAIT 的连接数量超过该参数时，新关闭的连接就不再经历 TIME_WAIT 而直接关闭：**
 
-- 客户端TIME_WAIT过多，就会导致端口资源被占用，因为端口就 65536 个，被占满就会导致无法创建新的连接。
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/33.jpg)
 
+当服务器的并发连接增多时，相应地，同时处于 TIME_WAIT 状态的连接数量也会变多，此时就应当调大 `tcp_max_tw_buckets` 参数，减少不同连接间数据错乱的概率。tcp_max_tw_buckets 也不是越大越好，毕竟系统资源是有限的。
 
-服务端（被动连接方）受系统资源限制：
-
-- 由于一个四元组表示 TCP 连接，理论上服务端可以建立很多连接，因为服务端只监听一个端口，不会因为 TCP 连接过多而导致端口资源受限。但是 TCP 连接过多，会占用系统资源，比如文件描述符、内存资源、CPU 资源、线程资源等。
-
-
-另外，**Linux 提供了 tcp_max_tw_buckets 参数，当 TIME_WAIT 的连接数量超过该参数时，新关闭的连接就不再经历 TIME_WAIT 而直接关闭：**
-
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/33.jpg)
-
-当服务器的并发连接增多时，相应地，同时处于 TIME_WAIT 状态的连接数量也会变多，此时就应当调大 `tcp_max_tw_buckets` 参数，减少不同连接间数据错乱的概率。tcp_max_tw_buckets 也不是越大越好，毕竟端口和系统资源都是有限的。
+> TIME_WAIT 状态优化方式二
 
 **有一种方式可以在建立新连接时，复用处于 TIME_WAIT 状态的连接，那就是打开 tcp_tw_reuse 参数。但是需要注意，该参数是只用于客户端（建立连接的发起方），因为是在调用 connect() 时起作用的，而对于服务端（被动连接方）是没有用的。**
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/34.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/34.jpg)
+
+网上很多博客都说在服务端开启 tcp_tw_reuse 参数来优化 TCP，我信你个鬼，糟老头坏的很！**tcp_tw_reuse 只作用在 connect 函数，也就是客户端，跟服务端一毛关系的没有**。
 
 tcp_tw_reuse 从协议角度理解是安全可控的，可以复用处于 TIME_WAIT 的端口为新的连接所用。
 
@@ -448,7 +442,7 @@ tcp_tw_reuse 从协议角度理解是安全可控的，可以复用处于 TIME_W
 
 使用这个选项，还有一个前提，需要打开对 TCP 时间戳的支持（对方也要打开 ）：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/35.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/35.jpg)
 
 由于引入了时间戳，它能带来了些好处：
 
@@ -457,13 +451,13 @@ tcp_tw_reuse 从协议角度理解是安全可控的，可以复用处于 TIME_W
 
 时间戳是在 TCP 的选项字段里定义的，开启了时间戳功能，在 TCP 报文传输的时候会带上发送报文的时间戳。
 
-![TCP option 字段 - 时间戳](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%82%E6%95%B0/TCP%20option%E5%AD%97%E6%AE%B5-%E6%97%B6%E9%97%B4%E6%88%B3.png)
+![TCP option 字段 - 时间戳](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%82%E6%95%B0/TCP%20option%E5%AD%97%E6%AE%B5-%E6%97%B6%E9%97%B4%E6%88%B3.png)
 
 另外，老版本的 Linux 还提供了 `tcp_tw_recycle` 参数，但是当开启了它，允许处于 TIME_WAIT 状态的连接被快速回收，但是有个**大坑**。
 
 开启了 recycle 和 timestamps 选项，就会开启一种叫 per-host 的 PAWS（判断TCP 报文中时间戳是否是历史报文） 机制，**per-host 是对「对端 IP 做 PAWS 检查」**，而非对「IP + 端口」四元组做 PAWS 检查。
 
-但是如果客户端网络环境是用了 NAT 网关，那么客户端环境的每一台机器通过 NAT 网关后，都会是相同的 IP 地址，在服务端看来，就好像只是在跟一个客户端打交道一样，无法区分出来。
+如果客户端网络环境是用了 NAT 网关，那么客户端环境的每一台机器通过 NAT 网关后，都会是相同的 IP 地址，在服务端看来，就好像只是在跟一个客户端打交道一样，无法区分出来。
 
 Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断串扰数据，而 timestamp 是根据客户端各自的 CPU tick 得出的值。
 
@@ -475,15 +469,17 @@ Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断�
 
 所以，不建议设置为 1 ，在 Linux 4.12 版本后，Linux 内核直接取消了这一参数，建议关闭它：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/36.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/36.jpg)
 
-另外，我们可以在程序中设置 socket 选项，来设置调用 close 关闭连接行为。
+> TIME_WAIT 状态优化方式三
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/37.jpg)
+我们可以在程序中设置 socket 选项，来设置调用 close 关闭连接行为。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/37.jpg)
 
 如果 `l_onoff` 为非 0， 且 `l_linger` 值为 0，**那么调用 close 后，会立该发送一个 RST 标志给对端，该 TCP 连接将跳过四次挥手，也就跳过了 TIME_WAIT 状态，直接关闭。**
 
-但这为跨越 TIME_WAIT 状态提供了一个可能，不过是一个非常危险的行为，不值得提倡。
+这种方式只推荐在客户端使用，服务端千万不要使用。因为服务端一调用 close，就发送 RST 报文的话，客户端就总是看到 TCP 连接错误 “connnection reset by peer”。
 
 ### 被动方的优化
 
@@ -505,7 +501,7 @@ Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断�
 
 此时，上面介绍的优化策略仍然适用。两方发送 FIN 报文时，都认为自己是主动方，所以都进入了 FIN_WAIT1 状态，FIN 报文的重发次数仍由 tcp_orphan_retries 参数控制。
 
-![同时关闭](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/38.jpg)
+![同时关闭](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/38.jpg)
 
 接下来，**双方在等待 ACK 报文的过程中，都等来了 FIN 报文。这是一种新情况，所以连接会进入一种叫做 CLOSING 的新状态，它替代了 FIN_WAIT2 状态**。接着，双方内核回复 ACK 确认对方发送通道的关闭后，进入 TIME_WAIT 状态，等待 2MSL 的时间后，连接自动关闭。
 
@@ -513,7 +509,7 @@ Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断�
 
 针对 TCP 四次挥手的优化，我们需要根据主动方和被动方四次挥手状态变化来调整系统 TCP 内核参数。
 
-![四次挥手的优化策略](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/39.jpg)
+![四次挥手的优化策略](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/39.jpg)
 
 > 主动方的优化
 
@@ -558,13 +554,13 @@ TCP 会保证每一个报文都能够抵达对方，它的机制是这样：报�
 
 如果 TCP 是每发送一个数据，都要进行一次确认应答。当上一个数据包收到了应答了， 再发送下一个。这个模式就有点像我和你面对面聊天，你一句我一句，但这种方式的缺点是效率比较低的。
 
-![按数据包进行确认应答](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/40.jpg)
+![按数据包进行确认应答](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/40.jpg)
 
 所以，这样的传输方式有一个缺点：数据包的**往返时间越长，通信的效率就越低**。
 
 **要解决这一问题不难，并行批量发送报文，再批量确认报文即可。**
 
-![并行处理](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/41.jpg)
+![并行处理](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/41.jpg)
 
 然而，这引出了另一个问题，发送方可以随心所欲的发送报文吗？**当然这不现实，我们还得考虑接收方的处理能力。**
 
@@ -578,17 +574,17 @@ TCP 会保证每一个报文都能够抵达对方，它的机制是这样：报�
 
 发送方的窗口等价于接收方的窗口吗？如果不考虑拥塞控制，发送方的窗口大小「约等于」接收方的窗口大小，因为窗口通知报文在网络传输是存在时延的，所以是约等于的关系。
 
-![TCP 头部](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/42.jpg)
+![TCP 头部](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/42.jpg)
 
 从上图中可以看到，窗口字段只有 2 个字节，因此它最多能表达 65535 字节大小的窗口，也就是 64KB 大小。
 
 这个窗口大小最大值，在当今高速网络下，很明显是不够用的。所以后续有了扩充窗口的方法：**在 TCP 选项字段定义了窗口扩大因子，用于扩大 TCP 通告窗口，其值大小是 2^14，这样就使 TCP 的窗口大小从 16 位扩大为 30 位（2^16 * 2^ 14 = 2^30），所以此时窗口的最大值可以达到 1GB。**
 
-![TCP option 选项 - 窗口扩展](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%82%E6%95%B0/TCP%20option%E5%AD%97%E6%AE%B5-%E7%AA%97%E5%8F%A3.png)
+![TCP option 选项 - 窗口扩展](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%82%E6%95%B0/TCP%20option%E5%AD%97%E6%AE%B5-%E7%AA%97%E5%8F%A3.png)
 
 Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默认打开）：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/43.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/43.jpg)
 
 要使用窗口扩大选项，通讯双方必须在各自的 SYN 报文中发送这个选项：
 
@@ -614,7 +610,7 @@ Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默�
 
 这里需要说一个概念，就是带宽时延积，它决定网络中飞行报文的大小，它的计算方式：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/44.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/44.jpg)
 
 比如最大带宽是 100 MB/s，网络时延（RTT）是 10ms 时，意味着客户端到服务端的网络一共可以存放 100MB/s * 0.01s = 1MB 的字节。
 
@@ -638,12 +634,12 @@ Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默�
 
 先来看看发送缓冲区，它的范围通过 tcp_wmem 参数配置；
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/45.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/45.jpg)
 
 上面三个数字单位都是字节，它们分别表示：
 
 - 第一个数值是动态范围的最小值，4096 byte = 4K；
-- 第二个数值是初始默认值，87380 byte ≈ 86K；
+- 第二个数值是初始默认值，16384 byte ≈ 16K；
 - 第三个数值是动态范围的最大值，4194304 byte = 4096K（4M）；
 
 **发送缓冲区是自行调节的**，当发送方发送的数据被确认后，并且没有新的数据要发送，就会把发送缓冲区的内存释放掉。
@@ -652,7 +648,7 @@ Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默�
 
 而接收缓冲区的调整就比较复杂一些，先来看看设置接收缓冲区范围的 tcp_rmem 参数：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/46.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/46.jpg)
 
 上面三个数字单位都是字节，它们分别表示：
 
@@ -667,13 +663,13 @@ Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默�
 
 发送缓冲区的调节功能是自动开启的，**而接收缓冲区则需要配置 tcp_moderate_rcvbuf 为 1 来开启调节功能**：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/47.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/47.jpg)
 
 > 调节 TCP 内存范围
 
 接收缓冲区调节时，怎么知道当前内存是否紧张或充分呢？这是通过 tcp_mem 配置完成的：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/48.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/48.jpg)
 
 上面三个数字单位不是字节，而是「页面大小」，1 页表示 4KB，它们分别表示：
 
@@ -693,7 +689,7 @@ Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默�
 
 本节针对 TCP 优化数据传输的方式，做了一些介绍。
 
-![数据传输的优化策略](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/49.jpg)
+![数据传输的优化策略](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/49.jpg)
 
 TCP 可靠性是通过 ACK 确认报文实现的，又依赖滑动窗口提升了发送速度也兼顾了接收方的处理能力。
 
@@ -743,5 +739,6 @@ Linux 会对缓冲区动态调节，我们应该把缓冲区的上限设置为�
 
 **小林是专为大家图解的工具人，Goodbye，我们下次见！**
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+
 
