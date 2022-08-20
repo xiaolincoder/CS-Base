@@ -2,7 +2,7 @@
 
 大家好，我是小林。
 
-在前一篇文章我讲了下 MySQL 的全局锁、表记锁和行级别锁，其中行级锁只提了概念，并没有具体说。
+在前一篇文章我讲了下 MySQL 的全局锁、表级锁和行级别锁，其中行级锁只提了概念，并没有具体说。
 
 因为行级锁加锁规则比较复杂，不同的场景，加锁的形式还不同，所以这次就来好好介绍下行级锁。
 
@@ -94,7 +94,7 @@ select * from t_test where id>=8 and id<9 for update;
 
 比如下面这个例子：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/事务隔离/案例5.drawio.png)
+![图片](https://img-blog.csdnimg.cn/img_convert/be6818bd1fd22c4e790b989bde11e6b1.png)
 
 会话 1 加锁变化过程如下：
 
@@ -107,11 +107,25 @@ select * from t_test where id>=8 and id<9 for update;
 
 然后因为 b = 16 这条记录没有加锁，所以会话 5 是可以正常执行的。
 
+::: tip
+
+之前有读者反馈说，他自己做实验，发现插入 b = 4 这条记录会被阻塞，和我说的 next-key lock (4,8] 有点矛盾。
+
+其实测试锁的范围是开区间还是闭区间不能用 insert 语句测试，而是要用 update 语句去测试。
+
+因为 insert 加的锁是比较特殊的，**每插入一条新记录，都需要看一下待插入记录的下一条记录上是否已经被加了间隙锁，如果已加间隙锁，那 Insert 语句应该被阻塞，并生成一个插入意向锁**。
+
+插入意向锁名字虽然有意向锁，但是它并不是意向锁，它是一种特殊的间隙锁，然后插入意向锁和间隙锁是冲突的，所以插入 b = 4 这条记录就发生阻塞了。具体 insert 语句是怎么加锁的，可以看这篇：[ MySQL 死锁了，怎么办？](https://xiaolincoding.com/mysql/lock/deadlock.html#insert-%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E4%B9%88%E5%8A%A0%E8%A1%8C%E7%BA%A7%E9%94%81%E7%9A%84)
+
+而用 update 语句来更新 b = 4 的这条记录，加的是记录锁，你测试的时候，会发现更新 b = 4 的这条记录是能更新成功的，所以 b = 4 这条并没有加锁，因此 next-key lock 的范围是 (4,8] ，是没问题。
+
+:::
+
 > 接下来，我们看看查询的值不存在的情况
 
 直接看案例：
 
-![图片](https://img-blog.csdnimg.cn/img_convert/efc9ff83e96521e2bb68a04ea49eeaa0.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/事务隔离/案例5.drawio.png)
 
 会话 1 加锁变化过程如下：
 
@@ -159,3 +173,9 @@ select * from t_test where id>=8 and id<9 for update;
 这些加锁规则其实很好总结的，大家自己可以用我文中的案例测试一遍，看一下你的 MySQL 版本和我的 MySQL 版本的加锁规则有什么不同。
 
 就说到这啦， 我们下次见啦！
+
+----
+
+最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
+
+![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
