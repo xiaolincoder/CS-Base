@@ -28,7 +28,7 @@
 
 接下来，用 `30+` 张图，带大家走进操作系统中避免多线程资源竞争的**互斥、同步**的方法。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/2-%E6%8F%90%E7%BA%B2.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/2-%E6%8F%90%E7%BA%B2.jpg)
 
 ---
 
@@ -37,28 +37,28 @@
 在单核 CPU 系统里，为了实现多个程序同时运行的假象，操作系统通常以时间片调度的方式，让每个进程执行每次执行一个时间片，时间片用完了，就切换下一个进程运行，由于这个时间片的时间很短，于是就造成了「并发」的现象。
 
 
-![并发](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/3-%E5%B9%B6%E5%8F%91.jpg)
+![并发](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/3-%E5%B9%B6%E5%8F%91.jpg)
 
 另外，操作系统也为每个进程创建巨大、私有的虚拟内存的假象，这种地址空间的抽象让每个程序好像拥有自己的内存，而实际上操作系统在背后秘密地让多个地址空间「复用」物理内存或者磁盘。
 
-![虚拟内存管理-换入换出](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/4-%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2.jpg)
+![虚拟内存管理-换入换出](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/4-%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2.jpg)
 
 
 如果一个程序只有一个执行流程，也代表它是单线程的。当然一个程序可以有多个执行流程，也就是所谓的多线程程序，线程是调度的基本单位，进程则是资源分配的基本单位。
 
 所以，线程之间是可以共享进程的资源，比如代码段、堆空间、数据段、打开的文件等资源，但每个线程都有自己独立的栈空间。
 
-![多线程](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/5-%E5%A4%9A%E7%BA%BF%E7%A8%8B.jpg)
+![多线程](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/5-%E5%A4%9A%E7%BA%BF%E7%A8%8B.jpg)
 
 那么问题就来了，多个线程如果竞争共享资源，如果不采取有效的措施，则会造成共享数据的混乱。
 
 我们做个小实验，创建两个线程，它们分别对共享变量 `i` 自增 `1` 执行 `10000` 次，如下代码（虽然说是 C++ 代码，但是没学过 C++ 的同学也是看到懂的）：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/6-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AB%9E%E4%BA%89C++%E4%BB%A3%E7%A0%81%E4%BE%8B%E5%AD%90.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/互斥与同步/6-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AB%9E%E4%BA%89C%2B%2B%E4%BB%A3%E7%A0%81%E4%BE%8B%E5%AD%90.jpeg)
 
 按理来说，`i` 变量最后的值应该是 `20000`，但很不幸，并不是如此。我们对上面的程序执行一下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/7-%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/7-%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C.jpg)
 
 运行了两次，发现出现了 `i` 值的结果是 `15173`，也会出现 `20000` 的 i 值结果。
 
@@ -71,7 +71,7 @@
 
 在这个例子中，我们只是想给 `i` 加上数字 1，那么它对应的汇编指令执行过程是这样的：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/8-%E6%B1%87%E7%BC%96%E8%AF%AD%E5%8F%A5%E8%B5%8B%E5%80%BC%E8%BF%87%E7%A8%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/8-%E6%B1%87%E7%BC%96%E8%AF%AD%E5%8F%A5%E8%B5%8B%E5%80%BC%E8%BF%87%E7%A8%8B.jpg)
 
 可以发现，只是单纯给 `i` 加上数字 1，在 CPU 运行的时候，实际上要执行 `3` 条指令。
 
@@ -87,7 +87,7 @@
 
 针对上面线程 1 和线程 2 的执行过程，我画了一张流程图，会更明确一些：
 
-![蓝色表示线程 1 ，红色表示线程 2](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/9-%E6%B1%87%E7%BC%96%E8%AF%AD%E5%8F%A5-%E8%B5%8B%E5%80%BC%E8%BF%87%E7%A8%8B-%E7%AB%9E%E4%BA%89.jpg)
+![蓝色表示线程 1 ，红色表示线程 2](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/9-%E6%B1%87%E7%BC%96%E8%AF%AD%E5%8F%A5-%E8%B5%8B%E5%80%BC%E8%BF%87%E7%A8%8B-%E7%AB%9E%E4%BA%89.jpg)
 
 ### 互斥的概念
 
@@ -99,7 +99,7 @@
 我们希望这段代码是**互斥（*mutualexclusion*）的，也就说保证一个线程在临界区执行时，其他线程应该被阻止进入临界区**，说白了，就是这段代码执行过程中，最多只能出现一个线程。
 
 
-![互斥](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/10-%E4%B8%B4%E7%95%8C%E5%8C%BA.jpg)
+![互斥](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/10-%E4%B8%B4%E7%95%8C%E5%8C%BA.jpg)
 
 另外，说一下互斥也并不是只针对多线程。在多进程竞争共享资源的时候，也同样是可以使用互斥的方式来避免资源竞争造成的资源混乱。
 
@@ -116,7 +116,7 @@
 
 举个生活的同步例子，你肚子饿了想要吃饭，你叫妈妈早点做菜，妈妈听到后就开始做菜，但是在妈妈没有做完饭之前，你必须阻塞等待，等妈妈做完饭后，自然会通知你，接着你吃饭的事情就可以进行了。
 
-![吃饭与做菜的同步关系](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/11-%E5%90%83%E9%A5%AD%E5%90%8C%E6%AD%A5.jpg)
+![吃饭与做菜的同步关系](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/11-%E5%90%83%E9%A5%AD%E5%90%8C%E6%AD%A5.jpg)
 
 注意，同步与互斥是两种不同的概念：
 
@@ -143,7 +143,7 @@
 
 任何想进入临界区的线程，必须先执行加锁操作。若加锁操作顺利通过，则线程可进入临界区；在完成对临界资源的访问后再执行解锁操作，以释放该临界资源。
 
-![加锁-解锁](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/12-%E4%BA%92%E6%96%A5%E9%94%81.jpg)
+![加锁-解锁](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/12-%E4%BA%92%E6%96%A5%E9%94%81.jpg)
 
 根据锁的实现不同，可以分为「忙等待锁」和「无忙等待锁」。
 
@@ -153,7 +153,7 @@
 
 如果用 C 代码表示 Test-and-Set 指令，形式如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/13-TestAndSet.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/13-TestAndSet.jpg)
 
 测试并设置指令做了下述事情:
 
@@ -166,7 +166,7 @@
 
 我们可以运用 Test-and-Set 指令来实现「忙等待锁」，代码如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/14-%E8%87%AA%E6%97%8B%E9%94%81.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/14-%E8%87%AA%E6%97%8B%E9%94%81.jpg)
 
 我们来确保理解为什么这个锁能工作：
 
@@ -175,7 +175,7 @@
 
 - 第二种场景是，当某一个线程已经持有锁（即 `flag` 为1）。本线程调用 `lock()`，然后调用 `TestAndSet(flag, 1)`，这一次返回 1。只要另一个线程一直持有锁，`TestAndSet()` 会重复返回 1，本线程会一直**忙等**。当 `flag` 终于被改为 0，本线程会调用 `TestAndSet()`，返回 0 并且原子地设置为 1，从而获得锁，进入临界区。
 
-很明显，当获取不到锁时，线程就会一直 wile 循环，不做任何事情，所以就被称为「忙等待锁」，也被称为**自旋锁（*spin lock*）**。
+很明显，当获取不到锁时，线程就会一直 while 循环，不做任何事情，所以就被称为「忙等待锁」，也被称为**自旋锁（*spin lock*）**。
 
 这是最简单的一种锁，一直自旋，利用 CPU 周期，直到锁可用。在单处理器上，需要抢占式的调度器（即不断通过时钟中断一个线程，运行其他线程）。否则，自旋锁在单 CPU 上无法使用，因为一个自旋的线程永远不会放弃 CPU。
     
@@ -188,7 +188,7 @@
 
 既然不想自旋，那当没获取到锁的时候，就把当前线程放入到锁的等待队列，然后执行调度程序，把 CPU 让给其他线程执行。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/15-%E6%97%A0%E7%AD%89%E5%BE%85%E9%94%81.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/15-%E6%97%A0%E7%AD%89%E5%BE%85%E9%94%81.jpg)
 
 本次只是提出了两种简单锁的实现方式。当然，在具体操作系统实现中，会更复杂，但也离不开本例子两个基本元素。
 
@@ -209,14 +209,14 @@ P 操作是用在进入临界区之前，V 操作是用在离开临界区之后�
 
 举个类比，2 个资源的信号量，相当于 2 条火车轨道，PV 操作如下图过程：
 
-![信号量与火车轨道](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/16-%E7%81%AB%E8%BD%A6PV%E6%93%8D%E4%BD%9C.jpg)
+![信号量与火车轨道](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/16-%E7%81%AB%E8%BD%A6PV%E6%93%8D%E4%BD%9C.jpg)
 
 
 > 操作系统是如何实现 PV 操作的呢？
 
 信号量数据结构与 PV 操作的算法描述如下图：
 
-![PV 操作的算法描述](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/17-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9FPV%E7%AE%97%E6%B3%95%E6%8F%8F%E8%BF%B0.jpg)
+![PV 操作的算法描述](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/17-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9FPV%E7%AE%97%E6%B3%95%E6%8F%8F%E8%BF%B0.jpg)
 
 PV 操作的函数是由操作系统管理和实现的，所以操作系统已经使得执行 PV 函数时是具有原子性的。
 
@@ -230,7 +230,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 只要把进入临界区的操作置于 `P(s)` 和 `V(s)` 之间，即可实现进程/线程互斥：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/18-%E4%BA%92%E6%96%A5%E4%BF%A1%E5%8F%B7%E9%87%8F.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/18-%E4%BA%92%E6%96%A5%E4%BF%A1%E5%8F%B7%E9%87%8F.jpg)
 
 
 此时，任何想进入临界区的线程，必先在互斥信号量上执行 P 操作，在完成对临界资源的访问后再执行 V 操作。由于互斥信号量的初始值为 1，故在第一个线程执行 P 操作后 s 值变为 0，表示临界资源为空闲，可分配给该线程，使之进入临界区。
@@ -253,7 +253,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 我们把前面的「吃饭-做饭」同步的例子，用代码的方式实现一下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/19-%E4%BA%92%E6%96%A5%E4%BF%A1%E5%8F%B7%E9%87%8F%E5%90%8C%E6%AD%A5%E5%AE%9E%E7%8E%B0-%E5%90%83%E9%A5%AD%E4%BE%8B%E5%AD%90.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/19-%E4%BA%92%E6%96%A5%E4%BF%A1%E5%8F%B7%E9%87%8F%E5%90%8C%E6%AD%A5%E5%AE%9E%E7%8E%B0-%E5%90%83%E9%A5%AD%E4%BE%8B%E5%AD%90.jpg)
 
 妈妈一开始询问儿子要不要做饭时，执行的是 `P(s1)` ，相当于询问儿子需不需要吃饭，由于 `s1` 初始值为 0，此时 `s1` 变成 -1，表明儿子不需要吃饭，所以妈妈线程就进入等待状态。
 
@@ -266,7 +266,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 ### 生产者-消费者问题
 
-![生产者-消费者模型](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/20-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85.jpg)
+![生产者-消费者模型](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/20-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85.jpg)
 
 生产者-消费者问题描述：
 
@@ -287,7 +287,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 具体的实现代码：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/21-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/21-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B.jpg)
 
 如果消费者线程一开始执行 `P(fullBuffers)`，由于信号量 `fullBuffers` 初始值为 0，则此时 `fullBuffers` 的值从 0 变为 -1，说明缓冲区里没有数据，消费者只能等待。
 
@@ -306,11 +306,11 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 当然，我这回答槽透了，所以当场 game over，残酷又悲惨故事，就不多说了，反正当时菜就是菜。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/22-%E4%B8%8D%E9%9A%BE%E8%BF%87-%E8%A1%A8%E6%83%85.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/22-%E4%B8%8D%E9%9A%BE%E8%BF%87-%E8%A1%A8%E6%83%85.jpg)
 
 时至今日，看我来图解这道题。
 
-![哲学家就餐的问题](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/23-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90%E6%A8%A1%E5%9E%8B.jpg)
+![哲学家就餐的问题](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/23-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90%E6%A8%A1%E5%9E%8B.jpg)
 
 先来看看哲学家就餐的问题描述：
 
@@ -326,11 +326,11 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 我们用信号量的方式，也就是 PV 操作来尝试解决它，代码如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/24-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%80%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/24-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%80%E7%A4%BA%E4%BE%8B.jpg)
 
 上面的程序，好似很自然。拿起叉子用 P 操作，代表有叉子就直接用，没有叉子时就等待其他哲学家放回叉子。
 
-![方案一的问题](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/25-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%80%E9%97%AE%E9%A2%98.jpg)
+![方案一的问题](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/25-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%80%E9%97%AE%E9%A2%98.jpg)
 
 不过，这种解法存在一个极端的问题：**假设五位哲学家同时拿起左边的叉子，桌面上就没有叉子了，
 这样就没有人能够拿到他们右边的叉子，也就说每一位哲学家都会在 `P(fork[(i + 1) % N ])` 这条语句阻塞了，很明显这发生了死锁的现象**。
@@ -339,12 +339,12 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 既然「方案一」会发生同时竞争左边叉子导致死锁的现象，那么我们就在拿叉子前，加个互斥信号量，代码如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/26-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%BA%8C%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/26-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%BA%8C%E7%A4%BA%E4%BE%8B.jpg)
 
 上面程序中的互斥信号量的作用就在于，**只要有一个哲学家进入了「临界区」，也就是准备要拿叉子时，其他哲学家都不能动，只有这位哲学家用完叉子了，才能轮到下一个哲学家进餐。**
 
 
-![方案二的问题](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/27-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%BA%8C%E9%97%AE%E9%A2%98.jpg)
+![方案二的问题](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/27-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%BA%8C%E9%97%AE%E9%A2%98.jpg)
 
 
 方案二虽然能让哲学家们按顺序吃饭，但是每次进餐只能有一位哲学家，而桌面上是有 5 把叉子，按道理是能可以有两个哲学家同时进餐的，所以从效率角度上，这不是最好的解决方案。
@@ -359,17 +359,17 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 **即让偶数编号的哲学家「先拿左边的叉子后拿右边的叉子」，奇数编号的哲学家「先拿右边的叉子后拿左边的叉子」。**
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/28-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%89%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/28-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%89%E7%A4%BA%E4%BE%8B.jpg)
 
 上面的程序，在 P 操作时，根据哲学家的编号不同，拿起左右两边叉子的顺序不同。另外，V 操作是不需要分支的，因为 V 操作是不会阻塞的。
 
-![方案三可解决问题](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/29-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%89-%E5%9B%BE%E8%A7%A3.jpg)
+![方案三可解决问题](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/29-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E4%B8%89-%E5%9B%BE%E8%A7%A3.jpg)
 
 方案三即不会出现死锁，也可以两人同时进餐。
 
 > 方案四
 
-在这里再提出另外一种可行的解决方案，我们**用一个数组 state 来记录每一位哲学家在进程、思考还是饥饿状态（正在试图拿叉子）。**
+在这里再提出另外一种可行的解决方案，我们**用一个数组 state 来记录每一位哲学家的三个状态，分别是在进餐状态、思考状态、饥饿状态（正在试图拿叉子）。**
 
 那么，**一个哲学家只有在两个邻居都没有进餐时，才可以进入进餐状态。**
 
@@ -382,13 +382,13 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 具体代码实现如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/30-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E5%9B%9B%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/30-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E5%9B%9B%E7%A4%BA%E4%BE%8B.jpg)
 
 上面的程序使用了一个信号量数组，每个信号量对应一位哲学家，这样在所需的叉子被占用时，想进餐的哲学家就被阻塞。
 
 注意，每个进程/线程将 `smart_person` 函数作为主代码运行，而其他 `take_forks`、`put_forks` 和 `test` 只是普通的函数，而非单独的进程/线程。
 
-![方案四也可解决问题](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/31-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E5%9B%9B-%E5%9B%BE%E8%A7%A3.jpg)
+![方案四也可解决问题](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/31-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90-%E6%96%B9%E6%A1%88%E5%9B%9B-%E5%9B%BE%E8%A7%A3.jpg)
 
 方案四同样不会出现死锁，也可以两人同时进餐。
 
@@ -419,7 +419,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 接下来看看代码的实现：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/32-%E8%AF%BB%E8%80%85%E5%86%99%E8%80%85-%E6%96%B9%E6%A1%88%E4%B8%80%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/32-%E8%AF%BB%E8%80%85%E5%86%99%E8%80%85-%E6%96%B9%E6%A1%88%E4%B8%80%E7%A4%BA%E4%BE%8B.jpg)
 
 上面的这种实现，是读者优先的策略，因为只要有读者正在读的状态，后来的读者都可以直接进入，如果读者持续不断进入，则写者会处于饥饿状态。
 
@@ -439,7 +439,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 具体实现如下代码：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/33-%E8%AF%BB%E8%80%85%E5%86%99%E8%80%85-%E6%96%B9%E6%A1%88%E4%BA%8C%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/33-%E8%AF%BB%E8%80%85%E5%86%99%E8%80%85-%E6%96%B9%E6%A1%88%E4%BA%8C%E7%A4%BA%E4%BE%8B.jpg)
 
 注意，这里 `rMutex` 的作用，开始有多个读者读数据，它们全部进入读者队列，此时来了一个写者，执行了 `P(rMutex)` 之后，后续的读者由于阻塞在 `rMutex` 上，都不能再进入读者队列，而写者到来，则可以全部进入写者队列，因此保证了写者优先。
 
@@ -459,7 +459,7 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 具体代码实现：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/34-%E8%AF%BB%E8%80%85%E5%86%99%E8%80%85-%E6%96%B9%E6%A1%88%E4%B8%89%E7%A4%BA%E4%BE%8B.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5/34-%E8%AF%BB%E8%80%85%E5%86%99%E8%80%85-%E6%96%B9%E6%A1%88%E4%B8%89%E7%A4%BA%E4%BE%8B.jpg)
 
 看完代码不知你是否有这样的疑问，为什么加了一个信号量 `flag`，就实现了公平竞争？
 
@@ -479,4 +479,4 @@ PV 操作的函数是由操作系统管理和实现的，所以操作系统已�
 
 **小林是专为大家图解的工具人，Goodbye，我们下次见！**
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
