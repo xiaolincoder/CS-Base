@@ -19,7 +19,7 @@
 
 ## 传输层
 
-应用层的数据包会传给传输层，**传输层****（*Transport Layer*）是为应用层提供网络支持的。
+应用层的数据包会传给传输层，**传输层**（*Transport Layer*）是为应用层提供网络支持的。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/应用层.png)
 
@@ -119,7 +119,7 @@ MAC 头部是以太网使用的头部，它包含了接收方和发送方的 MAC
 
 再给大家贴一下每一层的封装格式：
 
-![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%B5%AE%E7%82%B9/%E5%B0%81%E8%A3%85.png)
+![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%B5%AE%E7%82%B9/%E5%B0%81%E8%A3%85.png)
 
 网络接口层的传输单位是帧（frame），IP 层的传输单位是包（packet），TCP 层的传输单位是段（segment），HTTP 的传输单位则是消息或报文（message）。但这些名词并没有什么本质的区分，可以统称为数据包。
 
