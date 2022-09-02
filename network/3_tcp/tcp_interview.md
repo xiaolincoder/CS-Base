@@ -6,7 +6,7 @@
 
 巨巨巨巨长的提纲，发车！发车！
 
-![](https://img-blog.csdnimg.cn/1310bf5ed78e4c8186481c47719e0793.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center)
+![](https://img-blog.csdnimg.cn/1310bf5ed78e4c8186481c47719e0793.png)
 
 
 
@@ -198,7 +198,7 @@ TCP 是面向连接的协议，所以使用 TCP 前必须先建立连接，而**
 
 ![TCP 三次握手](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4/%E7%BD%91%E7%BB%9C/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.drawio.png)
 
-- 一开始，客户端和服务端都处于 `CLOSED` 状态。先是服务端主动监听某个端口，处于 `LISTEN` 状态
+- 一开始，客户端和服务端都处于 `CLOSE` 状态。先是服务端主动监听某个端口，处于 `LISTEN` 状态
 
 ![第一个报文—— SYN 报文](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzE1LmpwZw?x-oss-process=image/format,png)
 
@@ -266,7 +266,7 @@ TCP 的连接状态查看，在 Linux 可以通过 `netstat -napt` 命令查看�
 
 我先直接说结论，主要是因为**在两次握手的情况下，「被动发起方」没有中间状态给「主动发起方」来阻止历史连接，导致「被动发起方」可能建立一个历史连接，造成资源浪费**。
 
-你想想，两次握手的情况下，「被动发起方」在收到 SYN 报文后，就进入 ESTABLISHED 状态，意味着这时可以给对方发送数据给，但是「主动发」起方此时还没有进入 ESTABLISHED 状态，假设这次是历史连接，主动发起方判断到此次连接为历史连接，那么就会回 RST 报文来断开连接，而「被动发起方」在第一次握手的时候就进入 ESTABLISHED 状态，所以它可以发送数据的，但是它并不知道这个是历史连接，它只有在收到 RST 报文后，才会断开连接。
+你想想，两次握手的情况下，「被动发起方」在收到 SYN 报文后，就进入 ESTABLISHED 状态，意味着这时可以给对方发送数据，但是「主动发起方」此时还没有进入 ESTABLISHED 状态，假设这次是历史连接，「主动发起方」判断到此次连接为历史连接，那么就会回 RST 报文来断开连接，而「被动发起方」在第一次握手的时候就进入 ESTABLISHED 状态，所以它可以发送数据的，但是它并不知道这个是历史连接，它只有在收到 RST 报文后，才会断开连接。
 
 ![两次握手无法阻止历史连接](https://img-blog.csdnimg.cn/img_convert/fe898053d2e93abac950b1637645943f.png)
 
@@ -348,7 +348,7 @@ TCP 建立连接时，通过三次握手**能防止历史连接的建立，能�
 
 相反，如果每次建立连接客户端和服务端的初始化序列号都「一样」，就有大概率遇到历史报文的序列号刚「好在」对方的接收窗口内，从而导致历史报文被新连接成功接收。
 
-所以，每次初始化序列号不一样能够很大程度上避免历史报文被下一个相同四元组的连接接收，注意是很大程度上，并不是完全避免了（因为序列号会有回绕的问题，所以需要用时间戳的机制来判断历史报文，详细看篇：[TCP 是如何避免历史报文的？](https://xiaolincoding.com/network/3_tcp/isn_deff.html)）。
+所以，每次初始化序列号不一样很大程度上能够避免历史报文被下一个相同四元组的连接接收，注意是很大程度上，并不是完全避免了（因为序列号会有回绕的问题，所以需要用时间戳的机制来判断历史报文，详细看篇：[TCP 是如何避免历史报文的？](https://xiaolincoding.com/network/3_tcp/isn_deff.html)）。
 
 ### 初始序列号 ISN 是如何随机产生的？
 
@@ -392,7 +392,7 @@ RFC793 提到初始化序列号 ISN 随机生成算法：ISN = M + F(localhost, 
 
 当客户端想和服务端建立 TCP 连接的时候，首先第一个发的就是 SYN 报文，然后进入到 `SYN_SENT` 状态。
 
-在这之后，如果客户端迟迟收不到服务端的 SYN-ACK 报文（第二次握手），就会触发「超时重传」机制，重传 SYN 报文。
+在这之后，如果客户端迟迟收不到服务端的 SYN-ACK 报文（第二次握手），就会触发「超时重传」机制，重传 SYN 报文，而且**重传的 SYN 报文的序列号都是一样的**。
 
 不同版本的操作系统可能超时时间不同，有的 1 秒的，也有 3 秒的，这个超时时间是写死在内核里的，如果想要更改则需要重新编译内核，比较麻烦。
 
@@ -400,11 +400,24 @@ RFC793 提到初始化序列号 ISN 随机生成算法：ISN = M + F(localhost, 
 
 在 Linux 里，客户端的 SYN 报文最大重传次数由 `tcp_syn_retries`内核参数控制，这个参数是可以自定义的，默认值一般是 5。
 
+```shell
+# cat /proc/sys/net/ipv4/tcp_syn_retries
+5
+```
+
 通常，第一次超时重传是在 1 秒后，第二次超时重传是在 2 秒，第三次超时重传是在 4 秒后，第四次超时重传是在 8 秒后，第五次是在超时重传 16 秒后。没错，**每次超时的时间是上一次的 2 倍**。
 
 当第五次超时重传后，会继续等待 32 秒，如果服务端仍然没有回应 ACK，客户端就不再发送 SYN 包，然后断开 TCP 连接。
 
 所以，总耗时是 1+2+4+8+16+32=63 秒，大约 1 分钟左右。
+
+举个例子，假设 tcp_syn_retries 参数值为 3，那么当客户端的 SYN 报文一直在网络中丢失时，会发生下图的过程：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第1次握手丢失.png)
+
+具体过程：
+
+- 当客户端超时重传 3 次 SYN 报文后，由于  tcp_syn_retries 为 3，已达到最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到服务端的第二次握手（SYN-ACK 报文），那么客户端就会断开连接。
 
 ### 第二次握手丢失了，会发生什么？
 
@@ -425,10 +438,24 @@ RFC793 提到初始化序列号 ISN 随机生成算法：ISN = M + F(localhost, 
 
 在 Linux 下，SYN-ACK 报文的最大重传次数由 `tcp_synack_retries`内核参数决定，默认值是 5。
 
+```shell
+# cat /proc/sys/net/ipv4/tcp_synack_retries
+5
+```
+
 因此，当第二次握手丢失了，客户端和服务端都会重传：
 
 - 客户端会重传 SYN 报文，也就是第一次握手，最大重传次数由 `tcp_syn_retries`内核参数决定；
 - 服务端会重传 SYN-ACK 报文，也就是第二次握手，最大重传次数由 `tcp_synack_retries` 内核参数决定。
+
+举个例子，假设 tcp_syn_retries  参数值为 1，tcp_synack_retries 参数值为 2，那么当第二次握手一直丢失时，发生的过程如下图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第2次握手丢失.png)
+
+具体过程：
+
+- 当客户端超时重传 1 次 SYN 报文后，由于  tcp_syn_retries 为 1，已达到最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到服务端的第二次握手（SYN-ACK 报文），那么客户端就会断开连接。
+- 当服务端超时重传 2 次 SYN-ACK 报文后，由于 tcp_synack_retries 为 2，已达到最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到客户端的第三次握手（ACK 报文），那么服务端就会断开连接。
 
 ### 第三次握手丢失了，会发生什么？
 
@@ -438,37 +465,26 @@ RFC793 提到初始化序列号 ISN 随机生成算法：ISN = M + F(localhost, 
 
 注意，**ACK 报文是不会有重传的，当 ACK 丢失了，就由对方重传对应的报文**。
 
-### 什么是 SYN 攻击？如何避免 SYN 攻击？
+举个例子，假设 tcp_synack_retries 参数值为 2，那么当第三次握手一直丢失时，发生的过程如下图：
 
-*SYN 攻击*
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第三次握手丢失.drawio.png)
+
+具体过程：
+
+- 当服务端超时重传 2 次 SYN-ACK 报文后，由于 tcp_synack_retries 为 2，已达到最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到客户端的第三次握手（ACK 报文），那么服务端就会断开连接。
+
+### 什么是 SYN 攻击？如何避免 SYN 攻击？
 
 我们都知道 TCP 连接建立是需要三次握手，假设攻击者短时间伪造不同 IP 地址的 `SYN` 报文，服务端每接收到一个 `SYN` 报文，就进入`SYN_RCVD` 状态，但服务端发送出去的 `ACK + SYN` 报文，无法得到未知 IP 主机的 `ACK` 应答，久而久之就会**占满服务端的半连接队列**，使得服务器不能为正常用户服务。
 
 ![SYN 攻击](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzI1LmpwZw?x-oss-process=image/format,png)
 
-*避免 SYN 攻击方式一*
+先跟大家说一下，什么是 TCP 半连接和全连接队列。
 
-其中一种解决方式是通过修改 Linux 内核参数，控制队列大小和当队列满时应做什么处理。
+在 TCP 三次握手的时候，Linux 内核会维护两个队列，分别是：
 
-- 当网卡接收数据包的速度大于内核处理的速度时，会有一个队列保存这些数据包。控制该队列的最大值如下参数：
-
-```
-net.core.netdev_max_backlog
-```
-
-- SYN_RCVD 状态连接的最大个数：
-
-```
-net.ipv4.tcp_max_syn_backlog
-```
-
-- 超出处理能时，对新的 SYN 直接回报 RST，丢弃连接：
-
-```
-net.ipv4.tcp_abort_on_overflow
-```
-
-*避免 SYN 攻击方式二*
+- 半连接队列，也称 SYN 队列；
+- 全连接队列，也称 accept 队列；
 
 我们先来看下 Linux 内核的 `SYN` 队列（半连接队列）与 `Accpet` 队列（全连接队列）是如何工作的？
 
@@ -476,39 +492,78 @@ net.ipv4.tcp_abort_on_overflow
 
 正常流程：
 
-- 当服务端接收到客户端的 SYN 报文时，会将其加入到内核的「 SYN 队列」；
+- 当服务端接收到客户端的 SYN 报文时，会创建一个半连接的对象，然后将其加入到内核的「 SYN 队列」；
 - 接着发送 SYN + ACK 给客户端，等待客户端回应 ACK 报文；
-- 服务端接收到 ACK 报文后，从「 SYN 队列」移除放入到「 Accept 队列」；
-- 应用通过调用 `accpet()` socket 接口，从「 Accept 队列」取出连接。
+- 服务端接收到 ACK 报文后，从「 SYN 队列」取出一个半连接对象，然后创建一个新的连接对象放入到「 Accept 队列」；
+- 应用通过调用 `accpet()` socket 接口，从「 Accept 队列」取出连接对象。
 
-![应用程序过慢](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzI3LmpwZw?x-oss-process=image/format,png)
+不管是半连接队列还是全连接队列，都有最大长度限制，超过限制时，默认情况都会丢弃报文。
 
-应用程序过慢：
+SYN 攻击方式最直接的表现就会把 TCP 半连接队列打满，这样**当 TCP 半连接队列满了，后续再在收到 SYN 报文就会丢弃**，导致客户端无法和服务端建立连接。
 
-- 如果应用程序过慢时，就会导致「 Accept 队列」被占满。
+避免 SYN 攻击方式，可以有以下四种方法：
 
-![受到 SYN 攻击](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzI4LmpwZw?x-oss-process=image/format,png)
+- 调大 netdev_max_backlog；
+- 增大 TCP 半连接队列；
+- 开启 tcp_syncookies；
+- 减少 SYN+ACK 重传次数
 
+> 方式一：调大 netdev_max_backlog
 
-受到 SYN 攻击：
+当网卡接收数据包的速度大于内核处理的速度时，会有一个队列保存这些数据包。控制该队列的最大值如下参数，默认值是 1000，我们要适当调大该参数的值，比如设置为 10000：
 
-- 如果不断受到 SYN 攻击，就会导致 SYN 队列（半连接队列）被占满，从而导致无法在建立新的连接。
-
-`tcp_syncookies` 的方式可以应对 SYN 攻击的方法：
-
+```bash
+net.core.netdev_max_backlog = 10000
 ```
-net.ipv4.tcp_syncookies = 1
-```
 
+> 方式二：增大 TCP 半连接队列
+
+增大 TCP 半连接队列，要同时增大下面这三个参数：
+
+- 增大 net.ipv4.tcp_max_syn_backlog
+- 增大  listen() 函数中的 backlog
+- 增大 net.core.somaxconn
+
+具体为什么是三个参数决定  TCP 半连接队列的大小，可以看这篇：可以看这篇：[TCP 半连接队列和全连接队列满了会发生什么？又该如何应对？](https://xiaolincoding.com/network/3_tcp/tcp_queue.html)
+
+> 方式三：开启 net.ipv4.tcp_syncookies 
+
+开启 syncookies 功能就可以在不使用 SYN 半连接队列的情况下成功建立连接，相当于绕过了 SYN 半连接来建立连接。
 
 ![tcp_syncookies 应对 SYN 攻击](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzI5LmpwZw?x-oss-process=image/format,png)
 
-- 当 「 SYN 队列」满之后，后续服务器收到 SYN 包，不进入「 SYN 队列」；
-- 计算出一个 `cookie` 值，再以 SYN + ACK 中的「序列号」返回客户端，
-- 服务端接收到客户端的应答报文时，服务器会检查这个 ACK 包的合法性。如果合法，直接放入到「 Accept 队列」。 
-- 最后应用通过调用 `accpet()` socket 接口，从「 Accept 队列」取出的连接。
+具体过程：
 
----
+- 当 「 SYN 队列」满之后，后续服务器收到 SYN 包，不会丢弃，而是根据算法，计算出一个 `cookie` 值；
+- 将 cookie 值放到第二次握手报文的「序列号」里，然后服务端回第二次握手给客户端；
+- 服务端接收到客户端的应答报文时，服务器会检查这个 ACK 包的合法性。如果合法，将该连接对象放入到「 Accept 队列」。 
+- 最后应用程序通过调用 `accpet()` 接口，从「 Accept 队列」取出的连接。
+
+可以看到，当开启了 tcp_syncookies 了，即使受到 SYN 攻击而导致 SYN 队列满时，也能保证正常的连接成功建立。
+
+net.ipv4.tcp_syncookies 参数主要有以下三个值：
+
+- 0 值，表示关闭该功能；
+- 1 值，表示仅当 SYN 半连接队列放不下时，再启用它；
+- 2 值，表示无条件开启功能；
+
+那么在应对 SYN 攻击时，只需要设置为 1 即可。
+
+```bash
+$ echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+```
+
+> 方式四：减少 SYN+ACK 重传次数
+
+当服务端受到 SYN 攻击时，就会有大量处于 SYN_REVC 状态的 TCP 连接，处于这个状态的 TCP 会重传 SYN+ACK ，当重传超过次数达到上限后，就会断开连接。
+
+那么针对 SYN 攻击的场景，我们可以减少 SYN-ACK 的重传次数，以加快处于 SYN_REVC 状态的 TCP 连接断开。
+
+SYN-ACK 报文的最大重传次数由 `tcp_synack_retries`内核参数决定（默认值是 5 次），比如将 tcp_synack_retries 减少到 2 次：
+
+```shell
+$ echo 2 > /proc/sys/net/ipv4/tcp_synack_retries
+```
 
 ## TCP 连接断开
 
@@ -522,12 +577,12 @@ net.ipv4.tcp_syncookies = 1
 
 
 - 客户端打算关闭连接，此时会发送一个 TCP 首部 `FIN` 标志位被置为 `1` 的报文，也即 `FIN` 报文，之后客户端进入 `FIN_WAIT_1` 状态。
-- 服务端收到该报文后，就向客户端发送 `ACK` 应答报文，接着服务端进入 `CLOSED_WAIT` 状态。
+- 服务端收到该报文后，就向客户端发送 `ACK` 应答报文，接着服务端进入 `CLOSE_WAIT` 状态。
 - 客户端收到服务端的 `ACK` 应答报文后，之后进入 `FIN_WAIT_2` 状态。
 - 等待服务端处理完数据后，也向客户端发送 `FIN` 报文，之后服务端进入 `LAST_ACK` 状态。
 - 客户端收到服务端的 `FIN` 报文后，回一个 `ACK` 应答报文，之后进入 `TIME_WAIT` 状态
-- 服务器收到了 `ACK` 应答报文后，就进入了 `CLOSED` 状态，至此服务端已经完成连接的关闭。
-- 客户端在经过 `2MSL` 一段时间后，自动进入 `CLOSED` 状态，至此客户端也完成连接的关闭。
+- 服务器收到了 `ACK` 应答报文后，就进入了 `CLOSE` 状态，至此服务端已经完成连接的关闭。
+- 客户端在经过 `2MSL` 一段时间后，自动进入 `CLOSE` 状态，至此客户端也完成连接的关闭。
 
 你可以看到，每个方向都需要**一个 FIN 和一个 ACK**，因此通常被称为**四次挥手**。
 
@@ -540,7 +595,9 @@ net.ipv4.tcp_syncookies = 1
 - 关闭连接时，客户端向服务端发送 `FIN` 时，仅仅表示客户端不再发送数据了但是还能接收数据。
 - 服务器收到客户端的 `FIN` 报文时，先回一个 `ACK` 应答报文，而服务端可能还有数据需要处理和发送，等服务端不再发送数据时，才发送 `FIN` 报文给客户端来表示同意现在关闭连接。
 
-从上面过程可知，服务端通常需要等待完成数据的发送和处理，所以服务端的 `ACK` 和 `FIN` 一般都会分开发送，从而比三次握手导致多了一次。
+从上面过程可知，服务端通常需要等待完成数据的发送和处理，所以服务端的 `ACK` 和 `FIN` 一般都会分开发送，因此是需要四次挥手。
+
+但是**在特定情况下，四次挥手是可以变成三次挥手的**，具体情况可以看这篇：[TCP 四次挥手，可以变成三次吗？](https://xiaolincoding.com/network/3_tcp/tcp_three_fin.html)
 
 ### 第一次挥手丢失了，会发生什么？
 
@@ -550,7 +607,15 @@ net.ipv4.tcp_syncookies = 1
 
 如果第一次挥手丢失了，那么客户端迟迟收不到被动方的 ACK 的话，也就会触发超时重传机制，重传 FIN 报文，重发次数由 `tcp_orphan_retries` 参数控制。
 
-当客户端重传 FIN 报文的次数超过 `tcp_orphan_retries` 后，就不再发送 FIN 报文，直接进入到 `close` 状态。
+当客户端重传 FIN 报文的次数超过 `tcp_orphan_retries` 后，就不再发送 FIN 报文，则会在等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到第二次挥手，那么直接进入到 `close` 状态。
+
+举个例子，假设 tcp_orphan_retries 参数值为 3，当第一次挥手一直丢失时，发生的过程如下图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第一次挥手丢失.png)
+
+具体过程：
+
+- 当客户端超时重传 3 次 FIN 报文后，由于 tcp_orphan_retries 为 3，已达到最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到服务端的第二次挥手（ACK报文），那么客户端就会断开连接。
 
 ### 第二次挥手丢失了，会发生什么？
 
@@ -558,13 +623,27 @@ net.ipv4.tcp_syncookies = 1
 
 在前面我们也提了，ACK 报文是不会重传的，所以如果服务端的第二次挥手丢失了，客户端就会触发超时重传机制，重传 FIN 报文，直到收到服务端的第二次挥手，或者达到最大的重传次数。
 
+举个例子，假设 tcp_orphan_retries 参数值为 2，当第二次挥手一直丢失时，发生的过程如下图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第二次挥手丢失.png)
+
+具体过程：
+
+- 当客户端超时重传 2 次 FIN 报文后，由于 tcp_orphan_retries 为 2，已达到最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到服务端的第二次挥手（ACK 报文），那么客户端就会断开连接。
+
 这里提一下，当客户端收到第二次挥手，也就是收到服务端发送的 ACK 报文后，客户端就会处于 `FIN_WAIT2` 状态，在这个状态需要等服务端发送第三次挥手，也就是服务端的 FIN 报文。
 
-对于 close 函数关闭的连接，由于无法再发送和接收数据，所以`FIN_WAIT2` 状态不可以持续太久，而  `tcp_fin_timeout` 控制了这个状态下连接的持续时长，默认值是 60 秒。
+对于 close 函数关闭的连接，由于无法再发送和接收数据，所以`FIN_WAIT2` 状态不可以持续太久，而 `tcp_fin_timeout` 控制了这个状态下连接的持续时长，默认值是 60 秒。
 
-这意味着对于调用 close 关闭的连接，如果在 60 秒后还没有收到 FIN 报文，客户端（主动关闭方）的连接就会直接关闭。
+这意味着对于调用 close 关闭的连接，如果在 60 秒后还没有收到 FIN 报文，客户端（主动关闭方）的连接就会直接关闭，如下图：
 
-但是注意，如果主动关闭方使用 shutdown 函数关闭连接，指定了只关闭发送方向，而接收方向并没有关闭，那么意味着主动关闭方还是可以接收数据的。此时，如果主动关闭方一直没收到第三次挥手，那么主动关闭方的连接将会一直处于 `FIN_WAIT2` 状态（`tcp_fin_timeout` 无法控制 shutdown 关闭的连接）。
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/fin_wait_2.drawio.png)
+
+但是注意，如果主动关闭方使用 shutdown 函数关闭连接，指定了只关闭发送方向，而接收方向并没有关闭，那么意味着主动关闭方还是可以接收数据的。
+
+此时，如果主动关闭方一直没收到第三次挥手，那么主动关闭方的连接将会一直处于 `FIN_WAIT2` 状态（`tcp_fin_timeout` 无法控制 shutdown 关闭的连接）。如下图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/fin_wait_2死等.drawio.png)
 
 ### 第三次挥手丢失了，会发生什么？
 
@@ -576,6 +655,15 @@ net.ipv4.tcp_syncookies = 1
 
 如果迟迟收不到这个 ACK，服务端就会重发 FIN 报文，重发次数仍然由 `tcp_orphan_retrie`s 参数控制，这与客户端重发 FIN 报文的重传次数控制方式是一样的。
 
+举个例子，假设 `tcp_orphan_retrie`s = 3，当第三次挥手一直丢失时，发生的过程如下图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第三次挥手丢失.drawio.png)
+
+具体过程：
+
+- 当服务端重传第三次挥手报文的次数达到了 3 次后，由于 tcp_orphan_retries 为 3，达到了重传最大次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到客户端的第四次挥手（ACK报文），那么服务端就会断开连接。
+- 客户端因为是通过 close 函数关闭连接的，处于 FIN_WAIT_2 状态是有时长限制的，如果 tcp_fin_timeout 时间内还是没能收到服务端的第三次挥手（FIN 报文），那么客户端就会断开连接。
+
 ### 第四次挥手丢失了，会发生什么？
 
 当客户端收到服务端的第三次挥手的 FIN 报文后，就会回 ACK 报文，也就是第四次挥手，此时客户端连接进入 `TIME_WAIT` 状态。
@@ -585,6 +673,15 @@ net.ipv4.tcp_syncookies = 1
 然后，服务端（被动关闭方）没有收到 ACK 报文前，还是处于 LAST_ACK 状态。
 
 如果第四次挥手的 ACK 报文没有到达服务端，服务端就会重发 FIN 报文，重发次数仍然由前面介绍过的 `tcp_orphan_retries` 参数控制。
+
+举个例子，假设 tcp_orphan_retries 为 2，当第四次挥手一直丢失时，发生的过程如下：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/第四次挥手丢失drawio.drawio.png)
+
+具体过程：
+
+- 当服务端重传第三次挥手报文达到 2 时，由于 tcp_orphan_retries 为 2， 达到了最大重传次数，于是再等待一段时间（时间为上一次超时时间的 2 倍），如果还是没能收到客户端的第四次挥手（ACK 报文），那么服务端就会断开连接。
+- 客户端在收到第三次挥手后，就会进入 TIME_WAIT 状态，开启时长为 2MSL 的定时器，如果途中再次收到第三次挥手（FIN 报文）后，就会重置定时器，当等待 2MSL 时长后，客户端就会断开连接。
 
 ### 为什么 TIME_WAIT 等待的时间是 2MSL？
 
@@ -658,7 +755,7 @@ TIME_WAIT 等待 2 倍的 MSL，比较合理的解释是： 网络中可能存�
 
 如果客户端（主动关闭方）最后一次 ACK 报文（第四次挥手）在网络中丢失了，那么按照 TCP 可靠性原则，服务端（被动关闭方）会重发 FIN 报文。
 
-假设客户端没有 TIME_WAIT 状态，而是在发完最后一次回 ACK 报文就直接进入 CLOSED 状态，如果该  ACK 报文丢失了，服务端则重传的 FIN 报文，而这时客户端已经进入到关闭状态了，在收到服务端重传的 FIN 报文后，就会回 RST 报文。
+假设客户端没有 TIME_WAIT 状态，而是在发完最后一次回 ACK 报文就直接进入 CLOSE 状态，如果该  ACK 报文丢失了，服务端则重传的 FIN 报文，而这时客户端已经进入到关闭状态了，在收到服务端重传的 FIN 报文后，就会回 RST 报文。
 
 ![TIME-WAIT 时间过短，没有确保连接正常关闭](https://img-blog.csdnimg.cn/img_convert/3a81c23ce57c27cf63fc2b77e34de0ab.png)
 
@@ -774,7 +871,7 @@ net.ipv4.tcp_keepalive_probes=9
 
 TCP 保活的这个机制检测的时间是有点长，我们可以自己在应用层实现一个心跳机制。
 
-比如，web 服务软件一般都会提供 `keepalive_timeout` 参数，用来指定 HTTP 长连接的超时时间。如果设置了 HTTP 长连接的超时时间是 60 秒，web 服务软件就会**启动一个定时器**，如果客户端在完后一个 HTTP 请求后，在 60 秒内都没有再发起新的请求，**定时器的时间一到，就会触发回调函数来释放该连接。**
+比如，web 服务软件一般都会提供 `keepalive_timeout` 参数，用来指定 HTTP 长连接的超时时间。如果设置了 HTTP 长连接的超时时间是 60 秒，web 服务软件就会**启动一个定时器**，如果客户端在完成一个 HTTP 请求后，在 60 秒内都没有再发起新的请求，**定时器的时间一到，就会触发回调函数来释放该连接。**
 
 ![web 服务的 心跳机制](https://img-blog.csdnimg.cn/img_convert/2d872f947dedd24800a1867dc4f8b9ce.png)
 
@@ -792,7 +889,7 @@ TCP 保活的这个机制检测的时间是有点长，我们可以自己在应�
 
 
 - 服务端和客户端初始化 `socket`，得到文件描述符；
-- 服务端调用 `bind`，将绑定在 IP 地址和端口;
+- 服务端调用 `bind`，将 socket 绑定在指定的 IP 地址和端口;
 - 服务端调用 `listen`，进行监听；
 - 服务端调用 `accept`，等待客户端连接；
 - 客户端调用 `connect`，向服务器端的地址和端口发起连接请求；
@@ -828,7 +925,7 @@ int listen (int socketfd, int backlog)
 
 **但是上限值是内核参数 somaxconn 的大小，也就说 accpet 队列长度 = min(backlog, somaxconn)。**
 
-想详细了解 TCP 半连接队列和全连接队列，可以看这篇：[TCP 半连接队列和全连接队列满了会发生什么？又该如何应对？](https://mp.weixin.qq.com/s/2qN0ulyBtO2I67NB_RnJbg)
+想详细了解 TCP 半连接队列和全连接队列，可以看这篇：[TCP 半连接队列和全连接队列满了会发生什么？又该如何应对？](https://xiaolincoding.com/network/3_tcp/tcp_queue.html)
 
 ### accept 发生在三次握手的哪一步？
 

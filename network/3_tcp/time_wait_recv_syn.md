@@ -52,13 +52,11 @@
 
 用下图作为例子，双方都启用了 TCP 时间戳机制，TSval 是发送报文时的时间戳：
 
-![图片](https://img-blog.csdnimg.cn/img_convert/642a6699c0234da3444e96805dddcc09.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/tw收到不合法.png)
 
 上图中，在收到第三次挥手的 FIN 报文时，会记录该报文的 TSval （21），用 ts_recent 变量保存。然后会计算下一次期望收到的序列号，本次例子下一次期望收到的序列号就是 301，用 rcv_nxt 变量保存。
 
 处于 TIME_WAIT 状态的连接收到 SYN 后，**因为 SYN 的 seq（200） 小于 rcv_nxt（301），所以是一个「非法的 SYN」，就会再回复一个与第四次挥手一样的 ACK 报文，客户端收到后，发现并不是自己期望收到确认号，就回 RST 报文给服务端**。
-
-客户端等待一段时间还是没收到 SYN + ACK 后，就会超时重传 SYN 报文，重传次数达到最大值后，就会断开连接。
 
 > PS：这里先埋一个疑问，处于 TIME_WAIT 状态的连接，收到 RST 会断开连接吗？
 
@@ -263,3 +261,9 @@ TIME_WAIT 状态之所以要持续 2MSL 时间，主要有两个目的：
 - 如果 `net.ipv4.tcp_rfc1337` 参数为 1，则会丢掉该 RST 报文。
 
 完！
+
+---
+
+最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
+
+![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
