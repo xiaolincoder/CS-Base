@@ -4,9 +4,7 @@ HTTP/3 现在还没正式推出，不过自 2017 年起， HTTP/3 已经更新�
 
 所以，这次 HTTP/3 介绍不会涉及到包格式，只说它的特性。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/HTTP3提纲.png)
-
----
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http3/HTTP3提纲.png)
 
 ## 美中不足的 HTTP/2 
 
@@ -20,21 +18,23 @@ HTTP/2 通过头部压缩、二进制编码、多路复用、服务器推送等�
 
 HTTP/2 多个请求是跑在一个 TCP 连接中的，那么当 TCP 丢包时，整个 TCP 都要等待重传，那么就会阻塞该 TCP 连接中的所有请求。
 
+比如下图中，Stream 2 有一个 TCP 报文丢失了，那么即使收到了 Stream 3 和 Stream 4 的 TCP 报文，应用层也是无法读取读取的，相当于阻塞了 Stream 3 和 Stream 4 请求。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/quic/http2阻塞.jpeg)
+
 因为 TCP 是字节流协议，TCP 层必须保证收到的字节数据是完整且有序的，如果序列号较低的 TCP 段在网络传输中丢失了，即使序列号较高的 TCP 段已经被接收了，应用层也无法从内核中读取到这部分数据，从 HTTP 视角看，就是请求被阻塞了。
 
 举个例子，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/tcp队头阻塞.gif)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http3/tcp队头阻塞.gif)
 
 图中发送方发送了很多个 packet，每个 packet 都有自己的序号，你可以认为是 TCP 的序列号，其中 packet 3 在网络中丢失了，即使 packet 4-6 被接收方收到后，由于内核中的 TCP 数据不是连续的，于是接收方的应用层就无法从内核中读取到，只有等到 packet 3 重传后，接收方的应用层才可以从内核中读取到数据，这就是 HTTP/2 的队头阻塞问题，是在 TCP 层面发生的。
-
-
 
 ### TCP 与 TLS 的握手时延迟
 
 发起 HTTP 请求时，需要经过 TCP  三次握手和 TLS 四次握手（TLS 1.2）的过程，因此共需要 3 个 RTT 的时延才能发出请求数据。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/TCP+TLS.gif)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http3/TCP%2BTLS.gif)
 
 另外， TCP 由于具有「拥塞控制」的特性，所以刚建立连接的 TCP 会有个「慢启动」的过程，它会对 TCP 连接产生"减速"效果。
 
@@ -44,9 +44,7 @@ HTTP/2 多个请求是跑在一个 TCP 连接中的，那么当 TCP 丢包时，
 
 这些问题都是 TCP 协议固有的问题，无论应用层的 HTTP/2 在怎么设计都无法逃脱。要解决这个问题，就必须把**传输层协议替换成 UDP**，这个大胆的决定，HTTP/3 做了！
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/http3quic.jpg)
-
----
+![HTTP/1 ~ HTTP/3](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/27-HTTP3.png)
 
 ## QUIC 协议的特点
 
@@ -75,9 +73,7 @@ QUIC 协议也有类似 HTTP/2 Stream 与多路复用的概念，也是可以在
 
 所以，QUIC 连接上的多个 Stream 之间并没有依赖，都是独立的，某个流发生丢包了，只会影响该流，其他流不受影响。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/quic多路复用.png)
-
-
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/quic/quic无阻塞.jpeg)
 
 ### 更快的连接建立
 
@@ -90,27 +86,25 @@ HTTP/3 在传输数据前虽然需要 QUIC 协议握手，这个握手过程只�
 
 如下图右边部分，HTTP/3 当会话恢复时，有效负载数据与第一个数据包一起发送，可以做到 0-RTT：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/0-rtt.gif)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http3/0-rtt.gif)
 
 
 ### 连接迁移
 
-在前面我们提到，基于 TCP 传输协议的 HTTP 协议，由于是通过四元组（源 IP、源端口、目的 IP、目的端口）确定一条 TCP 连接，那么当移动设备的网络从 4G 切换到 WIFI 时，意味着 IP 地址变化了，那么就必须要断开连接，然后重新建立连接，而建立连接的过程包含 TCP 三次握手和 TLS 四次握手的时延，以及 TCP 慢启动的减速过程，给用户的感觉就是网络突然卡顿了一下，因此连接的迁移成本是很高的。
+在前面我们提到，基于 TCP 传输协议的 HTTP 协议，由于是通过四元组（源 IP、源端口、目的 IP、目的端口）确定一条 TCP 连接。
+
+![TCP 四元组](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzEwLmpwZw?x-oss-process=image/format,png)
+
+那么当移动设备的网络从 4G 切换到 WIFI 时，意味着 IP 地址变化了，那么就必须要断开连接，然后重新建立连接，而建立连接的过程包含 TCP 三次握手和 TLS 四次握手的时延，以及 TCP 慢启动的减速过程，给用户的感觉就是网络突然卡顿了一下，因此连接的迁移成本是很高的。
 
 
 而 QUIC 协议没有用四元组的方式来“绑定”连接，而是通过**连接 ID**来标记通信的两个端点，客户端和服务器可以各自选择一组 ID 来标记自己，因此即使移动设备的网络变化后，导致 IP 地址变化了，只要仍保有上下文信息（比如连接 ID、TLS 密钥等），就可以“无缝”地复用原连接，消除重连的成本，没有丝毫卡顿感，达到了**连接迁移**的功能。
-
-
----
 
 ## HTTP/3 协议
 
 了解完 QUIC 协议的特点后，我们再来看看 HTTP/3 协议在 HTTP 这一层做了什么变化。
 
- HTTP/3 同 HTTP/2 一样采用二进制帧的结构，不同的地方在于 HTTP/2 的二进制帧里需要定义 Stream，而  HTTP/3 自身不需要再定义 Stream，直接使用 QUIC 里的 Stream，于是 HTTP/3 的帧的结构也变简单了。
-
-
- ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/http3/http3frame.png)
+ HTTP/3 同 HTTP/2 一样采用二进制帧的结构，不同的地方在于 HTTP/2 的二进制帧里需要定义 Stream，而  HTTP/3 自身不需要再定义 Stream，直接使用 QUIC 里的 Stream，于是 HTTP/3 的帧的结构也变简单了。 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http3/http3frame.png)
 
  从上图可以看到，HTTP/3 帧头只有两个字段：类型和长度。
 
@@ -118,7 +112,7 @@ HTTP/3 在传输数据前虽然需要 QUIC 协议握手，这个握手过程只�
 根据帧类型的不同，大体上分为数据帧和控制帧两大类，HEADERS 帧（HTTP 头部）和 DATA 帧（HTTP 包体）属于数据帧。
 
 
-HTTP/3 在头部压缩算法这一方便也做了升级，升级成了 **QPACK**。与 HTTP/2 中的 HPACK 编码方式相似，HTTP/3 中的 QPACK 也采用了静态表、动态表及 Huffman 编码。
+HTTP/3 在头部压缩算法这一方面也做了升级，升级成了 **QPACK**。与 HTTP/2 中的 HPACK 编码方式相似，HTTP/3 中的 QPACK 也采用了静态表、动态表及 Huffman 编码。
 
 对于静态表的变化，HTTP/2 中的 HPACK 的静态表只有 61 项，而 HTTP/3 中的 QPACK 的静态表扩大到 91 项。
 
@@ -131,14 +125,12 @@ HTTP/2 和 HTTP/3 的 Huffman 编码并没有多大不同，但是动态表编�
 
 HTTP/3 的 QPACK 解决了这一问题，那它是如何解决的呢？
 
-QUIC 会有两个特殊的单向流，所谓的单项流只有一端可以发送消息，双向则指两端都可以发送消息，传输 HTTP 消息时用的是双向流，这两个单向流的用法：
+QUIC 会有两个特殊的单向流，所谓的单向流只有一端可以发送消息，双向则指两端都可以发送消息，传输 HTTP 消息时用的是双向流，这两个单向流的用法：
 
 - 一个叫 QPACK Encoder Stream， 用于将一个字典（key-value）传递给对方，比如面对不属于静态表的 HTTP 请求头部，客户端可以通过这个 Stream 发送字典；
 - 一个叫 QPACK Decoder Stream，用于响应对方，告诉它刚发的字典已经更新到自己的本地动态表了，后续就可以使用这个字典来编码了。
 
 这两个特殊的单向流是用来**同步双方的动态表**，编码方收到解码方更新确认的通知后，才使用动态表编码 HTTP 头部。
-
----
 
 ## 总结
 
@@ -179,5 +171,5 @@ QUIC  协议的特点：
 
 哈喽，我是小林，就爱图解计算机基础，如果文章对你有帮助，别忘记关注哦！
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 

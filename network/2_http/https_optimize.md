@@ -10,7 +10,7 @@
 这次，就从多个角度来优化 HTTPS。
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/优化https提纲.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/优化https提纲.png)
 
 ---
 
@@ -33,7 +33,7 @@
 
 为了大家更清楚这些步骤在 TLS 协议握手的哪一个阶段，我画出了这幅图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/tls性能损耗.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/tls性能损耗.png)
 
 
 ---
@@ -43,7 +43,7 @@
 玩游戏时，如果我们怎么都战胜不了对方，那么有一个最有效、最快的方式来变强，那就是「充钱」，如果还是不行，那说明你充的钱还不够多。
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/充钱.jpg)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/充钱.jpg)
 
 
 
@@ -58,7 +58,7 @@
 
 如果你的服务器是 Linux 系统，那么你可以使用下面这行命令查看 CPU 是否支持 AES-NI 指令集：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/aesni_intel.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/aesni_intel.png)
 
 
 
@@ -101,14 +101,14 @@ ECDHE 算法是基于椭圆曲线实现的，不同的椭圆曲线性能也不�
 
 比如在 Nginx 上，可以使用 ssl_ecdh_curve 指令配置想使用的椭圆曲线，把优先使用的放在前面：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/ssl_ecdh_curve.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/ssl_ecdh_curve.png)
 
 
 对于对称加密算法方面，如果对安全性不是特别高的要求，可以**选用 AES_128_GCM**，它比 AES_256_GCM 快一些，因为密钥的长度短一些。
 
 比如在 Nginx 上，可以使用 ssl_ciphers 指令配置想使用的非对称加密算法和对称加密算法，也就是密钥套件，而且把性能最快最安全的算法放在最前面：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/ssl_ciphers.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/ssl_ciphers.png)
 
 
 
@@ -118,7 +118,7 @@ ECDHE 算法是基于椭圆曲线实现的，不同的椭圆曲线性能也不�
 
 在 TLS 1.2 的握手中，一般是需要 4 次握手，先要通过 Client Hello （第 1 次握手）和 Server Hello（第 2 次握手） 消息协商出后续使用的加密算法，再互相交换公钥（第 3 和 第 4 次握手），然后计算出最终的会话密钥，下图的左边部分就是 TLS 1.2 的握手过程：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/tls1.2and1.3.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/tls1.2and1.3.png)
 
 
 上图的右边部分就是 TLS 1.3 的握手过程，可以发现 **TLS 1.3 把 Hello 和公钥交换这两个消息合并成了一个消息，于是这样就减少到只需 1 RTT 就能完成 TLS 握手**。
@@ -145,7 +145,7 @@ ECDHE 算法是基于椭圆曲线实现的，不同的椭圆曲线性能也不�
 
 ## 证书优化
 
-为了验证的服务器的身份，服务器会在 TSL 握手过程中，把自己的证书发给客户端，以此证明自己身份是可信的。
+为了验证的服务器的身份，服务器会在 TLS 握手过程中，把自己的证书发给客户端，以此证明自己身份是可信的。
 
 对于证书的优化，可以有两个方向：
 
@@ -166,7 +166,7 @@ ECDHE 算法是基于椭圆曲线实现的，不同的椭圆曲线性能也不�
 
 CRL 称为证书吊销列表（*Certificate Revocation List*），这个列表是由 CA 定期更新，列表内容都是被撤销信任的证书序号，如果服务器的证书在此列表，就认为证书已经失效，不在的话，则认为证书是有效的。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/crl.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/crl.png)
 
 但是 CRL 存在两个问题：
 
@@ -177,7 +177,7 @@ CRL 称为证书吊销列表（*Certificate Revocation List*），这个列表�
 
 因此，现在基本都是使用 OCSP ，名为在线证书状态协议（*Online Certificate Status Protocol*）来查询证书的有效性，它的工作方式是**向 CA 发送查询请求，让 CA 返回证书的有效状态**。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/ocsp.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/ocsp.png)
 
 
 不必像 CRL 方式客户端需要下载大大的列表，还要从列表查询，同时因为可以实时查询每一张证书的有效性，解决了 CRL 的实时性问题。
@@ -189,7 +189,7 @@ OCSP 需要向  CA 查询，因此也是要发生网络请求，而且还得看 
 
 于是为了解决这一个网络开销，就出现了 OCSP Stapling，其原理是：服务器向 CA 周期性地查询证书状态，获得一个带有时间戳和签名的响应结果并缓存它。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/opscp-stapling.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/opscp-stapling.png)
 
 
 当有客户端发起连接请求时，服务器会把这个「响应结果」在 TLS 握手过程中发给客户端。由于有签名的存在，服务器无法篡改，因此客户端就能得知证书是否已被吊销了，这样客户端就不需要再去查询。
@@ -214,7 +214,7 @@ Session ID 的工作原理是，**客户端和服务器首次  TLS 握手连接�
 
 当客户端再次连接时，hello 消息里会带上 Session ID，服务器收到后就会从内存找，如果找到就直接用该会话密钥恢复会话状态，跳过其余的过程，只用一个消息往返就可以建立安全通信。当然为了安全性，内存中的会话密钥会定期失效。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/sessionid.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/sessionid.png)
 
 
 但是它有两个缺点：
@@ -231,7 +231,7 @@ Session ID 的工作原理是，**客户端和服务器首次  TLS 握手连接�
 
 客户端再次连接服务器时，客户端会发送 Ticket，服务器解密后就可以获取上一次的会话密钥，然后验证有效期，如果没问题，就可以恢复会话了，开始加密通信。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/ticket.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/ticket.png)
 
 对于集群服务器的话，**要确保每台服务器加密 「会话密钥」的密钥是一致的**，这样客户端携带 Ticket 访问任意一台服务器时，都能恢复会话。
 
@@ -239,7 +239,7 @@ Session ID 和 Session Ticket **都不具备前向安全性**，因为一旦加�
 
 同时应对**重放攻击**也很困难，这里简单介绍下重放攻击工作的原理。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/重放攻击.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/重放攻击.png)
 
 
 假设 Alice 想向 Bob 证明自己的身份。 Bob 要求 Alice 的密码作为身份证明，爱丽丝应尽全力提供（可能是在经过如哈希函数的转换之后）。与此同时，Eve 窃听了对话并保留了密码（或哈希）。
@@ -258,11 +258,11 @@ Session ID 和 Session Ticket **都不具备前向安全性**，因为一旦加�
 而 TLS1.3  更为牛逼，对于重连 TLS1.3 只需要 **0 RTT**，原理和 Ticket 类似，只不过在重连时，客户端会把 Ticket 和 HTTP 请求一同发送给服务端，这种方式叫 **Pre-shared Key**。
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/0-RTT.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/0-RTT.png)
 
 同样的，Pre-shared Key 也有重放攻击的危险。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/https优化/0-rtt-attack.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https优化/0-rtt-attack.png)
 
 如上图，假设中间人通过某种方式，截获了客户端使用会话重用技术的 POST 请求，通常 POST 请求是会改变数据库的数据，然后中间人就可以把截获的这个报文发送给服务器，服务器收到后，也认为是合法的，于是就恢复会话，致使数据库的数据又被更改，但是此时用户是不知情的。
 
@@ -280,7 +280,7 @@ Session ID 和 Session Ticket **都不具备前向安全性**，因为一旦加�
 对于协议优化的方向：
 
 - 密钥交换算法应该选择 **ECDHE 算法**，而不用 RSA 算法，因为 ECDHE 算法具备前向安全性，而且客户端可以在第三次握手之后，就发送加密应用数据，节省了 1 RTT。
-- 将 TSL1.2 升级 **TSL1.3**，因为 TSL1.3 的握手过程只需要 1 RTT，而且安全性更强。
+- 将 TLS1.2 升级 **TLS1.3**，因为 TLS1.3 的握手过程只需要 1 RTT，而且安全性更强。
 
 对于证书优化的方向：
 
@@ -309,5 +309,5 @@ Session ID 和 Session Ticket **都不具备前向安全性**，因为一旦加�
 
 哈喽，我是小林，就爱图解计算机基础，如果文章对你有帮助，别忘记关注哦！
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 
