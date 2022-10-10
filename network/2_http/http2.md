@@ -207,7 +207,7 @@ HTTP/2 **二进制帧**的结构如下图：
 
 为了理解 HTTP/2 的并发是怎样实现的，我们先来理解 HTTP/2 中的 Stream、Message、Frame 这 3 个概念。
 
-![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http2/Stream.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http2/stream.png)
 
 你可以从上图中看到：
 
@@ -217,7 +217,7 @@ HTTP/2 **二进制帧**的结构如下图：
 
 因此，我们可以得出个结论：多个 Stream 跑在一条 TCP 连接，同一个 HTTP 请求与响应是跑在同一个 Stream 中，HTTP 消息可以由多个 Frame 构成， 一个 Frame 可以由多个 TCP 报文构成。
 
-![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http2/Stream2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http2/stream2.png)
 
 在 HTTP/2 连接上，**不同 Stream 的帧是可以乱序发送的（因此可以并发不同的 Stream ）**，因为每个帧的头部会携带 Stream ID 信息，所以接收端可以通过 Stream ID 有序组装成 HTTP 消息，而**同一 Stream 内部的帧必须是严格有序的**。
 
