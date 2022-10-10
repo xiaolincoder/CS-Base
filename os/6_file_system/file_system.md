@@ -2,7 +2,7 @@
 
 不多 BB，直接上「硬菜」。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/操作系统/文件系统/文件系统-提纲.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/文件系统/文件系统-提纲.png)
 
 ---
 
@@ -20,7 +20,7 @@ Linux 文件系统会为每个文件分配两个数据结构：**索引节点（
 - 索引节点，也就是 *inode*，用来记录文件的元信息，比如 inode 编号、文件大小、访问权限、创建时间、修改时间、**数据在磁盘的位置**等等。索引节点是文件的**唯一**标识，它们之间一一对应，也同样都会被存储在硬盘中，所以**索引节点同样占用磁盘空间**。
 - 目录项，也就是 *dentry*，用来记录文件的名字、**索引节点指针**以及与其他目录项的层级关联关系。多个目录项关联起来，就会形成目录结构，但它与索引节点不同的是，**目录项是由内核维护的一个数据结构，不存放于磁盘，而是缓存在内存**。
 
-由于索引节点唯一标识一个文件，而目录项记录着文件的名，所以目录项和索引节点的关系是多对一，也就是说，一个文件可以有多个别字。比如，硬链接的实现就是多个目录项中的索引节点指向同一个文件。
+由于索引节点唯一标识一个文件，而目录项记录着文件的名字，所以目录项和索引节点的关系是多对一，也就是说，一个文件可以有多个别名。比如，硬链接的实现就是多个目录项中的索引节点指向同一个文件。
 
 注意，目录也是文件，也是用索引节点唯一标识，和普通文件不同的是，普通文件在磁盘里面保存的是文件数据，而目录文件在磁盘里面保存子目录或文件。
 
@@ -40,7 +40,7 @@ Linux 文件系统会为每个文件分配两个数据结构：**索引节点（
 
 以上就是索引节点、目录项以及文件数据的关系，下面这个图就很好的展示了它们之间的关系：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%9B%AE%E5%BD%95%E9%A1%B9+%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9+%E8%B6%85%E7%BA%A7%E5%9D%97+%E6%95%B0%E6%8D%AE%E5%9D%97%20(1).png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/文件系统/目录项和索引关系图.png)
 
 索引节点是存储在硬盘上的数据，那么为了加速文件的访问，通常会把索引节点加载到内存中。
 
@@ -64,9 +64,9 @@ Linux 文件系统会为每个文件分配两个数据结构：**索引节点（
 
 VFS 定义了一组所有文件系统都支持的数据结构和标准接口，这样程序员不需要了解文件系统的工作原理，只需要了解 VFS 提供的统一接口即可。
 
-在 Linux 文件系统中，用户空间、系统调用、虚拟机文件系统、缓存、文件系统以及存储之间的关系如下图：
+在 Linux 文件系统中，用户空间、系统调用、虚拟文件系统、缓存、文件系统以及存储之间的关系如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.png)
 
 Linux 支持的文件系统也不少，根据存储位置的不同，可以把文件系统分为三类：
 
@@ -82,7 +82,7 @@ Linux 支持的文件系统也不少，根据存储位置的不同，可以把�
 
 我们从用户角度来看文件的话，就是我们要怎么使用文件？首先，我们得通过系统调用来打开一个文件。
 
-![write 的过程](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%86%99%E5%88%B0%E7%A3%81%E7%9B%98%E8%BF%87%E7%A8%8B.png)
+![write 的过程](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%86%99%E5%88%B0%E7%A3%81%E7%9B%98%E8%BF%87%E7%A8%8B.png)
 
 ```c
 fd = open(name, flag); # 打开文件
@@ -100,7 +100,7 @@ close(fd);             # 关闭文件
 
 我们打开了一个文件后，操作系统会跟踪进程打开的所有文件，所谓的跟踪呢，就是操作系统为每个进程维护一个打开文件表，文件表里的每一项代表「**文件描述符**」，所以说文件描述符是打开文件的标识。
 
-![打开文件表](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E6%89%93%E5%BC%80%E8%A1%A8.png)
+![打开文件表](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E6%89%93%E5%BC%80%E8%A1%A8.png)
 
 操作系统在打开文件表中维护着打开文件的状态和信息：
 
@@ -146,14 +146,14 @@ close(fd);             # 关闭文件
 注意，此处说的文件头，就类似于 Linux 的 inode。
 
 
-![连续空间存放方式](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F.png)
+![连续空间存放方式](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F.png)
 
 
 连续空间存放的方式虽然读写效率高，**但是有「磁盘空间碎片」和「文件长度不易扩展」的缺陷。**
 
 如下图，如果文件 B 被删除，磁盘上就留下一块空缺，这时，如果新来的文件小于其中的一个空缺，我们就可以将其放在相应空缺里。但如果该文件的大小大于所有的空缺，但却小于空缺大小之和，则虽然磁盘上有足够的空缺，但该文件还是不能存放。当然了，我们可以通过将现有文件进行挪动来腾出空间以容纳新的文件，但是这个在磁盘挪动文件是非常耗时，所以这种方式不太现实。
 
-![磁盘碎片](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E7%A3%81%E7%9B%98%E7%A2%8E%E7%89%87.png)
+![磁盘碎片](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E7%A3%81%E7%9B%98%E7%A2%8E%E7%89%87.png)
 
 
 另外一个缺陷是文件长度扩展不方便，例如上图中的文件 A 要想扩大一下，需要更多的磁盘空间，唯一的办法就只能是挪动的方式，前面也说了，这种方式效率是非常低的。
@@ -170,7 +170,7 @@ close(fd);             # 关闭文件
 
 文件要以「**隐式链表**」的方式存放的话，**实现的方式是文件头要包含「第一块」和「最后一块」的位置，并且每个数据块里面留出一个指针空间，用来存放下一个数据块的位置**，这样一个数据块连着一个数据块，从链头开始就可以顺着指针找到所有的数据块，所以存放的方式可以是不连续的。
 
-![隐式链表](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E9%93%BE%E8%A1%A8%E6%96%B9%E5%BC%8F.png)
+![隐式链表](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E9%93%BE%E8%A1%A8%E6%96%B9%E5%BC%8F.png)
 
 隐式链表的存放方式的**缺点在于无法直接访问数据块，只能通过指针顺序访问文件，以及数据块指针消耗了一定的存储空间**。隐式链接分配的**稳定性较差**，系统在运行过程中由于软件或者硬件错误**导致链表中的指针丢失或损坏，会导致文件数据的丢失。**
 
@@ -178,7 +178,7 @@ close(fd);             # 关闭文件
 
 对于显式链接的工作方式，我们举个例子，文件 A 依次使用了磁盘块 4、7、2、10 和 12 ，文件 B 依次使用了磁盘块 6、3、11 和 14 。利用下图中的表，可以从第 4 块开始，顺着链走到最后，找到文件 A 的全部磁盘块。同样，从第 6 块开始，顺着链走到最后，也能够找出文件 B 的全部磁盘块。最后，这两个链都以一个不属于有效磁盘编号的特殊标记（如 -1 ）结束。内存中的这样一个表格称为**文件分配表（*File Allocation Table，FAT*）**。
 
-![显式链接](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E5%88%86%E9%85%8D%E8%A1%A8.png)
+![显式链接](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E5%88%86%E9%85%8D%E8%A1%A8.png)
 
 
 由于查找记录的过程是在内存中进行的，因而不仅显著地**提高了检索速度**，而且**大大减少了访问磁盘的次数**。但也正是整个表都存放在内存中的关系，它的主要的缺点是**不适用于大磁盘**。
@@ -196,7 +196,7 @@ close(fd);             # 关闭文件
 
 创建文件时，索引块的所有指针都设为空。当首次写入第 i 块时，先从空闲空间中取得一个块，再将其地址写到索引块的第 i 个条目。
 
-![索引的方式](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E7%B4%A2%E5%BC%95%E6%96%B9%E5%BC%8F.png)
+![索引的方式](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E7%B4%A2%E5%BC%95%E6%96%B9%E5%BC%8F.png)
 
 索引的方式优点在于：
 
@@ -212,24 +212,24 @@ close(fd);             # 关闭文件
 先来看看链表 + 索引的组合，这种组合称为「**链式索引块**」，它的实现方式是**在索引数据块留出一个存放下一个索引数据块的指针**，于是当一个索引数据块的索引信息用完了，就可以通过指针的方式，找到下一个索引数据块的信息。那这种方式也会出现前面提到的链表方式的问题，万一某个指针损坏了，后面的数据也就会无法读取了。
 
 
-![链式索引块](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%93%BE%E5%BC%8F%E7%B4%A2%E5%BC%95%E5%9D%97.png)
+![链式索引块](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%93%BE%E5%BC%8F%E7%B4%A2%E5%BC%95%E5%9D%97.png)
 
 
 还有另外一种组合方式是索引 + 索引的方式，这种组合称为「**多级索引块**」，实现方式是**通过一个索引块来存放多个索引数据块**，一层套一层索引，像极了俄罗斯套娃是吧。
 
-![多级索引块](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%A4%9A%E7%BA%A7%E7%B4%A2%E5%BC%95%E5%9D%97.png)
+![多级索引块](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%A4%9A%E7%BA%A7%E7%B4%A2%E5%BC%95%E5%9D%97.png)
 
 
 ### Unix 文件的实现方式
 
 我们先把前面提到的文件实现方式，做个比较：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/操作系统/文件系统/文件存储方式比较.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/文件系统/文件存储方式比较.png)
 
 
 那早期 Unix 文件系统是组合了前面的文件存放方式的优点，如下图：
 
-![早期 Unix 文件系统](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Unix%20%E5%A4%9A%E7%BA%A7%E7%B4%A2%E5%BC%95.png)
+![早期 Unix 文件系统](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Unix%20%E5%A4%9A%E7%BA%A7%E7%B4%A2%E5%BC%95.png)
 
 它是根据文件的大小，存放的方式会有所变化：
 
@@ -270,7 +270,7 @@ close(fd);             # 关闭文件
 
 空闲表法就是为所有空闲空间建立一张表，表内容包括空闲区的第一个块号和该空闲区的块个数，注意，这个方式是连续分配的。如下图：
 
-![空闲表法](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95.png)
+![空闲表法](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95.png)
 
 当请求分配磁盘空间时，系统依次扫描空闲表里的内容，直到找到一个合适的空闲区域为止。当用户撤销一个文件时，系统回收文件空间。这时，也需顺序扫描空闲表，寻找一个空闲表条目并将释放空间的第一个物理块号及它占用的块数填到这个条目中。
 
@@ -282,7 +282,7 @@ close(fd);             # 关闭文件
 我们也可以使用「链表」的方式来管理空闲空间，每一个空闲块里有一个指针指向下一个空闲块，这样也能很方便的找到空闲块并管理起来。如下图：
 
 
-![空闲链表法](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A9%BA%E9%97%B2%E5%9D%97%E9%93%BE%E8%A1%A8.png)
+![空闲链表法](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A9%BA%E9%97%B2%E5%9D%97%E9%93%BE%E8%A1%A8.png)
 
 当创建文件需要一块或几块时，就从链头上依次取下一块或几块。反之，当回收空间时，把这些空闲块依次接到链头上。
 
@@ -318,7 +318,7 @@ close(fd);             # 关闭文件
 
 下图给出了 Linux Ext2 整个文件系统的结构和块组的内容，文件系统都由大量块组组成，在硬盘上相继排布：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/操作系统/文件系统/块组.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/文件系统/块组.png)
 
 最前面的第一个块是引导块，在系统启动时用于启用引导，接着后面就是一个一个连续的块组了，块组的内容如下：
 
@@ -349,7 +349,7 @@ close(fd);             # 关闭文件
 
 列表中每一项就代表该目录下的文件的文件名和对应的 inode，通过这个 inode，就可以找到真正的文件。
 
-![目录格式哈希表](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%9B%AE%E5%BD%95%E5%93%88%E5%B8%8C%E8%A1%A8.png)
+![目录格式哈希表](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%9B%AE%E5%BD%95%E5%93%88%E5%B8%8C%E8%A1%A8.png)
 
 通常，第一项是「`.`」，表示当前目录，第二项是「`..`」，表示上一级目录，接下来就是一项一项的文件名和 inode。
 
@@ -369,12 +369,12 @@ Linux 系统的 ext 文件系统就是采用了哈希表，来保存目录的内
 
 硬链接是**多个目录项中的「索引节点」指向一个文件**，也就是指向同一个 inode，但是 inode 是不可能跨越文件系统的，每个文件系统都有各自的 inode 数据结构和列表，所以**硬链接是不可用于跨文件系统的**。由于多个目录项都是指向一个 inode，那么**只有删除文件的所有硬链接以及源文件时，系统才会彻底删除该文件。**
 
-![硬链接](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A1%AC%E9%93%BE%E6%8E%A5-2.png)
+![硬链接](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A1%AC%E9%93%BE%E6%8E%A5-2.png)
 
 
 软链接相当于重新创建一个文件，这个文件有**独立的 inode**，但是这个**文件的内容是另外一个文件的路径**，所以访问软链接的时候，实际上相当于访问到了另外一个文件，所以**软链接是可以跨文件系统的**，甚至**目标文件被删除了，链接文件还是在的，只不过指向的文件找不到了而已。**
 
-![软链接](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BD%AF%E9%93%BE%E6%8E%A5.png)
+![软链接](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BD%AF%E9%93%BE%E6%8E%A5.png)
 
 ---
 
@@ -428,12 +428,12 @@ Linux 系统的 ext 文件系统就是采用了哈希表，来保存目录的内
 
 注意，**阻塞等待的是「内核数据准备好」和「数据从内核态拷贝到用户态」这两个过程**。过程如下图：
 
-![阻塞 I/O](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%98%BB%E5%A1%9E%20I_O.png)
+![阻塞 I/O](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%98%BB%E5%A1%9E%20I_O.png)
 
 
 知道了阻塞 I/O ，来看看**非阻塞 I/O**，非阻塞的 read 请求在数据未准备好的情况下立即返回，可以继续往下执行，此时应用程序不断轮询内核，直到数据准备好，内核将数据拷贝到应用程序缓冲区，`read` 调用才可以获取到结果。过程如下图：
 
-![非阻塞 I/O](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E9%98%BB%E5%A1%9E%20I_O%20.png)
+![非阻塞 I/O](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E9%98%BB%E5%A1%9E%20I_O%20.png)
 
 
 注意，**这里最后一次 read 调用，获取数据的过程，是一个同步的过程，是需要等待的过程。这里的同步指的是内核态的数据拷贝到用户程序的缓存区这个过程。**
@@ -445,11 +445,13 @@ Linux 系统的 ext 文件系统就是采用了哈希表，来保存目录的内
 
 为了解决这种傻乎乎轮询方式，于是 **I/O 多路复用**技术就出来了，如 select、poll，它是通过 I/O 事件分发，当内核数据准备好时，再以事件通知应用程序进行操作。
 
-这个做法大大改善了应用进程对 CPU 的利用率，在没有被通知的情况下，应用进程可以使用 CPU 做其他的事情。
+这个做法大大改善了 CPU 的利用率，因为当调用了 I/O 多路复用接口，如果没有事件发生，那么当前线程就会发生阻塞，这时 CPU 会切换其他线程执行任务，等内核发现有事件到来的时候，会唤醒阻塞在 I/O 多路复用接口的线程，然后用户可以进行后续的事件处理。
+
+整个流程要比阻塞 IO 要复杂，似乎也更浪费性能。但 **I/O 多路复用接口最大的优势在于，用户可以在一个线程内同时处理多个 socket 的 IO 请求**（参见：[I/O 多路复用：select/poll/epoll](https://xiaolincoding.com/os/8_network_system/selete_poll_epoll.html)）。用户可以注册多个 socket，然后不断地调用  I/O 多路复用接口读取被激活的 socket，即可达到在同一个线程内同时处理多个 IO 请求的目的。而在同步阻塞模型中，必须通过多线程的方式才能达到这个目的。
 
 下图是使用 select I/O 多路复用过程。注意，`read` 获取数据的过程（数据从内核态拷贝到用户态的过程），也是一个**同步的过程**，需要等待：
 
-![I/O 多路复用](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8E%E9%9D%9E%E9%98%BB%E5%A1%9E%20I_O%20%E7%9A%84%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png)
+![I/O 多路复用](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8E%E9%9D%9E%E9%98%BB%E5%A1%9E%20I_O%20%E7%9A%84%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png)
 
 
 实际上，无论是阻塞 I/O、非阻塞 I/O，还是基于非阻塞 I/O 的多路复用**都是同步调用。因为它们在 read 调用时，内核将数据从内核空间拷贝到应用程序空间，过程都是需要等待的，也就是说这个过程是同步的，如果内核实现的拷贝效率不高，read 调用就会在这个同步过程中等待比较长的时间。**
@@ -458,11 +460,11 @@ Linux 系统的 ext 文件系统就是采用了哈希表，来保存目录的内
 
 当我们发起 `aio_read` 之后，就立即返回，内核自动将数据从内核空间拷贝到应用程序空间，这个拷贝过程同样是异步的，内核自动完成的，和前面的同步操作不一样，应用程序并不需要主动发起拷贝动作。过程如下图：
 
-![异步 I/O](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%BC%82%E6%AD%A5%20I_O.png)
+![异步 I/O](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%BC%82%E6%AD%A5%20I_O.png)
 
 下面这张图，总结了以上几种 I/O 模型：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/操作系统/文件系统/同步VS异步IO.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/文件系统/同步VS异步IO.png)
 
 
 在前面我们知道了，I/O 是分为两个过程的：
@@ -494,4 +496,4 @@ Linux 系统的 ext 文件系统就是采用了哈希表，来保存目录的内
 
 ***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
