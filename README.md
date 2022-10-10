@@ -25,6 +25,7 @@
   - [HTTPS 如何优化？](https://xiaolincoding.com/network/2_http/https_optimize.html) 
   - [HTTP/2 牛逼在哪？](https://xiaolincoding.com/network/2_http/http2.html) 
   - [HTTP/3 强势来袭](https://xiaolincoding.com/network/2_http/http3.html) 
+  - [既然有 HTTP 协议，为什么还要有 RPC？](https://xiaolincoding.com/network/2_http/http_rpc.md) 
 - **TCP 篇** :point_down:
   - [TCP 三次握手与四次挥手面试题](https://xiaolincoding.com/network/3_tcp/tcp_interview.html) 
   - [TCP 重传、滑动窗口、流量控制、拥塞控制](https://xiaolincoding.com/network/3_tcp/tcp_feature.html) 
@@ -43,6 +44,11 @@
   - [TCP Keepalive 和 HTTP Keep-Alive 是一个东西吗？](https://xiaolincoding.com/network/3_tcp/tcp_http_keepalive.html) 
   - [TCP 协议有什么缺陷？](https://xiaolincoding.com/network/3_tcp/tcp_problem.html)
   - [如何基于 UDP 协议实现可靠传输？](https://xiaolincoding.com/network/3_tcp/quic.html)
+  - [TCP 和 UDP 可以使用同一个端口吗？](https://xiaolincoding.com/network/3_tcp/port.md)
+  - [服务端没有 listen，客户端发起连接建立，会发生什么？](https://xiaolincoding.com/network/3_tcp/tcp_no_listen.md)
+  - [没有 accpet，可以建立 TCP 连接吗？](https://xiaolincoding.com/network/3_tcp/tcp_no_accpet.md)
+  - [用了 TCP 协议，数据一定不会丢吗？](https://xiaolincoding.com/network/3_tcp/tcp_drop.md)
+  - [TCP 四次挥手，可以变成三次吗？](https://xiaolincoding.com/network/3_tcp/tcp_three_fin.md)
 - **IP 篇** :point_down:
   - [IP 基础知识全家桶](https://xiaolincoding.com/network/4_ip/ip_base.html) 	
   - [ping 的工作原理](https://xiaolincoding.com/network/4_ip/ping.html) 	
@@ -68,6 +74,7 @@
   - [malloc是如何分配内存的？](https://xiaolincoding.com/os/3_memory/malloc.html)
   - [内存满了，会发生什么？](https://xiaolincoding.com/os/3_memory/mem_reclaim.html)
   - [在 4GB 物理内存的机器上，申请 8G 内存会怎么样？](https://xiaolincoding.com/os/3_memory/alloc_mem.html)
+  - [如何避免预读失效和缓存污染的问题？](https://xiaolincoding.com/os/3_memory/cache_lru.md)
 - **进程管理** :point_down:
   - [进程、线程基础知识](https://xiaolincoding.com/os/4_process/process_base.html) 
   - [进程间有哪些通信方式？](https://xiaolincoding.com/os/4_process/process_commu.html) 
@@ -104,17 +111,19 @@
   - [索引常见面试题](https://xiaolincoding.com/mysql/index/index_interview.html)
   - [从数据页的角度看 B+ 树](https://xiaolincoding.com/mysql/index/page.html)
   - [为什么 MySQL 采用 B+ 树作为索引？](https://xiaolincoding.com/mysql/index/why_index_chose_bpuls_tree.html)
+  - [MySQL 单表不要超过 2000W 行，靠谱吗？](https://xiaolincoding.com/mysql/index/2000w.md)
   - [索引失效有哪些？](https://xiaolincoding.com/mysql/index/index_lose.html)
   - [MySQL 使用 like “%x“，索引一定会失效吗？](https://xiaolincoding.com/mysql/index/index_issue.html)
   - [count(\*) 和 count(1) 有什么区别？哪个性能最好？](https://xiaolincoding.com/mysql/index/count.html)
 - **事务篇** :point_down:
   - [事务隔离级别是怎么实现的？](https://xiaolincoding.com/mysql/transaction/mvcc.html)
-  - [幻读是怎么被解决的？](https://xiaolincoding.com/mysql/transaction/phantom.html) 	
+  - [MySQL 可重复读隔离级别，完全解决幻读了吗？](https://xiaolincoding.com/mysql/transaction/phantom.md) 		
 - **锁篇** :point_down:
   - [MySQL 有哪些锁？](https://xiaolincoding.com/mysql/lock/mysql_lock.html) 	
   - [MySQL 是怎么加锁的？](https://xiaolincoding.com/mysql/lock/how_to_lock.html) 	
   - [update 没加索引会锁全表](https://xiaolincoding.com/mysql/lock/update_index.html) 	
-  - [MySQL 死锁了，怎么办？](https://xiaolincoding.com/mysql/lock/deadlock.html) 	
+  - [MySQL 死锁了，怎么办？](https://xiaolincoding.com/mysql/lock/deadlock.html) 
+  - [字节面试：加了什么锁，导致死锁的？](https://xiaolincoding.com/mysql/lock/show_lock.md)
 - **日志篇** :point_down:
   - [MySQL 日志：undo log、redo log、binlog 有什么用？](https://xiaolincoding.com/mysql/log/how_update.html)
 - **内存篇** :point_down:
@@ -128,14 +137,13 @@
    - [Redis 数据类型和应用场景](https://xiaolincoding.com/redis/data_struct/command.md)
    - [图解 Redis 数据结构](https://xiaolincoding.com/redis/data_struct/data_struct.md)
 - **持久化篇** :point_down:
-	- [AOF 持久化是怎么实现的？](https://xiaolincoding.com/redis/storage/aof.md) 	
-	- [RDB 快照是怎么实现的？](https://xiaolincoding.com/redis/storage/rdb.md) 
+  - [AOF 持久化是怎么实现的？](https://xiaolincoding.com/redis/storage/aof.md) 	
+  - [RDB 快照是怎么实现的？](https://xiaolincoding.com/redis/storage/rdb.md) 
 - **功能篇**:point_down:
    - [Redis 过期删除策略和内存淘汰策略有什么区别？](https://xiaolincoding.com/redis/module/strategy.md) 
 - **高可用篇** :point_down:
    - [主从复制是怎么实现的？](https://xiaolincoding.com/redis/cluster/master_slave_replication.md) 	
    - [为什么要有哨兵？](https://xiaolincoding.com/redis/cluster/sentinel.html)
-   - :joy:  正在赶稿的路上。。。。。
 - **缓存篇** :point_down:
    - [什么是缓存雪崩、击穿、穿透？](https://xiaolincoding.com/redis/cluster/cache_problem.md) 	
    - [数据库和缓存如何保证一致性？](https://xiaolincoding.com/redis/architecture/mysql_redis_consistency.md) 
