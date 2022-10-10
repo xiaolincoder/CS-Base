@@ -51,32 +51,38 @@
   - [什么是软中断？](/os/1_hardware/soft_interrupt.md) 
   - [为什么 0.1 + 0.2 不等于 0.3 ？](/os/1_hardware/float.md) 
 - **操作系统结构** :point_down:
-  - [Linux 内核 vs Windows 内核](/os/2_os_structure/linux_vs_windows.md) 
+	- [Linux 内核 vs Windows 内核](/os/2_os_structure/linux_vs_windows.md) 
 - **内存管理** :point_down:
-  - [为什么要有虚拟内存？](/os/3_memory/vmem.md) 
+	- [为什么要有虚拟内存？](/os/3_memory/vmem.md) 
+	- [malloc是如何分配内存的？](/os/3_memory/malloc.md) 
+	- [内存满了，会发生什么？](/os/3_memory/mem_reclaim.md) 
+	- [在 4GB 物理内存的机器上，申请 8G 内存会怎么样？](/os/3_memory/alloc_mem.md) 
+	- [如何避免预读失效和缓存污染的问题？](/os/3_memory/cache_lru.md) 
 - **进程管理** :point_down:
-  - [进程、线程基础知识](/os/4_process/process_base.md) 
-  - [进程间有哪些通信方式？](/os/4_process/process_commu.md) 
-  - [多线程冲突了怎么办？](/os/4_process/multithread_sync.md) 
-  - [怎么避免死锁？](/os/4_process/deadlock.md) 
-  - [什么是悲观锁、乐观锁？](/os/4_process/pessim_and_optimi_lock.md) 
-  - [一个进程最多可以创建多少个线程？](/os/4_process/create_thread_max.md) 
+	- [进程、线程基础知识](/os/4_process/process_base.md) 
+	- [进程间有哪些通信方式？](/os/4_process/process_commu.md) 
+	- [多线程冲突了怎么办？](/os/4_process/multithread_sync.md) 
+	- [怎么避免死锁？](/os/4_process/deadlock.md) 
+	- [什么是悲观锁、乐观锁？](/os/4_process/pessim_and_optimi_lock.md) 
+	- [一个进程最多可以创建多少个线程？](/os/4_process/create_thread_max.md) 
+	- [线程崩溃了，进程也会崩溃吗？](/os/4_process/thread_crash.md) 
 - **调度算法** :point_down:
-  - [进程调度/页面置换/磁盘调度算法](/os/5_schedule/schedule.md)
+	- [进程调度/页面置换/磁盘调度算法](/os/5_schedule/schedule.md)
 - **文件系统** :point_down:
-  - [文件系统全家桶](/os/6_file_system/file_system.md) 	
+	- [文件系统全家桶](/os/6_file_system/file_system.md) 
+	- [进程写文件时，进程发生了崩溃，已写入的数据会丢失吗？](/os/6_file_system/pagecache.md) 	
 - **设备管理** :point_down:
-  - [键盘敲入 A 字母时，操作系统期间发生了什么？](/os/7_device/device.md) 
+	- [键盘敲入 A 字母时，操作系统期间发生了什么？](/os/7_device/device.md) 
 - **网络系统** :point_down:
-  - [什么是零拷贝？](/os/8_network_system/zero_copy.md) 
-  - [I/O 多路复用：select/poll/epoll](/os/8_network_system/selete_poll_epoll.md) 
-  - [高性能网络模式：Reactor 和 Proactor](/os/8_network_system/reactor.md) 
-  - [什么是一致性哈希？](/os/8_network_system/hash.md) 
+	- [什么是零拷贝？](/os/8_network_system/zero_copy.md) 
+	- [I/O 多路复用：select/poll/epoll](/os/8_network_system/selete_poll_epoll.md) 
+	- [高性能网络模式：Reactor 和 Proactor](/os/8_network_system/reactor.md) 
+	- [什么是一致性哈希？](/os/8_network_system/hash.md) 
 - **学习心得** :point_down:
-  - [如何查看网络的性能指标？](/os/9_linux_cmd/linux_network.md) 	
+	- [如何查看网络的性能指标？](/os/9_linux_cmd/linux_network.md) 	
   - [画图经验分享](/os/9_linux_cmd/pv_uv.md) 	
 - **学习心得** :point_down:
-  - [计算机网络怎么学？](/os/10_learn/learn_os.md) 	
+	- [计算机网络怎么学？](/os/10_learn/learn_os.md) 	
   - [画图经验分享](/os/10_learn/draw.md) 	
 
 ## 有错误怎么办？
@@ -89,4 +95,4 @@
 
 新的图解文章都在公众号首发，别忘记关注了哦！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
