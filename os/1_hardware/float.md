@@ -18,7 +18,7 @@
 
  十进制数转二进制采用的是**除 2 取余法**，比如数字 8 转二进制的过程如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/十进制转二进制.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/十进制转二进制.png)
 
 
 接着，我们看看「整数类型」的数字在计算机的存储方式，这其实很简单，也很直观，就是将十进制的数字转换成二进制即可。
@@ -27,21 +27,21 @@
 
 那么，对于 int 类型的数字 1 的二进制数表示如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/int1.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/int1.png)
 
 而负数就比较特殊了点，负数在计算机中是以「补码」表示的，**所谓的补码就是把正数的二进制全部取反再加 1**，比如 -1 的二进制是把数字 1 的二进制取反后再加 1，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/反码.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/反码.png)
 
 
 不知道你有没有想过，为什么计算机要用补码的方式来表示负数？在回答这个问题前，我们假设不用补码的方式来表示负数，而只是把最高位的符号标志位变为 1 表示负数，如下图过程：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/非反码.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/非反码.png)
 
 
 如果采用这种方式来表示负数的二进制的话，试想一下 `-2 + 1` 的运算过程，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/非反码运算.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/非反码运算.png)
 
 
 按道理，`-2 + 1 = -1`，但是上面的运算过程中得到结果却是 `-3`，所可以发现，这种负数的表示方式是不能用常规的加法来计算了，就需要特殊处理，要先判断数字是否为负数，如果是负数就要把加法操作变成减法操作才可以得到正确对结果。
@@ -55,7 +55,7 @@
 
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/补码运算过程.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/补码运算过程.png)
 
 ---
 
@@ -66,7 +66,7 @@
 
 话不多说，我们就以 `8.625` 转二进制作为例子，直接上图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/十进制小数转二进制.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/十进制小数转二进制.png)
 
 
 最后把「整数部分 + 小数部分」结合在一起后，其结果就是 `1000.101`。
@@ -75,7 +75,7 @@
 
 如果我们用相同的方式，来把 `0.1` 转换成二进制，过程如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/无限小数.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/无限小数.png)
 
 可以发现，`0.1` 的二进制表示是无限循环的。
 
@@ -87,7 +87,7 @@
 
 举个例子，二进制 `1010.101` 转十进制的过程，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/小数转二进制2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/小数转二进制2.png)
 
 
 ---
@@ -118,7 +118,7 @@
 现在绝大多数计算机使用的浮点数，一般采用的是 IEEE 制定的国际标准，这种标准形式如下图：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/IEEE标准.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/IEEE标准.png)
 
 
 这三个重要部分的意义如下：
@@ -132,12 +132,12 @@
 用 `32` 位来表示的浮点数，则称为**单精度浮点数**，也就是我们编程语言中的 `float` 变量，而用 `64` 位来表示的浮点数，称为**双精度浮点数**，也就是 `double`  变量，它们的结构如下：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float.png)
 
 
 可以看到：
 
-- double 的尾数部分是 52 位，float 的尾数部分是 23 位，由于同时都带有一个固定隐含位（这个后面会说），所以 double 有 53 个二进制有效位，float 有 24 个二进制有效位，所以所以它们的精度在十进制中分别是 `log10(2^53)` 约等于 `15.95` 和 `log10(2^24)` 约等于 `7.22`  位，因此 double 的有效数字是 `15~16` 位，float 的有效数字是 `7~8` 位，这些是有效位是包含整数部分和小数部分；
+- double 的尾数部分是 52 位，float 的尾数部分是 23 位，由于同时都带有一个固定隐含位（这个后面会说），所以 double 有 53 个二进制有效位，float 有 24 个二进制有效位，所以所以它们的精度在十进制中分别是 `log10(2^53)` 约等于 `15.95` 和 `log10(2^24)` 约等于 `7.22`  位，因此 double 的有效数字是 `15~16` 位，float 的有效数字是 `7~8` 位，这些有效位是包含整数部分和小数部分；
 - double 的指数部分是 11 位，而 float 的指数位是 8 位，意味着 double 相比 float 能表示更大的数值范围；
 
 
@@ -145,7 +145,7 @@
 
 我们就以 `10.625` 作为例子，看看这个数字在 float 里是如何存储的。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float存储.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float存储.png)
 
 首先，我们计算出 10.625 的二进制小数为 1010.101。
 
@@ -173,12 +173,12 @@ float 的指数部分是 8 位，IEEE 标准规定单精度浮点的指数取值
 
 那么，对于我们在从 float 的二进制浮点数转换成十进制时，要考虑到这个隐含的 1，转换公式如下：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float公式.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float公式.png)
 
 举个例子，我们把下图这个 float 的数据转换成十进制，过程如下：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float转二进制例子.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/float转二进制例子.png)
 
 ---
 
@@ -195,7 +195,7 @@ float 的指数部分是 8 位，IEEE 标准规定单精度浮点的指数取值
 偷个懒，我就不自己手动算了，可以使用 binaryconvert 这个工具，将十进制 0.1 小数转换成 float 浮点数：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.1工具.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.1工具.png)
 
 
 可以看到，8 位指数部分是 `01111011`，23 位的尾数部分是 `10011001100110011001101`，可以看到尾数部分是 `0011` 是一直循环的，只不过尾数是有长度限制的，所以只会显示一部分，所以是一个近似值，精度十分有限。
@@ -203,7 +203,7 @@ float 的指数部分是 8 位，IEEE 标准规定单精度浮点的指数取值
 
 接下来，我们看看 0.2 的 float 浮点数：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.2工具.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.2工具.png)
 
 
 可以看到，8 位指数部分是 `01111100`，稍微和 0.1 的指数不同，23 位的尾数部分是 `10011001100110011001101` 和 0.1 的尾数部分是相同的，也是一个近似值。
@@ -212,15 +212,15 @@ float 的指数部分是 8 位，IEEE 标准规定单精度浮点的指数取值
 
  0.1 的二进制浮点数转换成十进制的结果是 `0.100000001490116119384765625`：
 
-  ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.1浮点数转二进制小数.png)
+  ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.1浮点数转二进制小数.png)
 
  0.2 的二进制浮点数转换成十进制的结果是 `0.20000000298023223876953125`：
 
- ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.2浮点数转换.png)
+ ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.2浮点数转换.png)
 
  这两个结果相加就是 `0.300000004470348358154296875`：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.1+0.2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/0.1%2B0.2.png)
 
 
 所以，你会看到**在计算机中 0.1 + 0.2 并不等于完整的 0.3**。
@@ -230,7 +230,7 @@ float 的指数部分是 8 位，IEEE 标准规定单精度浮点的指数取值
 
 我们在 JavaScript 里执行 0.1 + 0.2，你会得到下面这个结果：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/js0.1+0.2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/浮点/js0.1%2B0.2.png)
 
 结果和我们前面推到的类似，因为 JavaScript 对于数字都是使用 IEEE 754 标准下的双精度浮点类型来存储的。
 
@@ -244,7 +244,7 @@ float 的指数部分是 8 位，IEEE 标准规定单精度浮点的指数取值
 
 ## 总结
 
-最后，再来回答开头多问题。
+最后，再来回答开头的问题。
 
 > 为什么负数要用补码表示？
 

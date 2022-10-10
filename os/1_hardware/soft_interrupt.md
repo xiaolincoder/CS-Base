@@ -2,7 +2,7 @@
 
 今日的技术主题：**什么是软中断？**。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/软中断提纲.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/软中断提纲.png)
 
 ---
 
@@ -12,7 +12,7 @@
 
 这样的解释可能过于学术了，容易云里雾里，我就举个生活中取外卖的例子。
 
-小林中午搬完砖，肚子饿了，点了份白切鸡外卖，这次我带闪了，没有被某团大数据大熟。虽然平台上会显示配送进度，但是我也不能一直傻傻地盯着呀，时间很宝贵，当然得去干别的事情，等外卖到了配送员会通过「电话」通知我，电话响了，我就会停下手中地事情，去拿外卖。
+小林中午搬完砖，肚子饿了，点了份白切鸡外卖，这次我带闪了，没有被某团大数据杀熟。虽然平台上会显示配送进度，但是我也不能一直傻傻地盯着呀，时间很宝贵，当然得去干别的事情，等外卖到了配送员会通过「电话」通知我，电话响了，我就会停下手中地事情，去拿外卖。
 
 
 这里的打电话，其实就是对应计算机里的中断，没接到电话的时候，我可以做其他的事情，只有接到了电话，也就是发生中断，我才会停下当前的事情，去进行另一个事情，也就是拿外卖。
@@ -45,11 +45,9 @@
 
 再举一个计算机中的例子，常见的网卡接收网络包的例子。
 
-网卡收到网络包后，会通过**硬件中断**通知内核有新的数据到了，于是内核就会调用对应的中断处理程序来响应该事件，这个事件的处理也是会分成上半部和下半部。
+网卡收到网络包后，通过 DMA 方式将接收到的数据写入内存，接着会通过**硬件中断**通知内核有新的数据到了，于是内核就会调用对应的中断处理程序来处理该事件，这个事件的处理也是会分成上半部和下半部。
 
-上部分要做到快速处理，所以只要把网卡的数据读到内存中，然后更新一下硬件寄存器的状态，比如把状态更新为表示数据已经读到内存中的状态值。
-
-接着，内核会触发一个**软中断**，把一些处理比较耗时且复杂的事情，交给「软中断处理程序」去做，也就是中断的下半部，其主要是需要从内存中找到网络数据，再按照网络协议栈，对网络数据进行逐层解析和处理，最后把数据送给应用程序。
+上部分要做的事情很少，会先禁止网卡中断，避免频繁硬中断，而降低内核的工作效率。接着，内核会触发一个**软中断**，把一些处理比较耗时且复杂的事情，交给「软中断处理程序」去做，也就是中断的下半部，其主要是需要从内存中找到网络数据，再按照网络协议栈，对网络数据进行逐层解析和处理，最后把数据送给应用程序。
 
 
 所以，中断处理程序的上部分和下半部可以理解为：
@@ -71,7 +69,7 @@
 接下来，就来简单的解析下  `/proc/softirqs` 文件的内容，在我服务器上查看到的文件内容如下：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/softirqs.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/softirqs.png)
 
 你可以看到，每一个 CPU 都有自己对应的不同类型软中断的**累计运行次数**，有 3 点需要注意下。
 
@@ -85,7 +83,7 @@
 
 前面提到过，软中断是以内核线程的方式执行的，我们可以用 `ps` 命令可以查看到，下面这个就是在我的服务器上查到软中断内核线程的结果：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/ksoftirqd.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/ksoftirqd.png)
 
 可以发现，内核线程的名字外面都有有中括号，这说明 ps 无法获取它们的命令行参数，所以一般来说，名字在中括号里的都可以认为是内核线程。
 
@@ -97,7 +95,7 @@
 
 要想知道当前的系统的软中断情况，我们可以使用 `top` 命令查看，下面是一台服务器上的 top 的数据：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/top_si.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/top_si.png)
 
 上图中的黄色部分 `si`，就是 CPU 在软中断上的使用率，而且可以发现，每个 CPU 使用率都不高，两个 CPU 的使用率虽然只有 3% 和 4% 左右，但是都是用在软中断上了。
 
@@ -105,13 +103,13 @@
 
 如果要知道是哪种软中断类型导致的，我们可以使用 `watch -d cat /proc/softirqs` 命令查看每个软中断类型的中断次数的变化速率。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/watch.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/watch.png)
 
 一般对于网络 I/O 比较高的 Web 服务器，`NET_RX` 网络接收中断的变化速率相比其他中断类型快很多。
 
 如果发现 `NET_RX` 网络接收中断次数的变化速率过快，接下来就可以使用 `sar -n DEV` 查看网卡的网络包接收速率情况，然后分析是哪个网卡有大量的网络包进来。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/sar_dev.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/软中断/sar_dev.png)
 
 
 接着，在通过 `tcpdump` 抓包，分析这些包的来源，如果是非法的地址，可以考虑加防火墙，如果是正常流量，则要考虑硬件升级等。
@@ -139,4 +137,4 @@ Linux 中的软中断包括网络收发、定时、调度、RCU 锁等各种类�
 
 ***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)

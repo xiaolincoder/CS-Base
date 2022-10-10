@@ -34,7 +34,7 @@ CPU Cache 通常会分为 **L1、L2、L3 三层**，其中 L1 Cache 通常分成
 当我们大脑记忆中没有资料的时候，可以从书桌或书架上拿书来阅读，那我们桌子上的书，就好比**内存**，我们虽然可以一伸手就可以拿到，但读写速度肯定远慢于寄存器，那图书馆书架上的书，就好比**硬盘**，能存储的数据非常大，但是读写速度相比内存差好几个数量级，更别说跟寄存器的差距了。
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/存储结构/学习与存储层次关系.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/操作系统/存储结构/学习与存储层次关系.png)
 
 
 我们从图书馆书架取书，把书放到桌子上，再阅读书，我们大脑就会记忆知识点，然后再经过大脑思考，这一系列过程相当于，数据从硬盘加载到内存，再从内存加载到 CPU 的寄存器和 Cache 中，然后再通过 CPU 进行处理和计算。
@@ -47,7 +47,7 @@ CPU 里的寄存器和 Cache，是整个计算机存储器中价格最贵的，�
 存储器通常可以分为这么几个级别：
 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/存储结构/存储区分级.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/操作系统/存储结构/存储区分级.png)
 
 - 寄存器；
 - CPU Cache；
@@ -79,9 +79,9 @@ SRAM 之所以叫「静态」存储器，是因为只要有电，数据就可以
 在 SRAM 里面，一个 bit 的数据，通常需要 6 个晶体管，所以 SRAM 的存储密度不高，同样的物理空间下，能存储的数据是有限的，不过也因为 SRAM 的电路简单，所以访问速度非常快。
 
 
-CPU 的高速缓存，通常可以分为 L1、L2、L3 这样的三层高速缓存，也称为一级缓存、二次缓存、三次缓存。
+CPU 的高速缓存，通常可以分为 L1、L2、L3 这样的三层高速缓存，也称为一级缓存、二级缓存、三级缓存。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/存储结构/CPU-Cache.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/操作系统/存储结构/CPU-Cache.png)
 
 
 #### L1 高速缓存
@@ -167,13 +167,13 @@ CPU 并不会直接和每一种存储器设备直接打交道，而是每一种�
 
 比如，CPU Cache 的数据是从内存加载过来的，写回数据的时候也只写回到内存，CPU Cache 不会直接把数据写到硬盘，也不会直接从硬盘加载数据，而是先加载到内存，再从内存加载到 CPU Cache 中。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/存储结构/存储器的层次关系图.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/操作系统/存储结构/存储器的层次关系图.png)
 
 所以，**每个存储器只和相邻的一层存储器设备打交道，并且存储设备为了追求更快的速度，所需的材料成本必然也是更高，也正因为成本太高，所以 CPU 内部的寄存器、L1\L2\L3 Cache 只好用较小的容量，相反内存、硬盘则可用更大的容量，这就我们今天所说的存储器层次结构**。
 
 另外，当 CPU 需要访问内存中某个数据的时候，如果寄存器有这个数据，CPU 就直接从寄存器取数据即可，如果寄存器没有这个数据，CPU 就会查询 L1 高速缓存，如果 L1 没有，则查询 L2 高速缓存，L2 还是没有的话就查询 L3 高速缓存，L3 依然没有的话，才去内存中取数据。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/存储结构/缓存体系.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/操作系统/存储结构/缓存体系1.png)
 
 所以，存储层次结构也形成了**缓存**的体系。
 
@@ -186,9 +186,7 @@ CPU 并不会直接和每一种存储器设备直接打交道，而是每一种�
 
 下面这张表格是不同层级的存储器之间的成本对比图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/存储结构/存储器成本的对比.png)
-
-
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/操作系统/存储结构/存储器成本的对比.png)
 
 你可以看到 L1 Cache 的访问延时是 1 纳秒，而内存已经是 100 纳秒了，相比 L1 Cache 速度慢了 `100` 倍。另外，机械硬盘的访问延时更是高达 10 毫秒，相比 L1 Cache 速度慢了 `10000000` 倍，差了好几个数量级别。
 
@@ -214,7 +212,7 @@ CPU 可以比喻成我们的大脑，我们当前正在思考和处理的知识�
 
 CPU L1 Cache 随机访问延时是 1 纳秒，内存则是 100 纳秒，所以 **CPU L1 Cache 比内存快 `100` 倍左右**。
 
-SSD 随机访问延时是 150 微妙，所以 **CPU L1 Cache 比 SSD 快 `150000` 倍左右**。
+SSD 随机访问延时是 150 微秒，所以 **CPU L1 Cache 比 SSD 快 `150000` 倍左右**。
 
 最慢的机械硬盘随机访问延时已经高达 10 毫秒，我们来看看机械硬盘到底有多「龟速」：
 
@@ -238,6 +236,6 @@ SSD 随机访问延时是 150 微妙，所以 **CPU L1 Cache 比 SSD 快 `150000
 
 准备入冬了，一起来抱团取暖吧，加群方式很简单，只需要加我的微信二维码，备注「**加群**」即可。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 
 **哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF**
