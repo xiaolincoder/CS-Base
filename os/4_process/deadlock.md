@@ -33,13 +33,13 @@
 
 比如下图，如果线程 A 已经持有的资源，不能再同时被线程 B 持有，如果线程 B 请求获取线程 A 已经占用的资源，那线程 B 只能等待，直到线程 A 释放了资源。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/互斥条件.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/互斥条件.png)
 
 ### 持有并等待条件
 
 持有并等待条件是指，当线程 A 已经持有了资源 1，又想申请资源 2，而资源 2 已经被线程 C 持有了，所以线程  A 就会处于等待状态，但是**线程  A 在等待资源 2 的同时并不会释放自己已经持有的资源 1**。 
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/持有并等待条件.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/持有并等待条件.png)
 
 
 
@@ -47,15 +47,15 @@
 
 不可剥夺条件是指，当线程已经持有了资源 ，**在自己使用完之前不能被其他线程获取**，线程 B 如果也想使用此资源，则只能在线程 A 使用完并释放后才能获取。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/不可剥夺条件.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/不可剥夺条件.png)
 
 ### 环路等待条件
 
-环路等待条件指都是，在死锁发生的时候，**两个线程获取资源的顺序构成了环形链**。
+环路等待条件指的是，在死锁发生的时候，**两个线程获取资源的顺序构成了环形链**。
 
 比如，线程 A 已经持有资源 2，而想请求资源 1， 线程 B 已经获取了资源 1，而想请求资源 2，这就形成资源请求等待的环形图。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/环路等待条件.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/环路等待条件.png)
 
 
 ---
@@ -291,7 +291,7 @@ $2 = {__data = {__lock = 2, __count = 0, __owner = 87748, __nusers = 1, __kind =
 
 所以我们只需将线程 B 改成以相同顺序的获取资源，就可以打破死锁了。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/资源有序分配.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/操作系统/死锁/资源有序分配.png)
 
 线程 B 函数改进后的代码如下：
 
@@ -345,4 +345,4 @@ exit
 
 ***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
