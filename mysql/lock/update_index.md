@@ -4,7 +4,7 @@
 
 昨晚在群划水的时候，看到有位读者说了这么一件事。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/202e1521bc02411698eb6162cf121114.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/202e1521bc02411698eb6162cf121114.png)
 
 
 大概就是，在线上执行一条 update 语句修改数据库数据的时候，where 条件没有带上索引，导致业务直接崩了，被老板教训了一波
@@ -36,7 +36,7 @@ InnoDB 存储引擎的默认事务隔离级别是「可重复读」，但是在�
 
 假设有两个事务的执行顺序如下：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/d2326f98cbb34fc09ca4013703251501.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/d2326f98cbb34fc09ca4013703251501.png)
 
 
 可以看到，事务 A 的 update 语句中 where 是等值查询，并且 id 是唯一索引，所以只会对 id = 1 这条记录加锁，因此，事务 B 的更新操作并不会阻塞。
@@ -51,7 +51,7 @@ InnoDB 存储引擎的默认事务隔离级别是「可重复读」，但是在�
 
 可以看到，这次事务 B 的 update 语句被阻塞了。
 
-这是因为事务 A的 update 语句中 where 条件没有索引列，所有记录都会被加锁，也就是这条 update 语句产生了 4 个记录锁和 5 个间隙锁，相当于锁住了全表。
+这是因为事务 A的 update 语句中 where 条件没有索引列，触发了全表扫描，在扫描过程中会对索引加锁，所以全表扫描的场景下，所有记录都会被加锁，也就是这条 update 语句产生了 4 个记录锁和 5 个间隙锁，相当于锁住了全表。
 
 
 ![](https://img-blog.csdnimg.cn/img_convert/63e055617720853f5b64c99576227c09.png)
@@ -65,10 +65,16 @@ InnoDB 存储引擎的默认事务隔离级别是「可重复读」，但是在�
 
 **关键还得看这条语句在执行过程种，优化器最终选择的是索引扫描，还是全表扫描，如果走了全表扫描，就会对全表的记录加锁了**。
 
-> PS：网上很多资料说，update 没加锁索引会加表锁，这是不对的，所以我在标题里加了个问号。Innodb 源码里面在扫码记录的时候，都是针对索引项这个单位去加锁的， update 不带索引就是全表扫扫描，也就是表里的索引项都加锁，所以大家误以为加了表锁。所以，大家要清楚 innodb 不会对select、insert、delete、update语句加表锁的。
+:::tip
+
+网上很多资料说，update 没加锁索引会加表锁，这是不对的。
+
+Innodb 源码里面在扫描记录的时候，都是针对索引项这个单位去加锁的， update 不带索引就是全表扫扫描，也就是表里的索引项都加锁，相当于锁了整张表，所以大家误以为加了表锁。
+
+:::
 
 
-## 又该如何避免这种事故的发生？
+## 如何避免这种事故的发生？
 
 我们可以将 MySQL 里的 `sql_safe_updates` 参数设置为 1，开启安全更新模式。
 

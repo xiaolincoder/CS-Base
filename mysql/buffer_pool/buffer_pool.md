@@ -16,7 +16,7 @@
 
 为此，Innodb 存储引擎设计了一个**缓冲池（*Buffer Pool*）**，来提高数据库的读写性能。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/缓冲池.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/缓冲池.drawio.png)
 
 有了缓冲池后：
 
@@ -39,13 +39,13 @@ InnoDB 会把存储的数据划分为若干个「页」，以页作为磁盘和�
 
 Buffer Pool  除了缓存「索引页」和「数据页」，还包括了 undo 页，插入缓存、自适应哈希索引、锁信息等等。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/bufferpool内容.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/bufferpool内容.drawio.png)
 
 为了更好的管理这些在 Buffer Pool 中的缓存页，InnoDB 为每一个缓存页都创建了一个**控制块**，控制块信息包括「缓存页的表空间、页号、缓存页地址、链表节点」等等。
 
 控制块也是占有内存空间的，它是放在 Buffer Pool 的最前面，接着才是缓存页，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/缓存页.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/缓存页.drawio.png)
 
 上图中控制块和缓存页之间灰色部分称为碎片空间。
 
@@ -73,7 +73,7 @@ Buffer Pool 是一片连续的内存空间，当 MySQL 运行一段时间后，�
 
 所以，为了能够快速找到空闲的缓存页，可以使用链表结构，将空闲缓存页的「控制块」作为链表的节点，这个链表称为 **Free 链表**（空闲链表）。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/freelist.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/freelist.drawio.png)
 
 Free 链表上除了有控制块，还有一个头节点，该头节点包含链表的头节点地址，尾节点地址，以及当前链表中节点的数量等信息。
 
@@ -87,7 +87,7 @@ Free 链表节点是一个一个的控制块，而每个控制块包含着对应
 
 那为了能快速知道哪些缓存页是脏的，于是就设计出 **Flush 链表**，它跟 Free 链表类似的，链表的节点也是控制块，区别在于 Flush 链表的元素都是脏页。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/Flush.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/Flush.drawio.png)
 
 有了 Flush 链表后，后台线程就可以遍历 Flush 链表，将脏页写入到磁盘。
 
@@ -106,19 +106,19 @@ Buffer Pool  的大小是有限的，对于一些频繁访问的数据我们希�
 
 比如下图，假设 LRU 链表长度为 5，LRU 链表从左到右有 1，2，3，4，5 的页。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru.png)
 
 如果访问了 3 号的页，因为 3 号页在 Buffer Pool 里，所以把 3 号页移动到头部即可。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru2.png)
 
 而如果接下来，访问了 8 号页，因为 8 号页不在 Buffer Pool  里，所以需要先淘汰末尾的 5 号页，然后再将 8 号页加入到头部。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru3.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru3.png)
 
 到这里我们可以知道，Buffer Pool 里有三种页和链表来管理数据。
 
-![](https://img2020.cnblogs.com/blog/1401949/202105/1401949-20210519140059196-1689708754.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/bufferpoll_page.png)
 
 图中：
 
@@ -155,7 +155,7 @@ MySQL 是这样做的，它改进了 LRU 算法，将 LRU 划分了 2 个区域�
 
 young 区域在 LRU 链表的前半部分，old 区域则是在后半部分，如下图：
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/young+old.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/young%2Bold.png)
 
 old 区域占整个 LRU 链表长度的比例可以通过 `innodb_old_blocks_pc` 参数来设置，默认是 37，代表整个 LRU 链表中 young 区域与 old 区域比例是 63:37。
 
@@ -165,17 +165,17 @@ old 区域占整个 LRU 链表长度的比例可以通过 `innodb_old_blocks_pc`
 
 假设有一个长度为 10 的 LRU 链表，其中 young 区域占比 70 %，old 区域占比 30 %。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo.drawio.png)
 
 现在有个编号为 20 的页被预读了，这个页只会被插入到  old 区域头部，而 old 区域末尾的页（10号）会被淘汰掉。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo2.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo2.png)
 
 如果 20 号页一直不会被访问，它也没有占用到 young 区域的位置，而且还会比 young 区域的数据更早被淘汰出去。
 
 如果 20 号页被预读后，立刻被访问了，那么就会将它插入到 young 区域的头部，young 区域末尾的页（7号），会被挤到 old 区域，作为 old 区域的头部，这个过程并不会有页被淘汰。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo3.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo3.png)
 
 虽然通过划分 old 区域 和 young 区域避免了预读失效带来的影响，但是还有个问题无法解决，那就是  Buffer Pool  污染的问题。
 
@@ -202,11 +202,11 @@ select * from t_user where name like "%xiaolin%";
 
 举个例子，假设需要批量扫描：21，22，23，24，25 这五个页，这些页都会被逐一访问（读取页里的记录）。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lruthree.drawio.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lruthree.drawio.png)
 
 在批量访问这些数据的时候，会被逐一插入到 young 区域头部。
 
-![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lruthree1.png)
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lruthree1.png)
 
 可以看到，原本在 young 区域的热点数据 6 和 7 号页都被淘汰了，这就是  Buffer Pool  污染的问题。
 
@@ -275,7 +275,7 @@ InnoDB 对 LRU 做了一些优化，我们熟悉的 LRU 算法通常是将最近
 
 最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
 
-![img](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 
 
 
