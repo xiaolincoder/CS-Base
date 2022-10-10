@@ -246,7 +246,7 @@ TCP 滑动窗口方案使用三个指针来跟踪在四个传输类别中的每�
 
 那么可用窗口大小的计算就可以是：
 
-**可用窗口大 = SND.WND -（SND.NXT - SND.UNA）**
+**可用窗口大小 = SND.WND -（SND.NXT - SND.UNA）**
 
 > 接收方的滑动窗口
 
@@ -287,7 +287,7 @@ TCP 滑动窗口方案使用三个指针来跟踪在四个传输类别中的每�
 - 假设两个设备在整个传输过程中都保持相同的窗口大小，不受外界影响
 
 
-![流量控制](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/21.jpg?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0)
+![流量控制](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/21.png?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0)
 
 根据上图的流量控制，说明下每个过程：
 
@@ -390,7 +390,7 @@ probe ) 报文**，而对方在确认这个探测报文时，给出自己现在�
 
 到最后，**如果接收方腾出几个字节并告诉发送方现在有几个字节的窗口，而发送方会义无反顾地发送这几个字节，这就是糊涂窗口综合症**。
 
-要知道，我们的 `TCP + IP` 头有 `40` 个字节，为了传输那几个字节的数据，要达上这么大的开销，这太不经济了。
+要知道，我们的 `TCP + IP` 头有 `40` 个字节，为了传输那几个字节的数据，要搭上这么大的开销，这太不经济了。
 
 就好像一个可以承载 50 人的大巴车，每次来了一两个人，就直接发车。除非家里有矿的大巴司机，才敢这样玩，不然迟早破产。要解决这个问题也不难，大巴司机等乘客数量超过了 25 个，才认定可以发车。
 
@@ -428,7 +428,7 @@ probe ) 报文**，而对方在确认这个探测报文时，给出自己现在�
 
 发送方通常的策略如下:
 
-使用 Nagle 算法，该算法的思路是延时处理，只有满足下面两个条件中的任意一个条件，才能可以发送数据：
+使用 Nagle 算法，该算法的思路是延时处理，只有满足下面两个条件中的任意一个条件，才可以发送数据：
 
 - 条件一：要等到窗口大小 >= `MSS` 并且 数据大小 >= `MSS`；
 - 条件二：收到之前发送数据的 `ack` 回包；

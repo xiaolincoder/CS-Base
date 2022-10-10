@@ -3,6 +3,7 @@
 大家好，我是小林。
 
 之前有个读者在秋招面试的时候，被问了这么一个问题：SYN 报文什么时候情况下会被丢弃？
+
 ![](https://img-blog.csdnimg.cn/img_convert/d4df0c85e08f66f6a2aa2038af73adcc.png)
 
 好家伙，现在面试都问那么细节了吗？
@@ -27,7 +28,11 @@ TCP 四次挥手过程中，主动断开连接方会有一个 TIME_WAIT 的状�
  net.ipv4.ip_local_port_range
 ```
 
-那么，如果如果主动断开连接方的 TIME_WAIT 状态过多，占满了所有端口资源，则会导致无法创建新连接。
+**如果客户端（发起连接方）的 TIME_WAIT 状态过多**，占满了所有端口资源，那么就无法对「目的 IP+ 目的 PORT」都一样的服务器发起连接了，但是被使用的端口，还是可以继续对另外一个服务器发起连接的。具体可以看我这篇文章：[客户端的端口可以重复使用吗？](https://xiaolincoding.com/network/3_tcp/port.html#%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E7%AB%AF%E5%8F%A3%E5%8F%AF%E4%BB%A5%E9%87%8D%E5%A4%8D%E4%BD%BF%E7%94%A8%E5%90%97)
+
+因此，客户端（发起连接方）都是和「目的 IP+ 目的 PORT 」都一样的服务器建立连接的话，当客户端的 TIME_WAIT 状态连接过多的话，就会受端口资源限制，如果占满了所有端口资源，那么就无法再跟「目的 IP+ 目的 PORT」都一样的服务器建立连接了。
+
+不过，即使是在这种场景下，只要连接的是不同的服务器，端口是可以重复使用的，所以客户端还是可以向其他服务器发起连接的，这是因为内核在定位一个连接的时候，是通过四元组（源IP、源端口、目的IP、目的端口）信息来定位的，并不会因为客户端的端口一样，而导致连接冲突。
 
 但是 TIME_WAIT 状态也不是摆设作用，它的作用有两个：
 
@@ -36,12 +41,12 @@ TCP 四次挥手过程中，主动断开连接方会有一个 TIME_WAIT 的状�
 
 不过，Linux 操作系统提供了两个可以系统参数来快速回收处于 TIME_WAIT 状态的连接，这两个参数都是默认关闭的：
 
-- net.ipv4.tcp_tw_reuse，如果开启该选项的话，客户端（连接发起方） 在调用 connect() 函数时，**内核会随机找一个 time_wait 状态超过 1 秒的连接给新的连接复用**，所以该选项只适用于连接发起方。
+- net.ipv4.tcp_tw_reuse，如果开启该选项的话，客户端（连接发起方） 在调用 connect() 函数时，**如果内核选择到的端口，已经被相同四元组的连接占用的时候，就会判断该连接是否处于 TIME_WAIT 状态，如果该连接处于 TIME_WAIT 状态并且 TIME_WAIT 状态持续的时间超过了 1 秒，那么就会重用这个连接，然后就可以正常使用该端口了。**所以该选项只适用于连接发起方。
 - net.ipv4.tcp_tw_recycle，如果开启该选项的话，允许处于 TIME_WAIT 状态的连接被快速回收；
 
 要使得这两个选项生效，有一个前提条件，就是要打开 TCP 时间戳，即 net.ipv4.tcp_timestamps=1（默认即为 1)）。
 
-tcp_tw_recycle 在使用了 NAT 的网络下是不安全的！
+**tcp_tw_recycle 在使用了 NAT 的网络下是不安全的！**
 
 对于服务器来说，如果同时开启了recycle 和 timestamps 选项，则会开启一种称之为「 per-host 的 PAWS 机制」。
 
@@ -98,7 +103,7 @@ tcp_tw_recycle 在 Linux 4.12 版本后，直接取消了这一参数。
 
 syncookies 是这么做的：服务器根据当前状态计算出一个值，放在己方发出的 SYN+ACK 报文中发出，当客户端返回 ACK 报文时，取出该值验证，如果合法，就认为连接建立成功，如下图所示。
 
-![](https://img-blog.csdnimg.cn/img_convert/58e01036d1febd0103dd0ec4d5acff05.png)开启 syncookies 功能
+![](https://img-blog.csdnimg.cn/img_convert/58e01036d1febd0103dd0ec4d5acff05.png)
 
 syncookies 参数主要有以下三个值：
 
@@ -139,9 +144,9 @@ syncookies 参数主要有以下三个值：
 
 *方式三：减少 SYN+ACK 重传次数*
 
-当服务端受到 SYN 攻击时，就会有大量处于 SYN_REVC 状态的 TCP 连接，处于这个状态的 TCP 会重传 SYN+ACK ，当重传超过次数达到上限后，就会断开连接。
+当服务端受到 SYN 攻击时，就会有大量处于 SYN_RECV 状态的 TCP 连接，处于这个状态的 TCP 会重传 SYN+ACK ，当重传超过次数达到上限后，就会断开连接。
 
-那么针对 SYN 攻击的场景，我们可以减少 SYN+ACK 的重传次数，以加快处于 SYN_REVC 状态的 TCP 连接断开。
+那么针对 SYN 攻击的场景，我们可以减少 SYN+ACK 的重传次数，以加快处于 SYN_RECV 状态的 TCP 连接断开。
 
 ![](https://img-blog.csdnimg.cn/img_convert/19443a03430368b72c201113150471c5.png)
 
@@ -172,4 +177,7 @@ syncookies 参数主要有以下三个值：
 
 好了，今天就分享到这里啦。
 
-如果有大佬还知道其他场景，欢迎评论区分享一下，让我也增加下知识哈哈。
+最新的图解文章都在公众号首发，别忘记关注哦！！如果你想加入百人技术交流群，扫码下方二维码回复「加群」。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
+

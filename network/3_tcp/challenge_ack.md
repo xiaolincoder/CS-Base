@@ -4,7 +4,7 @@
 
 昨晚有位读者问了我这么个问题：
 
-![](https://img-blog.csdnimg.cn/ea1c6e0165f04232ab02046132e63d0f.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_16,color_FFFFFF,t_70,g_se,x_16)
+![](https://img-blog.csdnimg.cn/ea1c6e0165f04232ab02046132e63d0f.jpg)
 
 
 大概意思是，一个已经建立的 TCP 连接，客户端中途宕机了，而服务端此时也没有数据要发送，一直处于 establish 状态，客户端恢复后，向服务端建立连接，此时服务端会怎么处理？
@@ -47,7 +47,8 @@
 
 rfc793 文档里的第 34 页里，有说到这个例子。
 
-![](https://img-blog.csdnimg.cn/873ad18443c040708c415bab6592ae41.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_14,color_FFFFFF,t_70,g_se,x_16)
+![](https://img-blog.csdnimg.cn/873ad18443c040708c415bab6592ae41.png)
+
 原文的解释我也贴出来给大家看看。
 
 - When the SYN arrives at line 3, TCP B, being in a synchronized state,
@@ -76,7 +77,8 @@ tcp_v4_rcv
 
 我们只关注 tcp_validate_incoming 函数是怎么处理 SYN 报文的，精简后的代码如下：
 
-![](https://img-blog.csdnimg.cn/780bc02c8fa940c0a320a5916b216c21.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+![](https://img-blog.csdnimg.cn/780bc02c8fa940c0a320a5916b216c21.png)
+
 从上面的代码实现可以看到，处于 establish 状态的服务端，在收到报文后，首先会判断序列号是否在窗口内，如果不在，则看看 RST 标记有没有被设置，如果有就会丢掉。然后如果没有 RST 标志，就会判断是否有 SYN 标记，如果有 SYN 标记就会跳转到 syn_challenge 标签，然后执行 tcp_send_challenge_ack 函数。
 
 tcp_send_challenge_ack 函数里就会调用 tcp_send_ack 函数来回复一个携带了正确序列号和确认号的 ACK 报文。
@@ -119,7 +121,7 @@ tcp_send_challenge_ack 函数里就会调用 tcp_send_ack 函数来回复一个�
 ```
 killcx 工具的工作原理，如下图。
 
-![](https://img-blog.csdnimg.cn/95592346a9a747819cd27741a660213c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP5p6XY29kaW5n,size_20,color_FFFFFF,t_70,g_se,x_16)
+![](https://img-blog.csdnimg.cn/95592346a9a747819cd27741a660213c.png)
 
 它伪造客户端发送 SYN 报文，服务端收到后就会回复一个携带了正确「序列号和确认号」的 ACK 报文（Challenge ACK），然后就可以利用这个 ACK 报文里面的信息，伪造两个 RST 报文：
 - 用 Challenge ACK 里的确认号伪造 RST 报文发送给服务端，服务端收到 RST 报文后就会释放连接。
