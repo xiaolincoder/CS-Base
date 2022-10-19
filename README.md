@@ -26,6 +26,7 @@
   - [HTTP/2 牛逼在哪？](https://xiaolincoding.com/network/2_http/http2.html) 
   - [HTTP/3 强势来袭](https://xiaolincoding.com/network/2_http/http3.html) 
   - [既然有 HTTP 协议，为什么还要有 RPC？](https://xiaolincoding.com/network/2_http/http_rpc.html) 
+  - [既然有 HTTP 协议，为什么还要有 WebSocket？](https://xiaolincoding.com/network/2_http/http_websocket.html) 
 - **TCP 篇** :point_down:
   - [TCP 三次握手与四次挥手面试题](https://xiaolincoding.com/network/3_tcp/tcp_interview.html) 
   - [TCP 重传、滑动窗口、流量控制、拥塞控制](https://xiaolincoding.com/network/3_tcp/tcp_feature.html) 
