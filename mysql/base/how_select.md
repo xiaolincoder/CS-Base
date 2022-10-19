@@ -147,13 +147,13 @@ MySQL 的连接也跟 HTTP 一样，有短连接和长连接的概念，它们�
 
 ::: tip
 
-这里说的查询缓存是 server 层的，也就是 MySQL 8.0 版本移除的是 server 层的查询缓存，并不是 Innodb 存储引擎中的 buffer poll。
+这里说的查询缓存是 server 层的，也就是 MySQL 8.0 版本移除的是 server 层的查询缓存，并不是 Innodb 存储引擎中的 buffer pool。
 
 ::::
 
 ## 第三步：解析 SQL
 
-在正式执行 SQL 查询语句之前， MySQL 会先对 SQL 语句做解析，这个工作交由由「解析器」来完成。
+在正式执行 SQL 查询语句之前， MySQL 会先对 SQL 语句做解析，这个工作交由「解析器」来完成。
 
 ### 解析器
 
