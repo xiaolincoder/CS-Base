@@ -157,19 +157,27 @@ Content-Length: 1000
 
 如上面则是告诉浏览器，本次服务器回应的数据长度是 1000 个字节，后面的字节就属于下一个回应了。
 
+大家应该都知道 HTTP 是基于 TCP 传输协议进行通信的，而使用了 TCP 传输协议，就会存在一个“粘包”的问题，**HTTP 协议通过设置回车符、换行符作为 HTTP header 的边界，通过 Content-Length 字段作为 HTTP body 的边界，这两个方式都是为了解决“粘包”的问题**。具体什么是 TCP 粘包，可以看这篇文章：[如何理解是 TCP 面向字节流协议？](https://xiaolincoding.com/network/3_tcp/tcp_stream.html)
+
 *Connection 字段*
 
-`Connection` 字段最常用于客户端要求服务器使用 TCP 持久连接，以便其他请求复用。
+`Connection` 字段最常用于客户端要求服务器使用「 HTTP 长连接」机制，以便其他请求复用。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/9-connection字段.png)
 
-HTTP/1.1 版本的默认连接都是持久连接，但为了兼容老版本的 HTTP，需要指定 `Connection` 首部字段的值为 `Keep-Alive`。
+HTTP 长连接的特点是，只要任意一端没有明确提出断开连接，则保持 TCP 连接状态。
+
+![HTTP 长连接](https://img-blog.csdnimg.cn/img_convert/d2b20d1cc03936332adb2a68512eb167.png)
+
+HTTP/1.1 版本的默认连接都是长连接，但为了兼容老版本的 HTTP，需要指定 `Connection` 首部字段的值为 `Keep-Alive`。
 
 ```
-Connection: keep-alive
+Connection: Keep-Alive
 ```
 
-一个可以复用的 TCP 连接就建立了，直到客户端或服务器主动关闭连接。但是，这不是标准字段。
+开启了 HTTP  Keep-Alive 机制后， 连接就不会中断，而是保持连接。当客户端发送另一个请求时，它会使用同一个连接，一直持续到客户端或服务器端提出断开连接。
+
+PS：大家不要把 HTTP  Keep-Alive 和 TCP Keepalive 搞混了，这两个虽然长的像，但是不是一个东西，具体可以看我这篇文章：[TCP Keepalive 和 HTTP Keep-Alive 是一个东西吗？](https://xiaolincoding.com/network/3_tcp/tcp_http_keepalive.html)
 
 *Content-Type 字段*
 
@@ -347,7 +355,11 @@ Cache-control 选项更多一些，设置更加精细，所以建议使用 Cache
 
 ## HTTP 特性
 
-###  HTTP（1.1） 的优点有哪些？
+到目前为止，HTTP 常见到版本有 HTTP/1.1，HTTP/2.0，HTTP/3.0，不同版本的 HTTP 特性是不一样的。
+
+这里先用  HTTP/1.1 版本给大家介绍，其他版本的后续也会介绍。
+
+###  HTTP/1.1 的优点有哪些？
 
 HTTP 最凸出的优点是「简单、灵活和易于扩展、应用广泛和跨平台」。
 
@@ -357,17 +369,18 @@ HTTP 基本的报文格式就是 `header + body`，头部信息也是 `key-value
 
 *2. 灵活和易于扩展*
 
-HTTP协议里的各类请求方法、URI/URL、状态码、头字段等每个组成要求都没有被固定死，都允许开发人员**自定义和扩充**。
+HTTP 协议里的各类请求方法、URI/URL、状态码、头字段等每个组成要求都没有被固定死，都允许开发人员**自定义和扩充**。
 
-同时 HTTP 由于是工作在应用层（ `OSI` 第七层），则它**下层可以随意变化**。
+同时 HTTP 由于是工作在应用层（ `OSI` 第七层），则它**下层可以随意变化**，比如：
 
-HTTPS 也就是在 HTTP 与 TCP 层之间增加了 SSL/TLS 安全传输层，HTTP/3 甚至把 TCP 层换成了基于 UDP 的 QUIC。
+- HTTPS 就是在 HTTP 与 TCP 层之间增加了 SSL/TLS 安全传输层；
+- HTTP/1.1 和 HTTP/2.0 传输协议使用的是 TCP 协议，而到了 HTTP/3.0 传输协议改用了 UDP 协议。
 
 *3. 应用广泛和跨平台*
 
 互联网发展至今，HTTP 的应用范围非常的广泛，从台式机的浏览器到手机上的各种 APP，从看新闻、刷贴吧到购物、理财、吃鸡，HTTP 的应用遍地开花，同时天然具有**跨平台**的优越性。
 
-### HTTP（1.1） 的缺点有哪些？
+### HTTP/1.1 的缺点有哪些？
 
 HTTP 协议里有优缺点一体的**双刃剑**，分别是「无状态、明文传输」，同时还有一大缺点「不安全」。
 
@@ -442,7 +455,7 @@ HTTP/1.1 采用了长连接的方式，这使得管道（pipeline）网络传输
 
 ::: tip
 
-注意!
+注意!!!
 
 实际上 HTTP/1.1 管道化技术不是默认开启，而且浏览器基本都没有支持，所以**后面所有文章讨论HTTP/1.1 都是建立在没有使用管道化的前提**。大家知道有这个功能，但是没有被使用就行了。
 
@@ -458,16 +471,17 @@ HTTP/1.1 采用了长连接的方式，这使得管道（pipeline）网络传输
 
 总之 HTTP/1.1 的性能一般般，后续的 HTTP/2 和 HTTP/3 就是在优化 HTTP 的性能。
 
----
-
 ## HTTP 与 HTTPS
 
 ### HTTP 与 HTTPS 有哪些区别？
 
-1. HTTP 是超文本传输协议，信息是明文传输，存在安全风险的问题。HTTPS 则解决 HTTP 不安全的缺陷，在 TCP 和 HTTP 网络层之间加入了 SSL/TLS 安全协议，使得报文能够加密传输。
-2. HTTP 连接建立相对简单， TCP 三次握手之后便可进行 HTTP 的报文传输。而 HTTPS 在 TCP 三次握手之后，还需进行 SSL/TLS 的握手过程，才可进入加密报文传输。
-3. HTTP 的端口号是 80，HTTPS 的端口号是 443。
-4. HTTPS 协议需要向 CA（证书权威机构）申请数字证书，来保证服务器的身份是可信的。
+- HTTP 是超文本传输协议，信息是明文传输，存在安全风险的问题。HTTPS 则解决 HTTP 不安全的缺陷，在 TCP 和 HTTP 网络层之间加入了 SSL/TLS 安全协议，使得报文能够加密传输。
+
+- HTTP 连接建立相对简单， TCP 三次握手之后便可进行 HTTP 的报文传输。而 HTTPS 在 TCP 三次握手之后，还需进行 SSL/TLS 的握手过程，才可进入加密报文传输。
+
+- 两者的默认端口不一样，HTTP 默认端口号是 80，HTTPS 默认端口号是 443。
+
+- HTTPS 协议需要向 CA（证书权威机构）申请数字证书，来保证服务器的身份是可信的。
 
 ### HTTPS 解决了 HTTP 的哪些问题？
 
@@ -603,12 +617,14 @@ SSL/TLS 协议基本流程：
 
 前两步也就是 SSL/TLS 的建立过程，也就是 TLS 握手阶段。
 
-SSL/TLS 的「握手阶段」涉及**四次**通信， [基于 RSA 握手过程的 HTTPS](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247487650&idx=1&sn=dfee83f6773a589c775ccd6f40491289&scene=21#wechat_redirect)见下图：
+TLS 的「握手阶段」涉及**四次**通信，使用不同的密钥交换算法，TLS 握手流程也会不一样的，现在常用的密钥交换算法有两种：[RSA 算法](https://xiaolincoding.com/network/2_http/https_rsa.html) 和 [ECDHE 算法](https://xiaolincoding.com/network/2_http/https_ecdhe.html)。
+
+基于 RSA 算法的 TLS 握手过程比较容易理解，所以这里先用这个给大家展示 TLS 握手过程，如下图：
 
 ![HTTPS 连接建立过程](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/23-HTTPS工作流程.png)
 
 
-SSL/TLS 协议建立的详细流程：
+TLS 协议建立的详细流程：
 
 *1. ClientHello*
 
@@ -616,7 +632,7 @@ SSL/TLS 协议建立的详细流程：
 
 在这一步，客户端主要向服务器发送以下信息：
 
-（1）客户端支持的 SSL/TLS 协议版本，如 TLS 1.2 版本。
+（1）客户端支持的 TLS 协议版本，如 TLS 1.2 版本。
 
 （2）客户端生产的随机数（`Client Random`），后面用于生成「会话秘钥」条件之一。
 
@@ -626,7 +642,7 @@ SSL/TLS 协议建立的详细流程：
 
 服务器收到客户端请求后，向客户端发出响应，也就是 `SeverHello`。服务器回应的内容有如下内容：
 
-（1）确认 SSL/ TLS 协议版本，如果浏览器不支持，则关闭加密通信。
+（1）确认 TLS 协议版本，如果浏览器不支持，则关闭加密通信。
 
 （2）服务器生产的随机数（`Server Random`），也是后面用于生产「会话秘钥」条件之一。
 
@@ -660,7 +676,17 @@ SSL/TLS 协议建立的详细流程：
 
 （2）服务器握手结束通知，表示服务器的握手阶段已经结束。这一项同时把之前所有内容的发生的数据做个摘要，用来供客户端校验。
 
-至此，整个 SSL/TLS 的握手阶段全部结束。接下来，客户端与服务器进入加密通信，就完全是使用普通的 HTTP 协议，只不过用「会话秘钥」加密内容。
+至此，整个 TLS 的握手阶段全部结束。接下来，客户端与服务器进入加密通信，就完全是使用普通的 HTTP 协议，只不过用「会话秘钥」加密内容。
+
+::: tip
+
+如果想深入学习基于 RSA 算法的 HTTPS 握手过程，可以看这篇，我通过抓包的方式，逐步分析每一个过程：[HTTPS RSA 握手解析](https://xiaolincoding.com/network/2_http/https_rsa.html)
+
+不过，基于 RSA 算法的 HTTPS 存在「前向安全」的问题：如果服务端的私钥泄漏了，过去被第三方截获的所有 TLS 通讯密文都会被破解。
+
+为了解决这个问题，后面就出现了 ECDHE 密钥协商算法，我们现在大多数网站使用的正是 ECDHE 密钥协商算法，关于 ECDHE 握手的过程可以看这篇文章：[HTTPS ECDHE 握手解析](https://xiaolincoding.com/network/2_http/https_ecdhe.html#%E7%A6%BB%E6%95%A3%E5%AF%B9%E6%95%B0)
+
+:::
 
 > 客户端校验数字证书的流程是怎样的？
 
@@ -913,6 +939,12 @@ HTTP/2 通过 Stream 的并发能力，解决了 HTTP/1 队头阻塞的问题，
 
 所以，一旦发生了丢包现象，就会触发 TCP 的重传机制，这样在一个 TCP 连接中的**所有的 HTTP 请求都必须等待这个丢了的包被重传回来**。
 
+::: tip
+
+如果想更进一步了解 HTTP/2 协议，可以看我这篇文章：[HTTP/2 牛逼在哪？](https://xiaolincoding.com/network/2_http/http2.html)
+
+:::
+
 ### HTTP/3 做了哪些优化？
 
 前面我们知道了 HTTP/1.1 和 HTTP/2 都有队头阻塞的问题：
@@ -973,6 +1005,15 @@ HTTP/3 在传输数据前虽然需要 QUIC 协议握手，这个握手过程只�
 QUIC 是新协议，对于很多网络设备，根本不知道什么是 QUIC，只会当做 UDP，这样会出现新的问题，因为有的网络设备是会丢掉 UDP 包的，而 QUIC 是基于UDP 实现的，那么如果网络设备无法识别这个是 QUIC 包，那么就会当作 UDP包，然后被丢弃。
 
 HTTP/3 现在普及的进度非常的缓慢，不知道未来 UDP 是否能够逆袭 TCP。
+
+::: tip
+
+如果想更进一步了解 HTTP/3 和 QUIC 协议，可以看我这两篇文章：
+
+- [HTTP/3 强势来袭](https://xiaolincoding.com/network/2_http/http3.html)
+- [如何基于 UDP 协议实现可靠传输？](https://xiaolincoding.com/network/3_tcp/quic.html)
+
+:::
 
 ----
 
