@@ -8,7 +8,7 @@
 
 在 MySQL 里，根据加锁的范围，可以分为**全局锁、表级锁和行锁**三类。
 
-![](https://img-blog.csdnimg.cn/1e37f6994ef44714aba03b8046b1ace2.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM0ODI3Njc0,size_16,color_FFFFFF,t_70)
+![](https://img-blog.csdnimg.cn/1e37f6994ef44714aba03b8046b1ace2.png)
 
 
 ## 全局锁
@@ -179,9 +179,9 @@ select ... for update;
 
 ### AUTO-INC 锁
 
-最后，说说 **AUTO-INC 锁**。
+表里的主键通常都会设置成自增的，这是通过对主键字段声明 `AUTO_INCREMENT` 属性实现的。
 
-在为某个字段声明 `AUTO_INCREMENT` 属性时，之后可以在插入数据时，可以不指定该字段的值，数据库会自动给该字段赋值递增的值，这主要是通过 AUTO-INC 锁实现的。
+之后可以在插入数据时，可以不指定主键的值，数据库会自动给主键赋值递增的值，这主要是通过 **AUTO-INC 锁**实现的。
 
 AUTO-INC 锁是特殊的表锁机制，锁**不是再一个事务提交后才释放，而是再执行完插入语句后就会立即释放**。
 
@@ -196,11 +196,35 @@ AUTO-INC 锁是特殊的表锁机制，锁**不是再一个事务提交后才释
 一样也是在插入数据的时候，会为被 `AUTO_INCREMENT` 修饰的字段加上轻量级锁，**然后给该字段赋值一个自增的值，就把这个轻量级锁释放了，而不需要等待整个插入语句执行完后才释放锁**。
 
 InnoDB 存储引擎提供了个 innodb_autoinc_lock_mode 的系统变量，是用来控制选择用 AUTO-INC 锁，还是轻量级的锁。
-- 当 innodb_autoinc_lock_mode = 0，就采用 AUTO-INC 锁；
-- 当 innodb_autoinc_lock_mode = 2，就采用轻量级锁；
-- 当 innodb_autoinc_lock_mode = 1，这个是默认值，两种锁混着用，如果能够确定插入记录的数量就采用轻量级锁，不确定时就采用 AUTO-INC 锁。
+- 当 innodb_autoinc_lock_mode = 0，就采用 AUTO-INC 锁，语句执行结束后才释放锁；
+- 当 innodb_autoinc_lock_mode = 2，就采用轻量级锁，申请自增主键后就释放锁，并不需要等语句执行后才释放。
+- 当 innodb_autoinc_lock_mode = 1：
+  -  普通 insert 语句，自增锁在申请之后就马上释放；
+  - 类似 insert … select 这样的批量插入数据的语句，自增锁还是要等语句结束后才被释放；
 
-不过，当 innodb_autoinc_lock_mode = 2 是性能最高的方式，但是会带来一定的问题。因为并发插入的存在，在每次插入时，自增长的值可能不是连续的，**这在有主从复制的场景中是不安全的**。
+当 innodb_autoinc_lock_mode = 2 是性能最高的方式，但是当搭配  binlog 的日志格式是 statement 一起使用的时候，在「主从复制的场景」中会发生**数据不一致的问题**。
+
+举个例子，考虑下面场景：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/innodb_autoinc_lock_mode=2.png)
+
+session A 往表 t 中插入了 4 行数据，然后创建了一个相同结构的表 t2，然后**两个 session 同时执行向表 t2 中插入数据**。
+
+如果 innodb_autoinc_lock_mode = 2，意味着「申请自增主键后就释放锁，不必等插入语句执行完」。那么就可能出现这样的情况：
+
+- session B 先插入了两个记录，(1,1,1)、(2,2,2)；
+- 然后，session A 来申请自增 id 得到 id=3，插入了（3,5,5)；
+- 之后，session B 继续执行，插入两条记录 (4,3,3)、 (5,4,4)。
+
+可以看到，**session B 的 insert 语句，生成的 id 不连续**。
+
+当「主库」发生了这种情况，binlog 面对 t2 表的更新只会记录这两个 session 的 insert 语句，如果 binlog_format=statement，记录的语句就是原始语句。记录的顺序要么先记 session A 的 insert 语句，要么先记 session B 的 insert 语句。
+
+但不论是哪一种，这个 binlog 拿去「从库」执行，这时从库是按「顺序」执行语句的，只有当执行完一条 SQL 语句后，才会执行下一条 SQL。因此，在**从库上「不会」发生像主库那样两个 session 「同时」执行向表 t2 中插入数据的场景。所以，在备库上执行了 session B 的 insert 语句，生成的结果里面，id 都是连续的。这时，主从库就发生了数据不一致**。
+
+要解决这问题，binlog 日志格式要设置为 row，这样在 binlog 里面记录的是主库分配的自增值，到备库执行的时候，主库的自增值是什么，从库的自增值就是什么。
+
+所以，**当 innodb_autoinc_lock_mode = 2 时，并且 binlog_format = row，既能提升并发性，又不会出现数据一致性问题**。
 
 ## 行级锁
 
