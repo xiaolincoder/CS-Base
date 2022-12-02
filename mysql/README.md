@@ -7,6 +7,7 @@
 - **基础篇**:point_down:
   
    - [执行一条 SQL 查询语句，期间发生了什么？](/mysql/base/how_select.md)
+   - [MySQL 一行记录是怎么存储的？](/mysql/base/row_format.md)
    
 - **索引篇** :point_down:
   
