@@ -38,7 +38,7 @@ select ... for update;
 
 ```sql
 //对操作的记录加独占锁(X型锁)
-updaet table .... where id = 1;
+update table .... where id = 1;
 
 //对操作的记录加独占锁(X型锁)
 delete from table where id = 1;
@@ -730,6 +730,16 @@ mysql> select * from user where age >= 22  for update;
 其实理解 MySQL 为什么要这样加锁，主要要以避免幻读角度去分析，这样就很容易理解这些加锁的规则了。
 
 还有一件很重要的事情，在线上在执行 update、delete、select ... for update 等具有加锁性质的语句，一定要检查语句是否走了索引，**如果是全表扫描的话，会对每一个索引加 next-key 锁，相当于把整个表锁住了**，这是挺严重的问题。
+
+最后附上「@一只小铭」同学总结的流程图。
+
+唯一索引加锁的流程图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/行级锁/唯一索引加锁流程.jpeg)
+
+非唯一索引加锁的流程图：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/行级锁/非唯一索引加锁流程.jpeg)
 
 就说到这啦， 我们下次见啦！
 
