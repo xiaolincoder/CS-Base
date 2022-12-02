@@ -18,7 +18,7 @@
 
 ### HTTP 是什么？
 
-HTTP 是超文本传输协议，也就是**H**yperText **T**ransfer **P**rotocol。
+HTTP 是超文本传输协议，也就是**H**yper**T**ext **T**ransfer **P**rotocol。
 
 > 能否详细解释「超文本传输协议」？
 
