@@ -108,6 +108,7 @@
   - [图解MySQL介绍](https://xiaolincoding.com/mysql/)
 - **基础篇**:point_down:：
   - [执行一条 select 语句，期间发生了什么？](https://xiaolincoding.com/mysql/base/how_select.html)
+  - [MySQL 一行记录是怎么存储的？](https://xiaolincoding.com/mysql/base/row_format.html)
 - **索引篇** :point_down:
   - [索引常见面试题](https://xiaolincoding.com/mysql/index/index_interview.html)
   - [从数据页的角度看 B+ 树](https://xiaolincoding.com/mysql/index/page.html)
