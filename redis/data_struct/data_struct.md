@@ -182,9 +182,37 @@ C 语言的字符串标准库提供的字符串操作函数，大多数（比如
 
 所以，Redis 的 SDS 结构里引入了 alloc 和 len 成员变量，这样 SDS API 通过 `alloc - len` 计算，可以算出剩余可用的空间大小，这样在对字符串做修改操作的时候，就可以由程序内部判断缓冲区大小是否足够用。
 
-而且，**当判断出缓冲区大小不够用时，Redis 会自动将扩大 SDS 的空间大小（小于 1MB 翻倍扩容，大于 1MB 按 1MB 扩容）**，以满足修改所需的大小。
+而且，**当判断出缓冲区大小不够用时，Redis 会自动将扩大 SDS 的空间大小**，以满足修改所需的大小。
 
-在扩展 SDS 空间之前，SDS API 会优先检查未使用空间是否足够，如果不够的话，API 不仅会为 SDS 分配修改所必须要的空间，还会给 SDS 分配额外的「未使用空间」。
+SDS 扩容的规则代码如下：
+
+```c
+hisds hi_sdsMakeRoomFor(hisds s, size_t addlen)
+{
+    ... ...
+    // s目前的剩余空间已足够，无需扩展，直接返回
+    if (avail >= addlen)
+        return s;
+    //获取目前s的长度
+    len = hi_sdslen(s);
+    sh = (char *)s - hi_sdsHdrSize(oldtype);
+    //扩展之后 s 至少需要的长度
+    newlen = (len + addlen);
+    //根据新长度，为s分配新空间所需要的大小
+    if (newlen < HI_SDS_MAX_PREALLOC)
+        //新长度<HI_SDS_MAX_PREALLOC 则分配所需空间*2的空间
+        newlen *= 2;
+    else
+        //否则，分配长度为目前长度+1MB
+        newlen += HI_SDS_MAX_PREALLOC;
+       ...
+}
+```
+
+- 如果所需的 sds 长度**小于 1 MB**，那么最后的扩容是按照**翻倍扩容**来执行的，即 2 倍的newlen
+- 如果所需的 sds 长度**超过 1 MB**，那么最后的扩容长度应该是 newlen **+ 1MB**。
+
+在扩容 SDS 空间之前，SDS API 会优先检查未使用空间是否足够，如果不够的话，API 不仅会为 SDS 分配修改所必须要的空间，还会给 SDS 分配额外的「未使用空间」。
 
 这样的好处是，下次在操作 SDS 时，如果 SDS 空间够的话，API 就会直接使用「未使用空间」，而无须执行内存分配，**有效的减少内存分配次数**。
 
@@ -817,6 +845,32 @@ Redis 则采用一种巧妙的方法是，**跳表在创建节点的时候，随
 具体的做法是，**跳表在创建节点时候，会生成范围为[0-1]的一个随机数，如果这个随机数小于 0.25（相当于概率 25%），那么层数就增加 1 层，然后继续生成下一个随机数，直到随机数的结果大于 0.25 结束，最终确定该节点的层数**。
 
 这样的做法，相当于每增加一层的概率不超过 25%，层数越高，概率越低，层高最大限制是 64。
+
+虽然我前面讲解跳表的时候，图中的跳表的「头节点」都是 3 层高，但是其实**如果层高最大限制是 64，那么在创建跳表「头节点」的时候，就会直接创建 64 层高的头节点**。
+
+如下代码，创建跳表时，头节点的 level 数组有 ZSKIPLIST_MAXLEVEL个元素（层），节点不存储任何 member 和 score 值，level 数组元素的 forward 都指向NULL， span值都为0。
+
+```c
+/* Create a new skiplist. */
+zskiplist *zslCreate(void) {
+    int j;
+    zskiplist *zsl;
+
+    zsl = zmalloc(sizeof(*zsl));
+    zsl->level = 1;
+    zsl->length = 0;
+    zsl->header = zslCreateNode(ZSKIPLIST_MAXLEVEL,0,NULL);
+    for (j = 0; j < ZSKIPLIST_MAXLEVEL; j++) {
+        zsl->header->level[j].forward = NULL;
+        zsl->header->level[j].span = 0;
+    }
+    zsl->header->backward = NULL;
+    zsl->tail = NULL;
+    return zsl;
+}
+```
+
+其中，ZSKIPLIST_MAXLEVEL 定义的是最高的层数，Redis 7.0 定义为 32，Redis 5.0 定义为 64，Redis 3.0 定义为 32。
 
 ### 为什么用跳表而不用平衡树？
 

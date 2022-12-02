@@ -393,10 +393,10 @@ Hash 类型的 （key，field， value） 的结构与对象的（对象id， �
 
 ```shell
 # 存储一个哈希表uid:1的键值
-> HSET uid:1 name Tom age 15
+> HMSET uid:1 name Tom age 15
 2
 # 存储一个哈希表uid:2的键值
-> HSET uid:2 name Jerry age 13
+> HMSET uid:2 name Jerry age 13
 2
 # 获取哈希表用户id为1中所有的键值
 > HGETALL uid:1
@@ -1374,7 +1374,7 @@ Redis 的数据都存储在内存中，这就意味着一旦发生消息积压�
 2. 发布订阅模式是“发后既忘”的工作模式，如果有订阅者离线重连之后不能消费之前的历史消息。
 3. 当消费端有一定的消息积压时，也就是生产者发送的消息，消费者消费不过来时，如果超过 32M 或者是 60s 内持续保持在 8M 以上，消费端会被强行断开，这个参数是在配置文件中设置的，默认值是 `client-output-buffer-limit pubsub 32mb 8mb 60`。
 
-所以，发布/订阅机制只适合即使通讯的场景，比如[构建哨兵集群](https://xiaolincoding.com/redis/cluster/sentinel.html#%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%84%E6%88%90%E7%9A%84)的场景采用了发布/订阅机制。
+所以，发布/订阅机制只适合即时通讯的场景，比如[构建哨兵集群](https://xiaolincoding.com/redis/cluster/sentinel.html#%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%84%E6%88%90%E7%9A%84)的场景采用了发布/订阅机制。
 
 ## 总结
 
