@@ -50,6 +50,7 @@
   - [没有 accpet，可以建立 TCP 连接吗？](https://xiaolincoding.com/network/3_tcp/tcp_no_accpet.html)
   - [用了 TCP 协议，数据一定不会丢吗？](https://xiaolincoding.com/network/3_tcp/tcp_drop.html)
   - [TCP 四次挥手，可以变成三次吗？](https://xiaolincoding.com/network/3_tcp/tcp_three_fin.html)
+  - [TCP 序列号和确认号是如何变化的？](https://xiaolincoding.com/network/3_tcp/tcp_seq_ack.html)
 - **IP 篇** :point_down:
   - [IP 基础知识全家桶](https://xiaolincoding.com/network/4_ip/ip_base.html) 	
   - [ping 的工作原理](https://xiaolincoding.com/network/4_ip/ping.html) 	
@@ -76,6 +77,7 @@
   - [内存满了，会发生什么？](https://xiaolincoding.com/os/3_memory/mem_reclaim.html)
   - [在 4GB 物理内存的机器上，申请 8G 内存会怎么样？](https://xiaolincoding.com/os/3_memory/alloc_mem.html)
   - [如何避免预读失效和缓存污染的问题？](https://xiaolincoding.com/os/3_memory/cache_lru.html)
+  - [深入理解 Linux 虚拟内存管理](https://xiaolincoding.com/os/3_memory/linux_mem.html)
 - **进程管理** :point_down:
   - [进程、线程基础知识](https://xiaolincoding.com/os/4_process/process_base.html) 
   - [进程间有哪些通信方式？](https://xiaolincoding.com/os/4_process/process_commu.html) 
