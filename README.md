@@ -78,6 +78,7 @@
   - [在 4GB 物理内存的机器上，申请 8G 内存会怎么样？](https://xiaolincoding.com/os/3_memory/alloc_mem.html)
   - [如何避免预读失效和缓存污染的问题？](https://xiaolincoding.com/os/3_memory/cache_lru.html)
   - [深入理解 Linux 虚拟内存管理](https://xiaolincoding.com/os/3_memory/linux_mem.html)
+  - [深入理解 Linux 物理内存管理](https://xiaolincoding.com/os/3_memory/linux_mem2.html)
 - **进程管理** :point_down:
   - [进程、线程基础知识](https://xiaolincoding.com/os/4_process/process_base.html) 
   - [进程间有哪些通信方式？](https://xiaolincoding.com/os/4_process/process_commu.html) 
