@@ -19,7 +19,7 @@
   - [Linux 系统是如何收发网络包的？](https://xiaolincoding.com/network/1_base/how_os_deal_network_package.html) 
 - **HTTP 篇** :point_down:
   - [HTTP 常见面试题](https://xiaolincoding.com/network/2_http/http_interview.html) 
-  - [HTTP/1.1如何优化？](https://xiaolincoding.com/network/2_http/http_optimize.html) 
+  - [HTTP/1.1 如何优化？](https://xiaolincoding.com/network/2_http/http_optimize.html) 
   - [HTTPS RSA 握手解析](https://xiaolincoding.com/network/2_http/https_rsa.html) 
   - [HTTPS ECDHE 握手解析](https://xiaolincoding.com/network/2_http/https_ecdhe.html) 
   - [HTTPS 如何优化？](https://xiaolincoding.com/network/2_http/https_optimize.html) 
@@ -73,7 +73,7 @@
   - [Linux 内核 vs Windows 内核](https://xiaolincoding.com/os/2_os_structure/linux_vs_windows.html) 
 - **内存管理** :point_down:
   - [为什么要有虚拟内存？](https://xiaolincoding.com/os/3_memory/vmem.html) 
-  - [malloc是如何分配内存的？](https://xiaolincoding.com/os/3_memory/malloc.html)
+  - [malloc 是如何分配内存的？](https://xiaolincoding.com/os/3_memory/malloc.html)
   - [内存满了，会发生什么？](https://xiaolincoding.com/os/3_memory/mem_reclaim.html)
   - [在 4GB 物理内存的机器上，申请 8G 内存会怎么样？](https://xiaolincoding.com/os/3_memory/alloc_mem.html)
   - [如何避免预读失效和缓存污染的问题？](https://xiaolincoding.com/os/3_memory/cache_lru.html)
@@ -108,7 +108,7 @@
 
 ## :open_book:《图解MySQL》
 - **介绍**:point_down:：
-  - [图解MySQL介绍](https://xiaolincoding.com/mysql/)
+  - [图解 MySQL 介绍](https://xiaolincoding.com/mysql/)
 - **基础篇**:point_down:：
   - [执行一条 select 语句，期间发生了什么？](https://xiaolincoding.com/mysql/base/how_select.html)
   - [MySQL 一行记录是怎么存储的？](https://xiaolincoding.com/mysql/base/row_format.html)
@@ -164,9 +164,9 @@
 - [图解网络 + 图解系统 PDF 下载](https://mp.weixin.qq.com/s/02036z-FMOCLpZ_otwMwBg)
 
 ## 勘误及提问
-如果有疑问或者发现错误，可以在相应的 issues 进行提问或勘误，也可以在[图解计算机基础网站](https://xiaolincoding.com/)对应的文章底部留言。
+如果有疑问或者发现错误，可以在相应的 Issues 进行提问或勘误，也可以在[图解计算机基础网站](https://xiaolincoding.com/)对应的文章底部留言。
 
-如果喜欢或者有所启发，欢迎 star，对作者也是一种鼓励。
+如果喜欢或者有所启发，欢迎 Star，对作者也是一种鼓励。
 
 
 ## 公众号
