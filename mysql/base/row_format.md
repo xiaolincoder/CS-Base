@@ -60,7 +60,7 @@ t_order.ibd
 
 - db.opt，用来存储当前数据库的默认字符集和字符校验规则。
 - t_order.frm ，t_order 的**表结构**会保存在这个文件。在 MySQL 中建立一张表都会生成一个.frm 文件，该文件是用来保存每个表的元数据信息的，主要包含表结构定义。
-- t_order.ibd，t_order 的**表数据**会保存在这个文件。表数据既可以存在共享表空间文件（文件名：ibdata1）里，也可以存放在独占表空间文件（文件名：表名字.idb）。这个行为是由参数 innodb_file_per_table 控制的，若设置了参数 innodb_file_per_table 为 1，则会将存储的数据、索引等信息单独存储在一个独占表空间，从 MySQL 5.6.6 版本开始，它的默认值就是 1 了，因此从这个版本之后， MySQL 中每一张表的数据都存放在一个独立的 .idb 文件。
+- t_order.ibd，t_order 的**表数据**会保存在这个文件。表数据既可以存在共享表空间文件（文件名：ibdata1）里，也可以存放在独占表空间文件（文件名：表名字.ibd）。这个行为是由参数 innodb_file_per_table 控制的，若设置了参数 innodb_file_per_table 为 1，则会将存储的数据、索引等信息单独存储在一个独占表空间，从 MySQL 5.6.6 版本开始，它的默认值就是 1 了，因此从这个版本之后， MySQL 中每一张表的数据都存放在一个独立的 .idb 文件。
 
 好了，现在我们知道了一张数据库表的数据是保存在「 表名字.idb 」的文件里的，这个文件也称为独占表空间文件。
 
@@ -155,7 +155,7 @@ varchar(n) 和 char(n) 的区别是什么，相信大家都非常清楚，char �
 ```sql
 CREATE TABLE `t_user` (
   `id` int(11) NOT NULL,
-  `name` VARCHAR(20) NOT NULL,
+  `name` VARCHAR(20) DEFAULT NULL,
   `phone` VARCHAR(20) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
@@ -247,7 +247,9 @@ CREATE TABLE `t_user` (
 
 NULL 值列表也不是必须的。
 
-**当数据表的字段都定义成 NOT NULL 的时候，这时候表里的行格式就不会有 NULL 值列表了**。所以在设计数据库表的时候，通常都是建议将字段设置为  NOT NULL，这样可以节省 1 字节的空间（NULL 值列表占用 1 字节空间）。
+**当数据表的字段都定义成 NOT NULL 的时候，这时候表里的行格式就不会有 NULL 值列表了**。
+
+所以在设计数据库表的时候，通常都是建议将字段设置为  NOT NULL，这样可以至少节省 1 字节的空间（NULL 值列表至少占用 1 字节空间）。
 
 > 「NULL 值列表」是固定 1 字节空间吗？如果这样的话，一条记录有 9 个字段值都是 NULL，这时候怎么表示？
 
