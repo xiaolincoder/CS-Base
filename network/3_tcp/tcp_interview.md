@@ -69,7 +69,7 @@ sockets, sequence numbers, and window sizes, is called a connection.*
 
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzkuanBn?x-oss-process=image/format,png)
 
-所以我们可以知道，建立一个 TCP 连接是需要客户端与服务端端达成上述三个信息的共识。
+所以我们可以知道，建立一个 TCP 连接是需要客户端与服务端达成上述三个信息的共识。
 
 - **Socket**：由 IP 地址和端口号组成
 - **序列号**：用来解决乱序问题等
@@ -1081,7 +1081,7 @@ TCP 的连接信息是由内核维护的，所以当服务端的进程崩溃后�
 - 服务端调用 `bind`，将 socket 绑定在指定的 IP 地址和端口;
 - 服务端调用 `listen`，进行监听；
 - 服务端调用 `accept`，等待客户端连接；
-- 客户端调用 `connect`，向服务端端的地址和端口发起连接请求；
+- 客户端调用 `connect`，向服务端的地址和端口发起连接请求；
 - 服务端 `accept` 返回用于传输的 `socket` 的文件描述符；
 - 客户端调用 `write` 写入数据；服务端调用 `read` 读取数据；
 - 客户端断开连接时，会调用 `close`，那么服务端 `read` 读取数据的时候，就会读取到了 `EOF`，待处理完数据后，服务端调用 `close`，表示连接关闭。
@@ -1122,10 +1122,10 @@ int listen (int socketfd, int backlog)
 
 ![socket 三次握手](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4/网络/socket三次握手.drawio.png)
 
-- 客户端的协议栈向服务端端发送了 SYN 包，并告诉服务端端当前发送序列号 client_isn，客户端进入 SYN_SENT 状态；
-- 服务端端的协议栈收到这个包之后，和客户端进行 ACK 应答，应答的值为 client_isn+1，表示对 SYN 包 client_isn 的确认，同时服务端也发送一个 SYN 包，告诉客户端当前我的发送序列号为 server_isn，服务端端进入 SYN_RCVD 状态；
-- 客户端协议栈收到 ACK 之后，使得应用程序从 `connect` 调用返回，表示客户端到服务端端的单向连接建立成功，客户端的状态为 ESTABLISHED，同时客户端协议栈也会对服务端端的 SYN 包进行应答，应答数据为 server_isn+1；
-- ACK 应答包到达服务端端后，服务端端的 TCP 连接进入 ESTABLISHED 状态，同时服务端端协议栈使得 `accept` 阻塞调用返回，这个时候服务端端到客户端的单向连接也建立成功。至此，客户端与服务端两个方向的连接都建立成功。
+- 客户端的协议栈向服务端发送了 SYN 包，并告诉服务端当前发送序列号 client_isn，客户端进入 SYN_SENT 状态；
+- 服务端的协议栈收到这个包之后，和客户端进行 ACK 应答，应答的值为 client_isn+1，表示对 SYN 包 client_isn 的确认，同时服务端也发送一个 SYN 包，告诉客户端当前我的发送序列号为 server_isn，服务端进入 SYN_RCVD 状态；
+- 客户端协议栈收到 ACK 之后，使得应用程序从 `connect` 调用返回，表示客户端到服务端的单向连接建立成功，客户端的状态为 ESTABLISHED，同时客户端协议栈也会对服务端的 SYN 包进行应答，应答数据为 server_isn+1；
+- ACK 应答包到达服务端后，服务端的 TCP 连接进入 ESTABLISHED 状态，同时服务端协议栈使得 `accept` 阻塞调用返回，这个时候服务端到客户端的单向连接也建立成功。至此，客户端与服务端两个方向的连接都建立成功。
 
 从上面的描述过程，我们可以得知**客户端 connect 成功返回是在第二次握手，服务端 accept 成功返回是在三次握手成功之后。**
 
