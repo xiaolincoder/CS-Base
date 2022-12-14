@@ -47,7 +47,7 @@
   - [Linux 系统是如何收发网络包的？](/network/1_base/how_os_deal_network_package.md) 
 - **HTTP 篇** :point_down:
 	- [HTTP 常见面试题](/network/2_http/http_interview.md) 
-	- [HTTP/1.1如何优化？](/network/2_http/http_optimize.md) 
+	- [HTTP/1.1 如何优化？](/network/2_http/http_optimize.md) 
 	- [HTTPS RSA 握手解析](/network/2_http/https_rsa.md) 
 	- [HTTPS ECDHE 握手解析](/network/2_http/https_ecdhe.md) 
 	- [HTTPS 如何优化？](/network/2_http/https_optimize.md) 
@@ -75,13 +75,13 @@
 	- [如何基于 UDP 协议实现可靠传输？](/network/3_tcp/quic.md)
 	- [TCP 和 UDP 可以使用同一个端口吗？](/network/3_tcp/port.md)
 	- [服务端没有 listen，客户端发起连接建立，会发生什么？](/network/3_tcp/tcp_no_listen.md)
-	- [没有 accpet，可以建立 TCP 连接吗？](/network/3_tcp/tcp_no_accpet.md)
+	- [没有 accept，可以建立 TCP 连接吗？](/network/3_tcp/tcp_no_accpet.md)
 	- [用了 TCP 协议，数据一定不会丢吗？](/network/3_tcp/tcp_drop.md)
 	- [TCP 四次挥手，可以变成三次吗？](/network/3_tcp/tcp_three_fin.md)
 - **IP 篇** :point_down:
 	- [IP 基础知识全家桶](/network/4_ip/ip_base.md) 	
-	- [ping 的工作原理](/network/4_ip/ping.md)
-	- [断网了，还能 ping 通 127.0.0.1 吗？](/network/4_ip/ping_lo.md) 	 	
+	- [ping 的工作原理](/network/4_ip/ping.md) 	
+	- [断网了，还能 ping 通 127.0.0.1 吗？](/network/4_ip/ping_lo.md)
 - **学习心得** :point_down:
 	- [计算机网络怎么学？](/network/5_learn/learn_network.md) 	
   - [画图经验分享](/network/5_learn/draw.md) 	
