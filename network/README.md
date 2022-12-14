@@ -81,6 +81,7 @@
 - **IP 篇** :point_down:
 	- [IP 基础知识全家桶](/network/4_ip/ip_base.md) 	
 	- [ping 的工作原理](/network/4_ip/ping.md) 	
+	- [断网了，还能 ping 通 127.0.0.1 吗？](https://xiaolincoding.com/network/4_ip/ping_lo.html)
 - **学习心得** :point_down:
 	- [计算机网络怎么学？](/network/5_learn/learn_network.md) 	
   - [画图经验分享](/network/5_learn/draw.md) 	
