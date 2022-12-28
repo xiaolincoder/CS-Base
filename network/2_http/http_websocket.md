@@ -81,7 +81,7 @@
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/a3a8c95b97d2bac26cfab123a4da68b2.png)
 
-像这种发起一个请求，在较长时间内等待服务器响应的机制，就是所谓的**长训轮机制**。我们常用的消息队列 RocketMQ 中，消费者去取数据时，也用到了这种方式。
+像这种发起一个请求，在较长时间内等待服务器响应的机制，就是所谓的**长轮询机制**。我们常用的消息队列 RocketMQ 中，消费者去取数据时，也用到了这种方式。
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/6173c1d25abc914ef17ee9e534ed6a5f.png)
 
@@ -197,7 +197,7 @@ HTTP和WebSocket的关系
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/437a076935f82be1d36960c9a4785fbd.png)
 
-另外，可以看到，我们存放** payload 长度的字段有好几个**，我们既可以用最前面的`7bit`, 也可以用后面的`7+16bit 或 7+64bit。`
+另外，可以看到，我们存放**payload 长度的字段有好几个**，我们既可以用最前面的`7bit`, 也可以用后面的`7+16bit 或 7+64bit。`
 
 那么问题就来了。
 
