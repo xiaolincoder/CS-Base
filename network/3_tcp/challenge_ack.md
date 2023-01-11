@@ -11,21 +11,21 @@
 
 看过我的图解网络的读者都知道，TCP 连接是由「四元组」唯一确认的。
 
-然后这个场景中，客户端的IP、服务端IP、目的端口并没有变化，所以这个问题关键要看客户端发送的 SYN 报文中的源端口是否和上一次连接的源端口相同。
+然后这个场景中，客户端的 IP、服务端 IP、目的端口并没有变化，所以这个问题关键要看客户端发送的 SYN 报文中的源端口是否和上一次连接的源端口相同。
 
 **1. 客户端的 SYN 报文里的端口号与历史连接不相同**
 
 如果客户端恢复后发送的 SYN 报文中的源端口号跟上一次连接的源端口号不一样，此时服务端会认为是新的连接要建立，于是就会通过三次握手来建立新的连接。
 
-那旧连接里处于 establish 状态的服务端最后会怎么样呢？
+那旧连接里处于 Established 状态的服务端最后会怎么样呢？
 
 如果服务端发送了数据包给客户端，由于客户端的连接已经被关闭了，此时客户的内核就会回 RST 报文，服务端收到后就会释放连接。
 
-如果服务端一直没有发送数据包给客户端，在超过一段时间后， TCP 保活机制就会启动，检测到客户端没有存活后，接着服务端就会释放掉该连接。
+如果服务端一直没有发送数据包给客户端，在超过一段时间后，TCP 保活机制就会启动，检测到客户端没有存活后，接着服务端就会释放掉该连接。
 
 **2. 客户端的 SYN 报文里的端口号与历史连接相同**
 
-如果客户端恢复后，发送的 SYN 报文中的源端口号跟上一次连接的源端口号一样，也就是处于 establish 状态的服务端收到了这个 SYN 报文。
+如果客户端恢复后，发送的 SYN 报文中的源端口号跟上一次连接的源端口号一样，也就是处于 Established 状态的服务端收到了这个 SYN 报文。
 
 大家觉得服务端此时会做什么处理呢？
 - 丢掉 SYN 报文？
@@ -39,21 +39,20 @@
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/est_syn.png)
 
 
-**处于 establish 状态的服务端如果收到了客户端的 SYN 报文（注意此时的 SYN 报文其实是乱序的，因为 SYN 报文的初始化序列号其实是一个随机数），会回复一个携带了正确序列号和确认号的 ACK 报文，这个 ACK 被称之为 Challenge ACK。**
+**处于 Established 状态的服务端如果收到了客户端的 SYN 报文（注意此时的 SYN 报文其实是乱序的，因为 SYN 报文的初始化序列号其实是一个随机数），会回复一个携带了正确序列号和确认号的 ACK 报文，这个 ACK 被称之为 Challenge ACK。**
 
 **接着，客户端收到这个 Challenge ACK，发现序列号并不是自己期望收到的，于是就会回 RST 报文，服务端收到后，就会释放掉该连接。**
 
 ## RFC 文档解释
 
-rfc793 文档里的第 34 页里，有说到这个例子。
+RFC 793 文档里的第 34 页里，有说到这个例子。
 
 ![](https://img-blog.csdnimg.cn/873ad18443c040708c415bab6592ae41.png)
 
 原文的解释我也贴出来给大家看看。
 
 - When the SYN arrives at line 3, TCP B, being in a synchronized state,
-and the incoming segment outside the window, responds with an
-acknowledgment indicating what sequence it next expects to hear (ACK
+and the incoming segment outside the window, responds with an acknowledgment indicating what sequence it next expects to hear (ACK
 100).
 - TCP A sees that this segment does not acknowledge anything it
 sent and, being unsynchronized, sends a reset (RST) because it has
