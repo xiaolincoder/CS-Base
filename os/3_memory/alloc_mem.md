@@ -36,9 +36,13 @@
 - `32` 位系统的内核空间占用 `1G`，位于最高处，剩下的 `3G` 是用户空间；
 - `64` 位系统的内核空间和用户空间都是 `128T`，分别占据整个内存空间的最高和最低处，剩下的中间部分是未定义的。
 
+### 32 位系统的场景
+
 > 现在可以回答这个问题了：在 32 位操作系统、4GB 物理内存的机器上，申请 8GB 内存，会怎么样？
 
-因为 32 位操作系统，进程最多只能申请 3 GB 大小的虚拟内存空间，所以进程申请 8GB 内存的话，在申请虚拟内存阶段就会失败（我手上没有 32 位操作系统测试，我估计失败的原因是 OOM）。
+因为 32 位操作系统，进程最多只能申请 3 GB 大小的虚拟内存空间，所以进程申请 8GB 内存的话，在申请虚拟内存阶段就会失败（我手上没有 32 位操作系统测试，我估计失败的错误是 cannot allocate memory，也就是无法申请内存失败）。
+
+### 64 位系统的场景
 
 > 在 64 位操作系统、4GB 物理内存的机器上，申请 8G 内存，会怎么样？
 
@@ -67,7 +71,7 @@ int main() {
             printf("执行 malloc 失败, 错误：%s\n",strerror(errno));
 		        return -1;
         }
-        printf("主线程调用malloc后，申请1gb大小得内存，此内存起始地址：0X%x\n", addr[i]);
+        printf("主线程调用malloc后，申请1gb大小得内存，此内存起始地址：0X%p\n", addr[i]);
     }
     
     //输入任意字符后，才结束
@@ -89,6 +93,92 @@ root      7797  0.0  0.0 4198540  352 pts/1    S+   16:58   0:00 ./test
 ```
 
 其中，VSZ 就代表进程使用的虚拟内存大小，RSS 代表进程使用的物理内存大小。可以看到，VSZ 大小为 4198540，也就是 4GB 的虚拟内存。
+
+> 之前有读者跟我反馈，说他自己也做了这个实验，然后发现 64 位操作系统，在申请 4GB 虚拟内存的时候失败了，这是为什么呢？
+
+失败的错误：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-1.png)
+
+我当时帮他排查了下，发现跟 Linux 中的 [overcommit_memory](http://linuxperf.com/?p=102) 参数有关，可以使用 `cat /proc/sys/vm/overcommit_memory` 来查看这个参数，这个参数接受三个值：
+
+- 如果值为 0（默认值），代表：Heuristic overcommit handling，它允许overcommit，但过于明目张胆的overcommit会被拒绝，比如malloc一次性申请的内存大小就超过了系统总内存。Heuristic的意思是“试探式的”，内核利用某种算法猜测你的内存申请是否合理，大概可以理解为单次申请不能超过free memory + free swap + pagecache的大小 + SLAB中可回收的部分 ，超过了就会拒绝overcommit。
+- 如果值为 1，代表：Always overcommit. 允许overcommit，对内存申请来者不拒。
+- 如果值为 2，代表：Don’t overcommit. 禁止overcommit。
+
+当时那位读者的 overcommit_memory 参数是默认值 0 ，所以申请失败的原因可能是内核认为我们申请的内存太大了，它认为不合理，所以 malloc() 返回了 Cannot allocate memory 错误，这里申请 4GB 虚拟内存失败的同学可以将这个 overcommit_memory 设置为1，就可以 overcommit 了。
+
+```shell
+echo 1 > /proc/sys/vm/overcommit_memory 
+```
+
+设置完为 1 后，读者的机子就可以正常申请 4GB 虚拟内存了。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-2.png)
+
+**不过我的环境 overcommit_memory 是 0，在 64 系统、2 G 物理内存场景下，也是可以成功申请 4 G 内存的，我怀疑可能是不同版本的内核在 overcommit_memory 为 0 时，检测内存申请是否合理的算法可能是不同的。**
+
+**总之，如果你申请大内存的时候，不想被内核检测内存申请是否合理的算法干扰的话，将 overcommit_memory 设置为 1 就行。**
+
+> 那么将这个 overcommit_memory 设置为 1 之后，64 位的主机就可以申请接近 128T 虚拟内存了吗？
+
+不一定，还得看你服务器的物理内存大小。
+
+读者的服务器物理内存是 2 GB，实验后发现，进程还没有申请到 128T 虚拟内存的时候就被杀死了。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-3.png)
+
+注意，这次是 killed，而不是 Cannot Allocate Memory，说明并不是内存申请有问题，而是触发 OOM 了。
+
+但是为什么会触发 OOM 呢？
+
+那得看你的主机的「物理内存」够不够大了，即使 malloc 申请的是虚拟内存，只要不去访问就不会映射到物理内存，但是申请虚拟内存的过程中，还是使用到了物理内存（比如内核保存虚拟内存的数据结构，也是占用物理内存的），如果你的主机是只有 2GB 的物理内存的话，大概率会触发 OOM。
+
+可以使用 top 命令，点击两下 m，通过进度条观察物理内存使用情况。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-4.png)
+
+可以看到申请虚拟内存的过程中**物理内存使用量一直在增长**。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-5.png)
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-6.png)
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-7.png)
+
+直到直接内存回收之后，也无法回收出一块空间供这个进程使用，这个时候就会触发 OOM，给所有能杀死的进程打分，分数越高的进程越容易被杀死。
+
+在这里当然是这个进程得分最高，那么操作系统就会将这个进程杀死，所以最后会出现 killed，而不是Cannot allocate memory。
+
+> 那么 2GB 的物理内存的 64 位操作系统，就不能申请128T的虚拟内存了吗？
+
+其实可以，上面的情况是还没开启 swap 的情况。
+
+使用 swapfile 的方式开启了 1GB 的 swap 空间之后再做实验：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-8.png)
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-9.png)
+
+发现出现了 Cannot allocate memory，但是其实到这里已经成功了，
+
+打开计算器计算一下，发现已经申请了 127.998T 虚拟内存了。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-10.png)
+
+实际上我们是不可能申请完整个 128T 的用户空间的，因为程序运行本身也需要申请虚拟空间
+
+申请 127T 虚拟内存试试：
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-11.png)
+
+发现进程没有被杀死，也没有 Cannot allocate memory，也正好是 127T 虚拟内存空间。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-12.png)
+
+在 top 中我们可以看到这个申请了127T虚拟内存的进程。
+
+![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-13.png)
 
 ## Swap 机制的作用
 
@@ -171,7 +261,7 @@ int main() {
             printf("执行 malloc 失败, 错误：%s\n",strerror(errno));
             return -1;
         }
-        printf("主线程调用malloc后，申请1gb大小得内存，此内存起始地址：0X%x\n", addr[i]);
+        printf("主线程调用malloc后，申请1gb大小得内存，此内存起始地址：0X%p\n", addr[i]);
     }
 
     for(i = 0; i < 4; ++i) {
@@ -253,8 +343,8 @@ int main() {
 
 至此， 验证完成了。简单总结下：
 
-- 在 32 位操作系统，因为进程最大只能申请 3 GB 大小的虚拟内存，所以直接申请 8G 内存，会申请失败。
-- 在 64位 位操作系统，因为进程最大只能申请 128 TB 大小的虚拟内存，即使物理内存只有 4GB，申请 8G 内存也是没问题，因为申请的内存是虚拟内存。如果这块虚拟内存被访问了，要看系统有没有 Swap 分区：
+- 在 32 位操作系统，因为进程理论上最大能申请 3 GB 大小的虚拟内存，所以直接申请 8G 内存，会申请失败。
+- 在 64位 位操作系统，因为进程理论上最大能申请 128 TB 大小的虚拟内存，即使物理内存只有 4GB，申请 8G 内存也是没问题，因为申请的内存是虚拟内存。如果这块虚拟内存被访问了，要看系统有没有 Swap 分区：
   - 如果没有 Swap 分区，因为物理空间不够，进程会被操作系统杀掉，原因是 OOM（内存溢出）；
   - 如果有 Swap 分区，即使物理内存只有 4GB，程序也能正常使用 8GB 的内存，进程可以正常运行；
 
