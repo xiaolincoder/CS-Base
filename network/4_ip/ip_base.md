@@ -264,7 +264,7 @@ C 类地址中前 24 位是网络号，最后 8 位是主机号，根据子网�
 
 私有 IP 地址通常是内部的 IT 人员管理，公有 IP 地址是由 `ICANN` 组织管理，中文叫「互联网名称与数字地址分配机构」。
 
-IANA 是 ICANN 的其中一个机构，它负责分配互联网 IP 地址，是按州的方式层层分配。
+IANA 是 ICANN 的其中一个机构，它负责分配互联网 IP 地址，是按洲的方式层层分配。
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/24.jpg)
 
