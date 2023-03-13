@@ -96,7 +96,7 @@ MySQL 里面表级别的锁有这几种：
 lock tables t_student read;
 
 //表级别的独占锁，也就是写锁；
-lock tables t_stuent write;
+lock tables t_student write;
 ```
 
 需要注意的是，表锁除了会限制别的线程的读写外，也会限制本线程接下来的读写操作。
