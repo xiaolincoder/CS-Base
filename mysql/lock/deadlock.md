@@ -96,7 +96,7 @@ select id from t_order where order_no = 1007 for update;
 从上图可以看到，共加了两个锁，分别是：
 
 - 表锁：X 类型的意向锁；
-- 行锁：X 类型的间隙锁；
+- 行锁：X 类型的 next-key 锁；
 
 这里我们重点关注行锁，图中 LOCK_TYPE 中的 RECORD 表示行级锁，而不是记录锁的意思，通过 LOCK_MODE 可以确认是 next-key 锁，还是间隙锁，还是记录锁：
 
