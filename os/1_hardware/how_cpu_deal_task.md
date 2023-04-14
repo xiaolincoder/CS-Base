@@ -235,7 +235,7 @@ PS：下图中的 csf_rq 应该是 `cfs_rq`，由于找不到原图了，我偷�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/操作系统/CPU伪共享/优先级.png)
 
-在前面我们提到了，权重值与 nice 值的关系的，nice 值越低，权重值就越大，计算出来的 vruntime 就会越少，由于 CFS 算法调度的时候，就会优先选择 vruntime 少的任务进行执行，所以 nice 值越低，任务的优先级就越高。
+在前面我们提到了，权重值与 nice 值是有关系的，nice 值越低，权重值就越大，计算出来的 vruntime 就会越少，由于 CFS 算法调度的时候，就会优先选择 vruntime 少的任务进行执行，所以 nice 值越低，任务的优先级就越高。
 
 
 我们可以在启动任务的时候，可以指定 nice 的值，比如将 mysqld 以 -3 优先级：
