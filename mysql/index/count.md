@@ -95,7 +95,7 @@ select count(1) from t_order;
 
 对于 `select *` 这条语句来说是这个意思，但是在 count(*)  中并不是这个意思。
 
-**count(`\*`) 其实等于 count(`0`)**，也就是说，当你使用 count(`*`)  时，MySQL 会将 `*` 参数转化为参数 0 来处理。
+**count(`*`) 其实等于 count(`0`)**，也就是说，当你使用 count(`*`)  时，MySQL 会将 `*` 参数转化为参数 0 来处理。
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/27b229f049b27898f3a86c7da7e26114.png)
 
@@ -103,9 +103,9 @@ select count(1) from t_order;
 
 在 MySQL 5.7 的官方手册中有这么一句话：
 
-*InnoDB handles SELECT COUNT(`\*`) and SELECT COUNT(`1`) operations in the same way. There is no performance difference.*
+*InnoDB handles SELECT COUNT(`*`) and SELECT COUNT(`1`) operations in the same way. There is no performance difference.*
 
-*翻译：InnoDB以相同的方式处理SELECT COUNT（`\*`）和SELECT COUNT（`1`）操作，没有性能差异。*
+*翻译：InnoDB以相同的方式处理SELECT COUNT（`*`）和SELECT COUNT（`1`）操作，没有性能差异。*
 
 而且 MySQL 会对 count(*) 和 count(1) 有个优化，如果有多个二级索引的时候，优化器会使用key_len 最小的二级索引进行扫描。
 
