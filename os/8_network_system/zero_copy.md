@@ -196,8 +196,8 @@ scatter-gather: on
 
 
 ```java
-@Overridepublic 
-long transferFrom(FileChannel fileChannel, long position, long count) throws IOException { 
+@Override
+public long transferFrom(FileChannel fileChannel, long position, long count) throws IOException { 
     return fileChannel.transferTo(position, count, socketChannel);
 }
 ```
