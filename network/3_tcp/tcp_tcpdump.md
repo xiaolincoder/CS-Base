@@ -560,7 +560,7 @@ TCP 为了防止发送方无脑的发送数据，导致接收方缓冲区被填�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/53.jpg)
 
-实际上是 Caculated window size 的值是 Wireshark 工具帮我们算好的，Window size scaling factor 和 Windos size value 的值是在 TCP 头部中，其中 Window size scaling factor 是在三次握手过程中确定的，如果你抓包的数据没有 TCP 三次握手，那可能就无法算出真实的窗口大小的值，如下图：
+实际上是 Caculated window size 的值是 Wireshark 工具帮我们算好的，Window size scaling factor 和 Window size value 的值是在 TCP 头部中，其中 Window size scaling factor 是在三次握手过程中确定的，如果你抓包的数据没有 TCP 三次握手，那可能就无法算出真实的窗口大小的值，如下图：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/54.jpg)
 
