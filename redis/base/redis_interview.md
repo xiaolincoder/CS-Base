@@ -877,7 +877,7 @@ Write Back（写回）策略在更新数据的时候，只更新缓存，同时�
 可以通过 redis-cli --bigkeys 命令查找大 key：
 
 ```shell
-redis-cli -h 127.0.0.1 -p6379 -a "password" -- bigkeys
+redis-cli -h 127.0.0.1 -p6379 -a "password" --bigkeys
 ```
 使用的时候注意事项：
 
