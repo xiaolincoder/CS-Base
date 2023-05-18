@@ -122,7 +122,7 @@ select * from product where product_no = '0002';
 
 ![回表](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/索引/回表.drawio.png)
 
-不过，当查询的数据是能在二级索引的 B+Tree 的叶子节点里查询到，这时就不用再查主键索引查，比如下面这条查询语句：
+不过，当查询的数据是能在二级索引的 B+Tree 的叶子节点里查询到，这时就不用再去主键索引中查寻了，比如下面这条查询语句：
 
 ```sql
 select id from product where product_no = '0002';
