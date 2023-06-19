@@ -63,7 +63,7 @@ A 和 B 也是公开的，因为根据离散对数的原理，从真数（A 和 
 
 双方交换各自 DH 公钥后，小红手上共有 5 个数：P、G、a、A、B，小明手上也同样共有 5 个数：P、G、b、B、A。
 
-然后小红执行运算： B ^ a ( mod P )，其结果为 K，因为离散对数的幂运算有交换律，所以小明执行运算： A ^ b ( mod P )，得到的结果也是 K。
+然后小红执行运算：B ^ a ( mod P )，其结果为 K，因为离散对数的幂运算有交换律，所以小明执行运算：A ^ b ( mod P )，得到的结果也是 K。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/dh算法.png)
 
