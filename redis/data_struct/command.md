@@ -590,7 +590,7 @@ key 可以是用户id，value 则是已关注的公众号的id。
 
 ```shell
 > SISMEMBER uid:1 5
-(integer) 1 # 返回0，说明关注了
+(integer) 1 # 返回1，说明关注了
 > SISMEMBER uid:2 5
 (integer) 0 # 返回0，说明没关注
 ```
