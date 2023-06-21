@@ -257,19 +257,19 @@ InnoDB 的后台线程每隔 1 秒：
 
 我们知道 redo log 是为了防止 Buffer Pool 中的脏页丢失而设计的，那么如果随着系统运行，Buffer Pool 的脏页刷新到了磁盘中，那么 redo log 对应的记录也就没用了，这时候我们擦除这些旧记录，以腾出空间记录新的更新操作。
 
-redo log 是循环写的方式，相当于一个环形，InnoDB 用 write pos 表示 redo log 当前记录写到的位置，用 checkpoint 表示当前要擦除的位置，如下图：
+redo log 是循环写的方式，相当于一个环形，InnoDB 用 write pos 表示 redo log 当前记录写到的位置，用 check point 表示当前要擦除的位置，如下图：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/how_update/checkpoint.png)
 
 图中的：
 
-- write pos 和 checkpoint 的移动都是顺时针方向；
-- write pos ～ checkpoint 之间的部分（图中的红色部分），用来记录新的更新操作；
+- write pos 和 check point 的移动都是顺时针方向；
+- write pos ～ check point 之间的部分（图中的红色部分），用来记录新的更新操作；
 - check point ～ write pos 之间的部分（图中蓝色部分）：待落盘的脏数据页记录；
 
-如果 write pos  追上了  checkpoint，就意味着 **redo log 文件满了，这时 MySQL 不能再执行新的更新操作，也就是说 MySQL 会被阻塞**（*因此所以针对并发量大的系统，适当设置  redo log 的文件大小非常重要*），此时**会停下来将 Buffer Pool 中的脏页刷新到磁盘中，然后标记 redo log 哪些记录可以被擦除，接着对旧的 redo log 记录进行擦除，等擦除完旧记录腾出了空间，checkpoint 就会往后移动（图中顺时针）**，然后 MySQL 恢复正常运行，继续执行新的更新操作。
+如果 write pos  追上了  check point，就意味着 **redo log 文件满了，这时 MySQL 不能再执行新的更新操作，也就是说 MySQL 会被阻塞**（*因此所以针对并发量大的系统，适当设置  redo log 的文件大小非常重要*），此时**会停下来将 Buffer Pool 中的脏页刷新到磁盘中，然后标记 redo log 哪些记录可以被擦除，接着对旧的 redo log 记录进行擦除，等擦除完旧记录腾出了空间，check point 就会往后移动（图中顺时针）**，然后 MySQL 恢复正常运行，继续执行新的更新操作。
 
-所以，一次 checkpoint 的过程就是脏页刷新到磁盘中变成干净页，然后标记 redo log  哪些记录可以被覆盖的过程。
+所以，一次 check point 的过程就是脏页刷新到磁盘中变成干净页，然后标记 redo log  哪些记录可以被覆盖的过程。
 
 ## 为什么需要 binlog ？
 
