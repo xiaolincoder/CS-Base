@@ -140,7 +140,7 @@ mysql> select * from t_stu where id = 5;
 除了上面这一种场景会发生幻读现象之外，还有下面这个场景也会发生幻读现象。
 
 - T1 时刻：事务 A 先执行「快照读语句」：select * from t_test where id > 100 得到了 3 条记录。
-- T2 时刻：事务 B 往插入一个 id= 200 的记录并提交；
+- T2 时刻：事务 B 往`t_test`表中插入一个 id= 200 的记录并提交；
 - T3 时刻：事务 A 再执行「当前读语句」 select * from t_test where id > 100 for update 就会得到 4 条记录，此时也发生了幻读现象。
 
 **要避免这类特殊场景下发生幻读的现象的话，就是尽量在开启事务之后，马上执行 select ... for update 这类当前读的语句**，因为它会对记录加 next-key lock，从而避免其他事务插入一条新记录。
