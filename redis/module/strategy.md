@@ -163,7 +163,7 @@ int expireIfNeeded(redisDb *db, robj *key) {
 
 Redis 在访问或者修改 key 之前，都会调用 expireIfNeeded 函数对其进行检查，检查 key 是否过期：
 
-- 如果过期，则删除该 key，至于选择异步删除，还是选择同步删除，根据 `lazyfree_lazy_expire` 参数配置决定（Redis 4.0版本开始提供参数），然后返回 null 客户端；
+- 如果过期，则删除该 key，至于选择异步删除，还是选择同步删除，根据 `lazyfree-lazy-expire` 参数配置决定（Redis 4.0版本开始提供参数），然后返回 null 客户端；
 - 如果没有过期，不做任何处理，然后返回正常的键值对给客户端；
 
 惰性删除的流程图如下：
