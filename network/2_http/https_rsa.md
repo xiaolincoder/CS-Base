@@ -27,7 +27,7 @@ HTTP**S** 在 HTTP 与 TCP 层之间加入了 TLS 协议，来解决上述的风
 
 TLS 协议是如何解决 HTTP 的风险的呢？
 
-- *信息加密*： HTTP 交互信息是被加密的，第三方就无法被窃取；
+- *信息加密*：HTTP 交互信息是被加密的，第三方就无法被窃取；
 - *校验机制*：校验信息传输过程中是否有被第三方篡改过，如果被篡改过，则会有警告提示；
 - *身份证书*：证明淘宝是真的淘宝网；
 
@@ -36,7 +36,7 @@ TLS 协议是如何解决 HTTP 的风险的呢？
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/tls握手.png)
 
 
-上图简要概述了 TLS 的握手过程，其中每一个「框」都是一个记录（*record*），记录是 TLS 收发数据的基本单位，类似于 TCP 里的 segment。多个记录可以组合成一个 TCP 包发送，所以**通常经过「四个消息」就可以完成 TLS 握手，也就是需要 2个 RTT 的时延**，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议。
+上图简要概述了 TLS 的握手过程，其中每一个「框」都是一个记录（*record*），记录是 TLS 收发数据的基本单位，类似于 TCP 里的 segment。多个记录可以组合成一个 TCP 包发送，所以**通常经过「四个消息」就可以完成 TLS 握手，也就是需要 2 个 RTT 的时延**，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议。
 
 所以可以发现，HTTPS 是应用层协议，需要先完成 TCP 连接建立，然后走 TLS 握手过程后，才能建立通信安全的连接。
 
@@ -83,9 +83,9 @@ TLS 协议是如何解决 HTTP 的风险的呢？
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/serverhello.png)
 
-可以看到，服务端选择的密码套件是  “Cipher Suite: TLS_RSA_WITH_AES_128_GCM_SHA256”。
+可以看到，服务端选择的密码套件是“Cipher Suite: TLS_RSA_WITH_AES_128_GCM_SHA256”。
 
-这个密码套件看起来真让人头晕，好一大串，但是其实它是有固定格式和规范的。基本的形式是「**密钥交换算法 + 签名算法 + 对称加密算法 + 摘要算法**」， 一般 WITH 单词前面有两个单词，第一个单词是约定密钥交换的算法，第二个单词是约定证书的验证算法。比如刚才的密码套件的意思就是：
+这个密码套件看起来真让人头晕，好一大串，但是其实它是有固定格式和规范的。基本的形式是「**密钥交换算法 + 签名算法 + 对称加密算法 + 摘要算法**」，一般 WITH 单词前面有两个单词，第一个单词是约定密钥交换的算法，第二个单词是约定证书的验证算法。比如刚才的密码套件的意思就是：
 
 - 由于 WITH 单词只有一个 RSA，则说明握手时密钥交换算法和签名算法都是使用 RSA；
 - 握手后的通信使用 AES 对称算法，密钥长度 128 位，分组模式是 GCM；
@@ -125,7 +125,7 @@ TLS 协议是如何解决 HTTP 的风险的呢？
 
 我们用证书来认证公钥持有者的身份（服务端的身份），那证书又是怎么来的？又该怎么认证证书呢？
 
-为了让服务端的公钥被大家信任，服务端的证书都是由 CA （*Certificate Authority*，证书认证机构）签名的，CA 就是网络世界里的公安局、公证中心，具有极高的可信度，所以由它来给各个公钥签名，信任的一方签发的证书，那必然证书也是被信任的。
+为了让服务端的公钥被大家信任，服务端的证书都是由 CA（*Certificate Authority*，证书认证机构）签名的，CA 就是网络世界里的公安局、公证中心，具有极高的可信度，所以由它来给各个公钥签名，信任的一方签发的证书，那必然证书也是被信任的。
 
 之所以要签名，是因为签名的作用可以避免中间人在获取证书时对证书内容的篡改。
 
@@ -145,7 +145,7 @@ CA 签发证书的过程，如上图左边部分：
 客户端校验服务端的数字证书的过程，如上图右边部分：
 
 - 首先客户端会使用同样的 Hash 算法获取该证书的 Hash 值 H1；
-- 通常浏览器和操作系统中集成了 CA 的公钥信息，浏览器收到证书后可以使用 CA 的公钥解密 Certificate Signature 内容，得到一个 Hash 值 H2 ；
+- 通常浏览器和操作系统中集成了 CA 的公钥信息，浏览器收到证书后可以使用 CA 的公钥解密 Certificate Signature 内容，得到一个 Hash 值 H2；
 - 最后比较 H1 和 H2，如果值相同，则为可信赖的证书，否则则认为证书不可信。
 
 #### 证书链
@@ -156,11 +156,11 @@ CA 签发证书的过程，如上图左边部分：
 
 对于这种三级层级关系的证书的验证过程如下：
 
-- 客户端收到 baidu.com 的证书后，发现这个证书的签发者不是根证书，就无法根据本地已有的根证书中的公钥去验证 baidu.com 证书是否可信。于是，客户端根据 baidu.com 证书中的签发者，找到该证书的颁发机构是 “GlobalSign Organization Validation CA - SHA256 - G2”，然后向 CA 请求该中间证书。
-- 请求到证书后发现 “GlobalSign Organization Validation CA - SHA256 - G2” 证书是由 “GlobalSign Root CA” 签发的，由于 “GlobalSign Root CA” 没有再上级签发机构，说明它是根证书，也就是自签证书。应用软件会检查此证书是否已预载于根证书清单上，如果有，则可以利用根证书中的公钥去验证 “GlobalSign Organization Validation CA - SHA256 - G2” 证书，如果发现验证通过，就认为该中间证书是可信的。
-- “GlobalSign Organization Validation CA - SHA256 - G2” 证书被信任后，可以使用 “GlobalSign Organization Validation CA - SHA256 - G2” 证书中的公钥去验证 baidu.com 证书的可信性，如果验证通过，就可以信任 baidu.com 证书。
+- 客户端收到 baidu.com 的证书后，发现这个证书的签发者不是根证书，就无法根据本地已有的根证书中的公钥去验证 baidu.com 证书是否可信。于是，客户端根据 baidu.com 证书中的签发者，找到该证书的颁发机构是“GlobalSign Organization Validation CA - SHA256 - G2”，然后向 CA 请求该中间证书。
+- 请求到证书后发现“GlobalSign Organization Validation CA - SHA256 - G2”证书是由“GlobalSign Root CA”签发的，由于“GlobalSign Root CA”没有再上级签发机构，说明它是根证书，也就是自签证书。应用软件会检查此证书是否已预载于根证书清单上，如果有，则可以利用根证书中的公钥去验证“GlobalSign Organization Validation CA - SHA256 - G2”证书，如果发现验证通过，就认为该中间证书是可信的。
+- “GlobalSign Organization Validation CA - SHA256 - G2”证书被信任后，可以使用“GlobalSign Organization Validation CA - SHA256 - G2”证书中的公钥去验证 baidu.com 证书的可信性，如果验证通过，就可以信任 baidu.com 证书。
 
-在这四个步骤中，最开始客户端只信任根证书 GlobalSign Root CA 证书的，然后 “GlobalSign Root CA” 证书信任 “GlobalSign Organization Validation CA - SHA256 - G2” 证书，而 “GlobalSign Organization Validation CA - SHA256 - G2” 证书又信任 baidu.com 证书，于是客户端也信任 baidu.com 证书。
+在这四个步骤中，最开始客户端只信任根证书 GlobalSign Root CA 证书的，然后“GlobalSign Root CA”证书信任“GlobalSign Organization Validation CA - SHA256 - G2”证书，而“GlobalSign Organization Validation CA - SHA256 - G2”证书又信任 baidu.com 证书，于是客户端也信任 baidu.com 证书。
 
 总括来说，由于用户信任 GlobalSign，所以由 GlobalSign 所担保的 baidu.com 可以被信任，另外由于用户信任操作系统或浏览器的软件商，所以由软件商预载了根证书的 GlobalSign 都可被信任。
 

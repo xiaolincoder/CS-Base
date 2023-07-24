@@ -24,7 +24,7 @@
 
 针对这个问题，**关键是要看 SYN 的「序列号和时间戳」是否合法**，因为处于 TIME_WAIT 状态的连接收到 SYN 后，会判断 SYN 的「序列号和时间戳」是否合法，然后根据判断结果的不同做不同的处理。
 
-先跟大家说明下， 什么是「合法」的 SYN？
+先跟大家说明下，什么是「合法」的 SYN？
 
 - **合法 SYN**：客户端的  SYN 的「序列号」比服务端「期望下一个收到的序列号」要**大**，**并且** SYN 的「时间戳」比服务端「最后收到的报文的时间戳」要**大**。
 - **非法 SYN**：客户端的  SYN 的「序列号」比服务端「期望下一个收到的序列号」要**小**，**或者** SYN 的「时间戳」比服务端「最后收到的报文的时间戳」要**小**。
@@ -36,27 +36,27 @@
 
 ### 收到合法 SYN
 
-如果处于 TIME_WAIT 状态的连接收到「合法的 SYN 」后，**就会重用此四元组连接，跳过 2MSL 而转变为 SYN_RECV 状态，接着就能进行建立连接过程**。
+如果处于 TIME_WAIT 状态的连接收到「合法的 SYN」后，**就会重用此四元组连接，跳过 2MSL 而转变为 SYN_RECV 状态，接着就能进行建立连接过程**。
 
 用下图作为例子，双方都启用了 TCP 时间戳机制，TSval 是发送报文时的时间戳：
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/39d0d04adf72fe3d37623acff9ae2507.png)
 
-上图中，在收到第三次挥手的 FIN 报文时，会记录该报文的 TSval （21），用 ts_recent 变量保存。然后会计算下一次期望收到的序列号，本次例子下一次期望收到的序列号就是 301，用 rcv_nxt 变量保存。
+上图中，在收到第三次挥手的 FIN 报文时，会记录该报文的 TSval（21），用 ts_recent 变量保存。然后会计算下一次期望收到的序列号，本次例子下一次期望收到的序列号就是 301，用 rcv_nxt 变量保存。
 
-处于 TIME_WAIT 状态的连接收到 SYN 后，**因为 SYN 的 seq（400） 大于 rcv_nxt（301），并且 SYN 的 TSval（30） 大于 ts_recent（21），所以是一个「合法的 SYN」，于是就会重用此四元组连接，跳过 2MSL 而转变为 SYN_RECV 状态，接着就能进行建立连接过程。**
+处于 TIME_WAIT 状态的连接收到 SYN 后，**因为 SYN 的 seq（400）大于 rcv_nxt（301），并且 SYN 的 TSval（30）大于 ts_recent（21），所以是一个「合法的 SYN」，于是就会重用此四元组连接，跳过 2MSL 而转变为 SYN_RECV 状态，接着就能进行建立连接过程。**
 
 ### 收到非法的 SYN
 
-如果处于 TIME_WAIT 状态的连接收到「非法的 SYN 」后，就会**再回复一个第四次挥手的 ACK 报文，客户端收到后，发现并不是自己期望收到确认号（ack num），就回 RST 报文给服务端**。
+如果处于 TIME_WAIT 状态的连接收到「非法的 SYN」后，就会**再回复一个第四次挥手的 ACK 报文，客户端收到后，发现并不是自己期望收到确认号（ack num），就回 RST 报文给服务端**。
 
 用下图作为例子，双方都启用了 TCP 时间戳机制，TSval 是发送报文时的时间戳：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/network/tcp/tw收到不合法.png)
 
-上图中，在收到第三次挥手的 FIN 报文时，会记录该报文的 TSval （21），用 ts_recent 变量保存。然后会计算下一次期望收到的序列号，本次例子下一次期望收到的序列号就是 301，用 rcv_nxt 变量保存。
+上图中，在收到第三次挥手的 FIN 报文时，会记录该报文的 TSval（21），用 ts_recent 变量保存。然后会计算下一次期望收到的序列号，本次例子下一次期望收到的序列号就是 301，用 rcv_nxt 变量保存。
 
-处于 TIME_WAIT 状态的连接收到 SYN 后，**因为 SYN 的 seq（200） 小于 rcv_nxt（301），所以是一个「非法的 SYN」，就会再回复一个与第四次挥手一样的 ACK 报文，客户端收到后，发现并不是自己期望收到确认号，就回 RST 报文给服务端**。
+处于 TIME_WAIT 状态的连接收到 SYN 后，**因为 SYN 的 seq（200）小于 rcv_nxt（301），所以是一个「非法的 SYN」，就会再回复一个与第四次挥手一样的 ACK 报文，客户端收到后，发现并不是自己期望收到确认号，就回 RST 报文给服务端**。
 
 > PS：这里先埋一个疑问，处于 TIME_WAIT 状态的连接，收到 RST 会断开连接吗？
 
@@ -86,10 +86,10 @@ process:
 
 do_time_wait:
   ...
-  //由tcp_timewait_state_process函数处理在 time_wait 状态收到的报文
+  //由 tcp_timewait_state_process 函数处理在 time_wait 状态收到的报文
  switch (tcp_timewait_state_process(inet_twsk(sk), skb, th)) {
-    // 如果是TCP_TW_SYN，那么允许此 SYN 重建连接
-    // 即允许TIM_WAIT状态跃迁到SYN_RECV
+    // 如果是 TCP_TW_SYN，那么允许此 SYN 重建连接
+    // 即允许 TIM_WAIT 状态跃迁到 SYN_RECV
     case TCP_TW_SYN: {
       struct sock *sk2 = inet_lookup_listener(....);
       if (sk2) {
@@ -97,16 +97,16 @@ do_time_wait:
           goto process;
       }
     }
-    // 如果是TCP_TW_ACK，那么，返回记忆中的ACK
+    // 如果是 TCP_TW_ACK，那么，返回记忆中的 ACK
     case TCP_TW_ACK:
       tcp_v4_timewait_ack(sk, skb);
       break;
-    // 如果是TCP_TW_RST直接发送RESET包
+    // 如果是 TCP_TW_RST 直接发送 RESET 包
     case TCP_TW_RST:
       tcp_v4_send_reset(sk, skb);
       inet_twsk_deschedule_put(inet_twsk(sk));
       goto discard_it;
-     // 如果是TCP_TW_SUCCESS则直接丢弃此包，不做任何响应
+     // 如果是 TCP_TW_SUCCESS 则直接丢弃此包，不做任何响应
     case TCP_TW_SUCCESS:;
  }
  goto discard_it;
@@ -134,7 +134,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
  bool paws_reject = false;
 
  tmp_opt.saw_tstamp = 0;
-  //TCP头中有选项且旧连接开启了时间戳选项
+  //TCP 头中有选项且旧连接开启了时间戳选项
  if (th->doff > (sizeof(*th) >> 2) && tcptw->tw_ts_recent_stamp) { 
   //解析选项
     tcp_parse_options(twsk_net(tw), skb, &tmp_opt, 0, NULL);
@@ -148,7 +148,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
 
 ....
 
-  //是SYN包、没有RST、没有ACK、时间戳没有回绕，并且序列号也没有回绕，
+  //是 SYN 包、没有 RST、没有 ACK、时间戳没有回绕，并且序列号也没有回绕，
  if (th->syn && !th->rst && !th->ack && !paws_reject &&
      (after(TCP_SKB_CB(skb)->seq, tcptw->tw_rcv_nxt) ||
       (tmp_opt.saw_tstamp && //新连接开启了时间戳
@@ -158,17 +158,17 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
     if (isn == 0)
       isn++;
     TCP_SKB_CB(skb)->tcp_tw_isn = isn;
-    return TCP_TW_SYN; //允许重用TIME_WAIT四元组重新建立连接
+    return TCP_TW_SYN; //允许重用 TIME_WAIT 四元组重新建立连接
  }
 
 
  if (!th->rst) {
-    // 如果时间戳回绕，或者报文里包含ack，则将 TIMEWAIT 状态的持续时间重新延长
+    // 如果时间戳回绕，或者报文里包含 ack，则将 TIMEWAIT 状态的持续时间重新延长
   if (paws_reject || th->ack)
     inet_twsk_schedule(tw, &tcp_death_row, TCP_TIMEWAIT_LEN,
         TCP_TIMEWAIT_LEN);
 
-     // 返回TCP_TW_ACK, 发送上一次的 ACK
+     // 返回 TCP_TW_ACK, 发送上一次的 ACK
     return TCP_TW_ACK;
  }
  inet_twsk_put(tw);
@@ -193,8 +193,8 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
 
 会不会断开，关键看 `net.ipv4.tcp_rfc1337` 这个内核参数（默认情况是为 0）：
 
-- 如果这个参数设置为 0， 收到 RST 报文会提前结束 TIME_WAIT 状态，释放连接。
-- 如果这个参数设置为 1， 就会丢掉 RST 报文。
+- 如果这个参数设置为 0，收到 RST 报文会提前结束 TIME_WAIT 状态，释放连接。
+- 如果这个参数设置为 1，就会丢掉 RST 报文。
 
 源码处理如下：
 
@@ -204,17 +204,17 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
       const struct tcphdr *th)
 {
 ....
-  //rst报文的时间戳没有发生回绕
+  //rst 报文的时间戳没有发生回绕
  if (!paws_reject &&
      (TCP_SKB_CB(skb)->seq == tcptw->tw_rcv_nxt &&
       (TCP_SKB_CB(skb)->seq == TCP_SKB_CB(skb)->end_seq || th->rst))) {
 
-      //处理rst报文
+      //处理 rst 报文
       if (th->rst) {
-        //不开启这个选项，当收到 RST 时会立即回收tw，但这样做是有风险的
+        //不开启这个选项，当收到 RST 时会立即回收 tw，但这样做是有风险的
         if (twsk_net(tw)->ipv4.sysctl_tcp_rfc1337 == 0) {
           kill:
-          //删除tw定时器，并释放tw
+          //删除 tw 定时器，并释放 tw
           inet_twsk_deschedule_put(tw);
           return TCP_TW_SUCCESS;
         }
@@ -242,7 +242,7 @@ TIME_WAIT 状态之所以要持续 2MSL 时间，主要有两个目的：
 
 虽然 TIME_WAIT 状态持续的时间是有一点长，显得很不友好，但是它被设计来就是用来避免发生乱七八糟的事情。
 
-《UNIX网络编程》一书中却说道：**TIME_WAIT 是我们的朋友，它是有助于我们的，不要试图避免这个状态，而是应该弄清楚它**。
+《UNIX 网络编程》一书中却说道：**TIME_WAIT 是我们的朋友，它是有助于我们的，不要试图避免这个状态，而是应该弄清楚它**。
 
 所以，我个人觉得将 `net.ipv4.tcp_rfc1337` 设置为 1 会比较安全。
 

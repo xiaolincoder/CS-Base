@@ -91,7 +91,7 @@ Linux 操作系统为基于 Page Cache 的读缓存机制提供**预读机制**�
 
 ![](https://img-blog.csdnimg.cn/img_convert/ae8252378169c8c14b8b9907983f7d8b.png)
 
-上图中，应用程序利用 read 系统调动读取 4KB 数据，实际上内核使用预读机制（ReadaHead） 机制完成了 16KB 数据的读取，也就是通过一次磁盘顺序读将多个 Page 数据装入 Page Cache。
+上图中，应用程序利用 read 系统调动读取 4KB 数据，实际上内核使用预读机制（ReadaHead）机制完成了 16KB 数据的读取，也就是通过一次磁盘顺序读将多个 Page 数据装入 Page Cache。
 
 这样下次读取 4KB 数据后面的数据的时候，就不用从磁盘读取了，直接在 Page Cache 即可命中数据。因此，预读机制带来的好处就是**减少了 磁盘 I/O 次数，提高系统磁盘 I/O 吞吐量**。
 
@@ -137,13 +137,13 @@ Linux 操作系统实现两个了 LRU 链表：**活跃 LRU 链表（active_list
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/操作系统/缓存/active_inactive_list.drawio.png)
 
-现在有个编号为 20 的页被预读了，这个页只会被插入到 inactive list 的头部，而 inactive list 末尾的页（10号）会被淘汰掉。
+现在有个编号为 20 的页被预读了，这个页只会被插入到 inactive list 的头部，而 inactive list 末尾的页（10 号）会被淘汰掉。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/操作系统/缓存/active_inactive_list1.drawio.png)
 
 **即使编号为 20 的预读页一直不会被访问，它也没有占用到  active list 的位置**，而且还会比 active list 中的页更早被淘汰出去。
 
-如果 20 号页被预读后，立刻被访问了，那么就会将它插入到  active list 的头部， active list 末尾的页（5号），会被**降级**到 inactive list ，作为 inactive list 的头部，这个过程并不会有数据被淘汰。
+如果 20 号页被预读后，立刻被访问了，那么就会将它插入到  active list 的头部，active list 末尾的页（5 号），会被**降级**到 inactive list，作为 inactive list 的头部，这个过程并不会有数据被淘汰。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/操作系统/缓存/active_inactive_list2.drawio.png)
 
@@ -155,7 +155,7 @@ young 区域在 LRU 链表的前半部分，old 区域则是在后半部分，�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/young%2Bold.png)
 
-young 区域与 old 区域在 LRU 链表中的占比关系并不是一比一的关系，而是是 7 比 3 （默认比例）的关系。
+young 区域与 old 区域在 LRU 链表中的占比关系并不是一比一的关系，而是是 7 比 3（默认比例）的关系。
 
 **划分这两个区域后，预读的页就只需要加入到 old 区域的头部，当页被真正访问的时候，才将页插入 young 区域的头部**。如果预读的页一直没有被访问，就会从 old 区域移除，这样就不会影响 young 区域中的热点数据。
 
@@ -165,13 +165,13 @@ young 区域与 old 区域在 LRU 链表中的占比关系并不是一比一的�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo.drawio.png)
 
-现在有个编号为 20 的页被预读了，这个页只会被插入到 old 区域头部，而 old 区域末尾的页（10号）会被淘汰掉。
+现在有个编号为 20 的页被预读了，这个页只会被插入到 old 区域头部，而 old 区域末尾的页（10 号）会被淘汰掉。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo2.png)
 
 如果 20 号页一直不会被访问，它也没有占用到 young 区域的位置，而且还会比 young 区域的数据更早被淘汰出去。
 
-如果 20 号页被预读后，立刻被访问了，那么就会将它插入到 young 区域的头部，young 区域末尾的页（7号），会被挤到 old 区域，作为 old 区域的头部，这个过程并不会有页被淘汰。
+如果 20 号页被预读后，立刻被访问了，那么就会将它插入到 young 区域的头部，young 区域末尾的页（7 号），会被挤到 old 区域，作为 old 区域的头部，这个过程并不会有页被淘汰。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lrutwo3.png)
 
@@ -179,7 +179,7 @@ young 区域与 old 区域在 LRU 链表中的占比关系并不是一比一的�
 
 ### 什么是缓存污染？
 
-虽然 Linux （实现两个 LRU 链表）和 MySQL （划分两个区域）通过改进传统的 LRU 数据结构，避免了预读失效带来的影响。
+虽然 Linux（实现两个 LRU 链表）和 MySQL（划分两个区域）通过改进传统的 LRU 数据结构，避免了预读失效带来的影响。
 
 但是如果还是使用「只要数据被访问一次，就将数据加入到活跃 LRU 链表头部（或者 young 区域）」这种方式的话，那么**还存在缓存污染的问题**。
 
@@ -193,7 +193,7 @@ young 区域与 old 区域在 LRU 链表中的占比关系并不是一比一的�
 
 当某一个 SQL 语句**扫描了大量的数据**时，在 Buffer Pool 空间比较有限的情况下，可能会将 **Buffer Pool 里的所有页都替换出去，导致大量热数据被淘汰了**，等这些热数据又被再次访问的时候，由于缓存未命中，就会产生大量的磁盘 I/O，MySQL 性能就会急剧下降。
 
-注意， 缓存污染并不只是查询语句查询出了大量的数据才出现的问题，即使查询出来的结果集很小，也会造成缓存污染。
+注意，缓存污染并不只是查询语句查询出了大量的数据才出现的问题，即使查询出来的结果集很小，也会造成缓存污染。
 
 比如，在一个数据量非常大的表，执行了这条语句：
 
@@ -260,13 +260,13 @@ Linux 操作系统和 MySQL Innodb 存储引擎分别是这样提高门槛的：
   - 如果第二次的访问时间与第一次访问的时间**在 1 秒内**（默认值），那么该页就**不会**被从 old 区域升级到 young 区域；
   - 如果第二次的访问时间与第一次访问的时间**超过 1 秒**，那么该页就**会**从 old 区域升级到 young 区域；
 
-通过提高了进入 active list  （或者 young 区域）的门槛后，就很好了避免缓存污染带来的影响。
+通过提高了进入 active list（或者 young 区域）的门槛后，就很好了避免缓存污染带来的影响。
 
 完！
 
 ------
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」，关注后，回复「网络」再送你图解网络 PDF***
 
 ![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 

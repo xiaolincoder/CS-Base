@@ -20,12 +20,12 @@
 
 应用程序通过 malloc 函数申请内存的时候，实际上申请的是虚拟内存，此时并不会分配物理内存。
 
-当应用程序读写了这块虚拟内存，CPU 就会去访问这个虚拟内存， 这时会发现这个虚拟内存没有映射到物理内存， CPU 就会产生**缺页中断**，进程会从用户态切换到内核态，并将缺页中断交给内核的 Page Fault Handler （缺页中断函数）处理。
+当应用程序读写了这块虚拟内存，CPU 就会去访问这个虚拟内存，这时会发现这个虚拟内存没有映射到物理内存，CPU 就会产生**缺页中断**，进程会从用户态切换到内核态，并将缺页中断交给内核的 Page Fault Handler（缺页中断函数）处理。
 
 缺页中断处理函数会看是否有空闲的物理内存：
 
 - 如果有，就直接分配物理内存，并建立虚拟内存与物理内存之间的映射关系。
-- 如果没有空闲的物理内存，那么内核就会开始进行[回收内存](https://xiaolincoding.com/os/3_memory/mem_reclaim.html)的工作，如果回收内存工作结束后，空闲的物理内存仍然无法满足此次物理内存的申请，那么内核就会放最后的大招了触发 OOM （Out of Memory）机制。
+- 如果没有空闲的物理内存，那么内核就会开始进行[回收内存](https://xiaolincoding.com/os/3_memory/mem_reclaim.html)的工作，如果回收内存工作结束后，空闲的物理内存仍然无法满足此次物理内存的申请，那么内核就会放最后的大招了触发 OOM（Out of Memory）机制。
 
 32 位操作系统和 64 位操作系统的虚拟地址空间大小是不同的，在 Linux 操作系统中，虚拟地址空间的内部又被分为**内核空间和用户空间**两部分，如下所示：
 
@@ -68,10 +68,10 @@ int main() {
     for(i = 0; i < 4; ++i) {
         addr[i] = (char*) malloc(MEM_SIZE);
         if(!addr[i]) {
-            printf("执行 malloc 失败, 错误：%s\n",strerror(errno));
+            printf("执行 malloc 失败，错误：%s\n",strerror(errno));
 		        return -1;
         }
-        printf("主线程调用malloc后，申请1gb大小得内存，此内存起始地址：0X%p\n", addr[i]);
+        printf("主线程调用 malloc 后，申请 1gb 大小得内存，此内存起始地址：0X%p\n", addr[i]);
     }
     
     //输入任意字符后，才结束
@@ -102,11 +102,11 @@ root      7797  0.0  0.0 4198540  352 pts/1    S+   16:58   0:00 ./test
 
 我当时帮他排查了下，发现跟 Linux 中的 [overcommit_memory](http://linuxperf.com/?p=102) 参数有关，可以使用 `cat /proc/sys/vm/overcommit_memory` 来查看这个参数，这个参数接受三个值：
 
-- 如果值为 0（默认值），代表：Heuristic overcommit handling，它允许overcommit，但过于明目张胆的overcommit会被拒绝，比如malloc一次性申请的内存大小就超过了系统总内存。Heuristic的意思是“试探式的”，内核利用某种算法猜测你的内存申请是否合理，大概可以理解为单次申请不能超过free memory + free swap + pagecache的大小 + SLAB中可回收的部分 ，超过了就会拒绝overcommit。
-- 如果值为 1，代表：Always overcommit. 允许overcommit，对内存申请来者不拒。
-- 如果值为 2，代表：Don’t overcommit. 禁止overcommit。
+- 如果值为 0（默认值），代表：Heuristic overcommit handling，它允许 overcommit，但过于明目张胆的 overcommit 会被拒绝，比如 malloc 一次性申请的内存大小就超过了系统总内存。Heuristic 的意思是“试探式的”，内核利用某种算法猜测你的内存申请是否合理，大概可以理解为单次申请不能超过 free memory + free swap + pagecache 的大小 + SLAB 中可回收的部分，超过了就会拒绝 overcommit。
+- 如果值为 1，代表：Always overcommit. 允许 overcommit，对内存申请来者不拒。
+- 如果值为 2，代表：Don’t overcommit. 禁止 overcommit。
 
-当时那位读者的 overcommit_memory 参数是默认值 0 ，所以申请失败的原因可能是内核认为我们申请的内存太大了，它认为不合理，所以 malloc() 返回了 Cannot allocate memory 错误，这里申请 4GB 虚拟内存失败的同学可以将这个 overcommit_memory 设置为1，就可以 overcommit 了。
+当时那位读者的 overcommit_memory 参数是默认值 0，所以申请失败的原因可能是内核认为我们申请的内存太大了，它认为不合理，所以 malloc() 返回了 Cannot allocate memory 错误，这里申请 4GB 虚拟内存失败的同学可以将这个 overcommit_memory 设置为 1，就可以 overcommit 了。
 
 ```shell
 echo 1 > /proc/sys/vm/overcommit_memory 
@@ -148,9 +148,9 @@ echo 1 > /proc/sys/vm/overcommit_memory
 
 直到直接内存回收之后，也无法回收出一块空间供这个进程使用，这个时候就会触发 OOM，给所有能杀死的进程打分，分数越高的进程越容易被杀死。
 
-在这里当然是这个进程得分最高，那么操作系统就会将这个进程杀死，所以最后会出现 killed，而不是Cannot allocate memory。
+在这里当然是这个进程得分最高，那么操作系统就会将这个进程杀死，所以最后会出现 killed，而不是 Cannot allocate memory。
 
-> 那么 2GB 的物理内存的 64 位操作系统，就不能申请128T的虚拟内存了吗？
+> 那么 2GB 的物理内存的 64 位操作系统，就不能申请 128T 的虚拟内存了吗？
 
 其实可以，上面的情况是还没开启 swap 的情况。
 
@@ -176,7 +176,7 @@ echo 1 > /proc/sys/vm/overcommit_memory
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-12.png)
 
-在 top 中我们可以看到这个申请了127T虚拟内存的进程。
+在 top 中我们可以看到这个申请了 127T 虚拟内存的进程。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/033读者-13.png)
 
@@ -225,7 +225,7 @@ Linux 提供了两种不同的方法启用 Swap，分别是 Swap 分区（Swap P
 
 > Swap 换入换出的是什么类型的内存？
 
-内核缓存的文件数据，因为都有对应的磁盘文件，所以在回收文件数据的时候， 直接写回到对应的文件就可以了。
+内核缓存的文件数据，因为都有对应的磁盘文件，所以在回收文件数据的时候，直接写回到对应的文件就可以了。
 
 但是像进程的堆、栈数据等，它们是没有实际载体，这部分内存被称为匿名页。而且这部分内存很可能还要再次被访问，所以不能直接释放内存，于是就需要有一个能保存匿名页的磁盘载体，这个载体就是 Swap 分区。
 
@@ -258,14 +258,14 @@ int main() {
     for(i = 0; i < 4; ++i) {
         addr[i] = (char*) malloc(MEM_SIZE);
         if(!addr[i]) {
-            printf("执行 malloc 失败, 错误：%s\n",strerror(errno));
+            printf("执行 malloc 失败，错误：%s\n",strerror(errno));
             return -1;
         }
-        printf("主线程调用malloc后，申请1gb大小得内存，此内存起始地址：0X%p\n", addr[i]);
+        printf("主线程调用 malloc 后，申请 1gb 大小得内存，此内存起始地址：0X%p\n", addr[i]);
     }
 
     for(i = 0; i < 4; ++i) {
-        printf("开始访问第 %d 块虚拟内存(每一块虚拟内存为 1 GB)\n", i + 1);
+        printf("开始访问第 %d 块虚拟内存 (每一块虚拟内存为 1 GB)\n", i + 1);
         memset(addr[i], 0, MEM_SIZE);
     }
     
@@ -287,15 +287,15 @@ int main() {
 
 > 什么是 OOM?
 
-内存溢出(Out Of Memory，简称OOM)是指应用系统中存在无法回收的内存或使用的内存过多，最终使得程序运行要用到的内存大于能提供的最大内存。此时程序就运行不了，系统会提示内存溢出。
+内存溢出 (Out Of Memory，简称 OOM) 是指应用系统中存在无法回收的内存或使用的内存过多，最终使得程序运行要用到的内存大于能提供的最大内存。此时程序就运行不了，系统会提示内存溢出。
 
 ### 实验二：有开启 Swap 机制
 
-我用我的 mac book pro 笔记本做测试，我的笔记本是 64 位操作系统，物理内存是 8 GB， 目前 Swap 分区大小为 1 GB（注意这个大小不是固定不变的，Swap 分区总大小是会动态变化的，当没有使用 Swap 分区时，Swap 分区总大小是 0；当使用了 Swap 分区，Swap 分区总大小会增加至 1 GB；当 Swap 分区已使用的大小超过 1 GB 时；Swap 分区总大小就会增加到至 2 GB；当 Swap 分区已使用的大小超过 2 GB 时；Swap 分区总大小就增加至 3GB，如此往复。这个估计是 macos 自己实现的，Linux 的分区则是固定大小的，Swap 分区不会根据使用情况而自动增长）。
+我用我的 mac book pro 笔记本做测试，我的笔记本是 64 位操作系统，物理内存是 8 GB，目前 Swap 分区大小为 1 GB（注意这个大小不是固定不变的，Swap 分区总大小是会动态变化的，当没有使用 Swap 分区时，Swap 分区总大小是 0；当使用了 Swap 分区，Swap 分区总大小会增加至 1 GB；当 Swap 分区已使用的大小超过 1 GB 时；Swap 分区总大小就会增加到至 2 GB；当 Swap 分区已使用的大小超过 2 GB 时；Swap 分区总大小就增加至 3GB，如此往复。这个估计是 macos 自己实现的，Linux 的分区则是固定大小的，Swap 分区不会根据使用情况而自动增长）。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/swap分区大小.png)
 
-为了方便观察磁盘 I/O 情况，我们改进一下前面的代码，分配完 32 GB虚拟内存后（笔记本物理内存是 8 GB），通过一个 while 循环频繁访问虚拟内存，代码如下：
+为了方便观察磁盘 I/O 情况，我们改进一下前面的代码，分配完 32 GB 虚拟内存后（笔记本物理内存是 8 GB），通过一个 while 循环频繁访问虚拟内存，代码如下：
 
 ```c
 #include <stdio.h>
@@ -306,7 +306,7 @@ int main() {
 
 int main() {
     char* addr = (char*) malloc((long)MEM_SIZE);
-    printf("主线程调用malloc后，目前共申请了 32gb 的虚拟内存\n");
+    printf("主线程调用 malloc 后，目前共申请了 32gb 的虚拟内存\n");
     
     //循环频繁访问虚拟内存
     while(1) {
@@ -333,24 +333,24 @@ int main() {
 
 > 有了 Swap 分区，是不是意味着进程可以使用的内存是无上限的？
 
-当然不是，我把上面的代码改成了申请 64GB 内存后，当进程申请完 64GB 虚拟内存后，使用到 56 GB （这个不要理解为占用的物理内存，理解为已被访问的虚拟内存大小，也就是在物理内存呆过的内存大小）的时候，进程就被系统 kill 掉了，如下图：
+当然不是，我把上面的代码改成了申请 64GB 内存后，当进程申请完 64GB 虚拟内存后，使用到 56 GB（这个不要理解为占用的物理内存，理解为已被访问的虚拟内存大小，也就是在物理内存呆过的内存大小）的时候，进程就被系统 kill 掉了，如下图：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/操作系统/内存管理/被kill掉.png)
 
-当系统多次尝试回收内存，还是无法满足所需使用的内存大小，进程就会被系统 kill 掉了，意味着发生了 OOM （*PS：我没有在 macos 系统找到像 linux 系统里的 /var/log/message 系统日志文件，所以无法通过查看日志确认是否发生了 OOM*）。
+当系统多次尝试回收内存，还是无法满足所需使用的内存大小，进程就会被系统 kill 掉了，意味着发生了 OOM（*PS：我没有在 macos 系统找到像 linux 系统里的 /var/log/message 系统日志文件，所以无法通过查看日志确认是否发生了 OOM*）。
 
 ## 总结
 
-至此， 验证完成了。简单总结下：
+至此，验证完成了。简单总结下：
 
 - 在 32 位操作系统，因为进程理论上最大能申请 3 GB 大小的虚拟内存，所以直接申请 8G 内存，会申请失败。
-- 在 64位 位操作系统，因为进程理论上最大能申请 128 TB 大小的虚拟内存，即使物理内存只有 4GB，申请 8G 内存也是没问题，因为申请的内存是虚拟内存。如果这块虚拟内存被访问了，要看系统有没有 Swap 分区：
+- 在 64 位 位操作系统，因为进程理论上最大能申请 128 TB 大小的虚拟内存，即使物理内存只有 4GB，申请 8G 内存也是没问题，因为申请的内存是虚拟内存。如果这块虚拟内存被访问了，要看系统有没有 Swap 分区：
   - 如果没有 Swap 分区，因为物理空间不够，进程会被操作系统杀掉，原因是 OOM（内存溢出）；
   - 如果有 Swap 分区，即使物理内存只有 4GB，程序也能正常使用 8GB 的内存，进程可以正常运行；
 
 ---
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」，关注后，回复「网络」再送你图解网络 PDF***
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 

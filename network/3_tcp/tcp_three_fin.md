@@ -2,12 +2,12 @@
 
 大家好，我是小林。
 
-有位读者面美团时，被问到：**TCP 四次挥手中，能不能把第二次的 ACK 报文， 放到第三次 FIN 报文一起发送？**
+有位读者面美团时，被问到：**TCP 四次挥手中，能不能把第二次的 ACK 报文，放到第三次 FIN 报文一起发送？**
 
 ![](https://img-blog.csdnimg.cn/6e02477ccea24facbf7eada108158bc2.png)
 
 
-虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是**在一些情况下， TCP 四次挥手是可以变成 TCP 三次挥手的**。
+虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是**在一些情况下，TCP 四次挥手是可以变成 TCP 三次挥手的**。
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/52f35dcbe24a4ca7abb23f292837c707.png)
 
@@ -68,7 +68,7 @@ TCP 四次挥手的过程如下：
 
 当服务端收到 RST 后，内核就会释放连接，当服务端应用程序再次发起读操作或者写操作时，就能感知到连接已经被释放了：
 
-- 如果是读操作，则会返回 RST 的报错，也就是我们常见的Connection reset by peer。
+- 如果是读操作，则会返回 RST 的报错，也就是我们常见的 Connection reset by peer。
 - 如果是写操作，那么程序会产生 SIGPIPE 信号，应用层代码可以捕获并处理信号，如果不处理，则默认情况下进程会终止，异常退出。
 
 相对的，shutdown 函数因为可以指定只关闭发送方向而不关闭读取方向，所以即使在 TCP 四次挥手过程中，如果收到了服务端发送的数据，客户端也是可以正常读取到该数据的，然后就会经历完整的 TCP 四次挥手，所以我们常说，调用 shutdown 是优雅的关闭。
@@ -111,8 +111,8 @@ TCP 延迟确认的策略：
 
 知道了 HZ 的大小，那么就可以算出：
 
-- 最大延迟确认时间是 200 ms （1000/5）
-- 最短延迟确认时间是 40 ms （1000/25）
+- 最大延迟确认时间是 200 ms（1000/5）
+- 最短延迟确认时间是 40 ms（1000/25）
 
 > 怎么关闭 TCP 延迟确认机制？
 
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_addr.sin_port = htons(8888);
 
-    // 3. 绑定地址+端口
+    // 3. 绑定地址 + 端口
     if(bind(listenfd, (struct sockaddr *)(&server_addr), sizeof(struct sockaddr)) < 0)
     {
         fprintf(stderr,"bind error:%s\n", strerror(errno));
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
     }
 
 
-    // 5. 获取已连接的socket
+    // 5. 获取已连接的 socket
     struct sockaddr_in client_addr;
     socklen_t client_addrlen = sizeof(client_addr);
     int clientfd = accept(listenfd, (struct sockaddr *)&client_addr, &client_addrlen);
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
         if(n < 0) { // 读取错误
             fprintf(stderr, "read error:%s\n\a", strerror(errno));
             break;
-        } else if(n == 0) {  // 返回 0 ，代表读到 FIN 报文
+        } else if(n == 0) {  // 返回 0，代表读到 FIN 报文
             fprintf(stderr, "client closed \n");
             close(clientfd); // 没有数据要发送，立马关闭连接
             break;
@@ -321,7 +321,7 @@ tcpdump -i lo tcp and port 8888 -s0 -w /home/tcp_close.pcap
 
 客户端代码保持不变，服务端代码需要增加一点东西。
 
-在上面服务端代码中，增加了打开了 TCP_QUICKACK （快速应答）机制的代码，如下：
+在上面服务端代码中，增加了打开了 TCP_QUICKACK（快速应答）机制的代码，如下：
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/fbbe19e6b1cc4a21b024588950b88eee.png)
 
@@ -351,7 +351,7 @@ tcpdump -i lo tcp and port 8888 -s0 -w /home/tcp_close.pcap
 
 ----
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」***
 
 ![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
 

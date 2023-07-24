@@ -12,13 +12,13 @@
 
 ![](https://img-blog.csdnimg.cn/img_convert/1541c881598f554920355f0a3c5780fd.png)
 
-因为进程在执行 write （使用缓冲 IO）系统调用的时候，实际上是将文件数据写到了内核的 page cache，它是文件系统中用于缓存文件数据的缓冲，所以即使进程崩溃了，文件数据还是保留在内核的 page cache，我们读数据的时候，也是从内核的 page cache 读取，因此还是依然读的进程崩溃前写入的数据。
+因为进程在执行 write（使用缓冲 IO）系统调用的时候，实际上是将文件数据写到了内核的 page cache，它是文件系统中用于缓存文件数据的缓冲，所以即使进程崩溃了，文件数据还是保留在内核的 page cache，我们读数据的时候，也是从内核的 page cache 读取，因此还是依然读的进程崩溃前写入的数据。
 
 内核会找个合适的时机，将  page cache 中的数据持久化到磁盘。但是如果 page cache 里的文件数据，在持久化到磁盘化到磁盘之前，系统发生了崩溃，那这部分数据就会丢失了。
 
-当然， 我们也可以在程序里调用 fsync 函数，在写文文件的时候，立刻将文件数据持久化到磁盘，这样就可以解决系统崩溃导致的文件数据丢失的问题。
+当然，我们也可以在程序里调用 fsync 函数，在写文文件的时候，立刻将文件数据持久化到磁盘，这样就可以解决系统崩溃导致的文件数据丢失的问题。
 
-我在网上看到一篇介绍 page cache 很好的文章， 分享给大家一起学习。
+我在网上看到一篇介绍 page cache 很好的文章，分享给大家一起学习。
 
 > 作者：spongecaptain
 >
@@ -73,7 +73,7 @@ Page Cache = Buffers + Cached + SwapCached
 
 ### page 与 Page Cache
 
-page 是内存管理分配的基本单位， Page Cache 由多个 page 构成。page 在操作系统中通常为 4KB 大小（32bits/64bits），而 Page Cache 的大小则为 4KB 的整数倍。
+page 是内存管理分配的基本单位，Page Cache 由多个 page 构成。page 在操作系统中通常为 4KB 大小（32bits/64bits），而 Page Cache 的大小则为 4KB 的整数倍。
 
 **另一方面，并不是所有 page 都被组织为 Page Cache**。
 
@@ -123,7 +123,7 @@ Linux 通过一个 swappiness 参数来控制 Swap 机制：这个参数值可�
 
 ### Page Cache 与 buffer cache
 
-执行 free 命令，注意到会有两列名为 buffers 和 cached，也有一行名为 “-/+ buffers/cache”。
+执行 free 命令，注意到会有两列名为 buffers 和 cached，也有一行名为“-/+ buffers/cache”。
 
 ```
 ~ free -m
@@ -147,7 +147,7 @@ Page Cache 与 buffer cache 的**共同目的都是加速数据 I/O**：
 
 在 Linux 2.4 版本的内核之前，Page Cache 与 buffer cache 是完全分离的。但是，块设备大多是磁盘，磁盘上的数据又大多通过文件系统来组织，这种设计导致很多数据被缓存了两次，浪费内存。
 
-**所以在 2.4 版本内核之后，两块缓存近似融合在了一起：如果一个文件的页加载到了 Page Cache，那么同时 buffer cache 只需要维护块指向页的指针就可以了**。只有那些没有文件表示的块，或者绕过了文件系统直接操作（如dd命令）的块，才会真正放到 buffer cache 里。
+**所以在 2.4 版本内核之后，两块缓存近似融合在了一起：如果一个文件的页加载到了 Page Cache，那么同时 buffer cache 只需要维护块指向页的指针就可以了**。只有那些没有文件表示的块，或者绕过了文件系统直接操作（如 dd 命令）的块，才会真正放到 buffer cache 里。
 
 因此，**我们现在提起 Page Cache，基本上都同时指 Page Cache 和 buffer cache 两者，本文之后也不再区分，直接统称为 Page Cache**。
 
@@ -178,9 +178,9 @@ Page Cache 中的每个文件都是一棵基数树（radix tree，本质上是�
 
 任何系统引入缓存，就会引发一致性问题：内存中的数据与磁盘中的数据不一致，例如常见后端架构中的 Redis 缓存与 MySQL 数据库就存在一致性问题。
 
-Linux 提供多种机制来保证数据一致性，但无论是单机上的内存与磁盘一致性，还是分布式组件中节点 1 与节点 2 、节点 3 的数据一致性问题，理解的关键是 trade-off：吞吐量与数据一致性保证是一对矛盾。
+Linux 提供多种机制来保证数据一致性，但无论是单机上的内存与磁盘一致性，还是分布式组件中节点 1 与节点 2、节点 3 的数据一致性问题，理解的关键是 trade-off：吞吐量与数据一致性保证是一对矛盾。
 
-首先，需要我们理解一下文件的数据。**文件 = 数据 + 元数据**。元数据用来描述文件的各种属性，也必须存储在磁盘上。因此，我们说保证文件一致性其实包含了两个方面：数据一致+元数据一致。
+首先，需要我们理解一下文件的数据。**文件 = 数据 + 元数据**。元数据用来描述文件的各种属性，也必须存储在磁盘上。因此，我们说保证文件一致性其实包含了两个方面：数据一致 + 元数据一致。
 
 > 文件的元数据包括：文件大小、创建时间、访问时间、属主属组等信息。
 
@@ -226,7 +226,7 @@ Write Through 与 Write back 在持久化的可靠性上有所不同：
 
 **2.减少 I/O 次数，提高系统磁盘 I/O 吞吐量**
 
-得益于 Page Cache 的缓存以及预读能力，而程序又往往符合局部性原理，因此通过一次 I/O 将多个 page 装入 Page Cache 能够减少磁盘 I/O 次数， 进而提高系统磁盘 I/O 吞吐量。
+得益于 Page Cache 的缓存以及预读能力，而程序又往往符合局部性原理，因此通过一次 I/O 将多个 page 装入 Page Cache 能够减少磁盘 I/O 次数，进而提高系统磁盘 I/O 吞吐量。
 
 ### Page Cache 的劣势
 
@@ -258,13 +258,13 @@ Direct I/O 模式如下图所示：
 
 参考资料
 
-- [Linux内核技术实战课](https://time.geekbang.org/column/intro/337)
+- [Linux 内核技术实战课](https://time.geekbang.org/column/intro/337)
 - [Reconsidering swapping](https://lwn.net/Articles/690079/)
 - [访问局部性](https://zh.wikipedia.org/wiki/访问局部性)
 - [DMA 与零拷贝技术](https://spongecaptain.cool/SimpleClearFileIO/2.%20DMA%20%E4%B8%8E%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%8A%80%E6%9C%AF.html)
 
 ---
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」，关注后，回复「网络」再送你图解网络 PDF***
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)
