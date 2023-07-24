@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
 Linux 内核处理收到 TCP 报文的入口函数是  tcp_v4_rcv，在收到 TCP 报文后，会调用 __inet_lookup_skb 函数找到 TCP 报文所属 socket。
 
-```
+```plain
 int tcp_v4_rcv(struct sk_buff *skb)
 {
  ...

@@ -54,7 +54,7 @@ Short Packet Header 中的 `Packet Number` 是每个报文独一无二的编号�
 
 ![](https://img-blog.csdnimg.cn/635813465fbb449882da2e2bee39f24e.png)
 
->  为什么要这么设计呢？
+> 为什么要这么设计呢？
 
 我们先来看看  TCP 的问题，TCP 在重传报文时的序列号和原始报文的序列号是一样的，也正是由于这个特性，引入了 TCP 重传的歧义问题。
 

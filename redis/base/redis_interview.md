@@ -994,7 +994,7 @@ def del_large_sortedset():
 
 主要有 4 种场景，默认都是关闭的：
 
-```
+```plain
 lazyfree-lazy-eviction no
 lazyfree-lazy-expire no
 lazyfree-lazy-server-del

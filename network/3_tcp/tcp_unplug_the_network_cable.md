@@ -92,7 +92,7 @@ Linux 2.6+ 使用 1000 毫秒的 HZ，因此`TCP_RTO_MIN`约为 200 毫秒，`TC
 
 在 Linux 内核可以有对应的参数可以设置保活时间、保活探测的次数、保活探测的时间间隔，以下都为默认值：
 
-```
+```plain
 net.ipv4.tcp_keepalive_time=7200
 net.ipv4.tcp_keepalive_intvl=75  
 net.ipv4.tcp_keepalive_probes=9

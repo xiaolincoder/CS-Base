@@ -87,7 +87,7 @@ HTTP/2 为高频出现在头部的字符串和字段建立了一张**静态表**
 
 这么说有点抽象，我们来看个具体的例子，下面这个 `server` 头部字段，在 HTTP/1.1 的形式如下：
 
-```
+```plain
 server: nghttpx\r\n
 ```
 
@@ -104,7 +104,7 @@ server: nghttpx\r\n
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http2/静态头部.png)
 
 
-HTTP/2 头部由于基于**二进制编码**，就不需要冒号空格和末尾的\r\n作为分隔符，于是改用表示字符串长度（Value Length）来分割 Index 和 Value。
+HTTP/2 头部由于基于**二进制编码**，就不需要冒号空格和末尾的\r\n 作为分隔符，于是改用表示字符串长度（Value Length）来分割 Index 和 Value。
 
 接下来，根据这个头部格式来分析上面抓包的 `server` 头部的二进制数据。
 

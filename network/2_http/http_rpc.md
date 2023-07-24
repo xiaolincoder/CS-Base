@@ -1,6 +1,6 @@
 # 3.8 既然有 HTTP 协议，为什么还要有 RPC？
 
->来源：公众号@小白 debug
+> 来源：公众号@小白 debug
 >
 >原文地址：[既然有 HTTP 协议，为什么还要有 RPC？](https://mp.weixin.qq.com/s/qmnfmUCdekEt1xG0hp_4MQ)
 
@@ -86,13 +86,13 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 举个例子，我们平时调用一个**本地方法**就像下面这样。
 
-```
+```plain
  res = localFunc(req)
 ```
 
 如果现在这不是个本地方法，而是个**远端服务器**暴露出来的一个方法 `remoteFunc`，如果我们还能像调用本地方法那样去调用它，这样就可以**屏蔽掉一些网络细节**，用起来更方便，岂不美哉？
 
-```
+```plain
  res = remoteFunc(req)
 ```
 

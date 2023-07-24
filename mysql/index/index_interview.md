@@ -10,7 +10,7 @@
 - 什么时候不需要创建索引？
 - 什么情况下索引会失效？
 - 有什么优化索引的方法？
-- .....
+- ……
 
 今天就带大家，夯实 MySQL 索引的知识点。
 
@@ -257,13 +257,13 @@ ON table_name(column_name(length));
 
 通过将多个字段组合成一个索引，该索引就被称为联合索引。
 
-比如，将商品表中的 product_no 和 name 字段组合成联合索引` (product_no, name)`，创建联合索引的方式如下：
+比如，将商品表中的 product_no 和 name 字段组合成联合索引`(product_no, name)`，创建联合索引的方式如下：
 
 ```sql
 CREATE INDEX index_product_no_name ON product(product_no, name);
 ```
 
-联合索引` (product_no, name)` 的 B+Tree 示意图如下：
+联合索引`(product_no, name)` 的 B+Tree 示意图如下：
 
 ![联合索引](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/索引/联合索引.drawio.png)
 
@@ -349,7 +349,7 @@ Q2 和 Q1 的查询语句很像，唯一的区别就是 a 字段的查询条件�
 
 通过 Q2 查询语句我们可以知道，虽然 a 字段使用了 >= 进行范围查询，但是联合索引的最左匹配原则并没有在遇到 a 字段的范围查询（ >=）后就停止匹配了，b 字段还是可以用到了联合索引的。
 
-> Q3: ` SELECT * FROM t_table WHERE a BETWEEN 2 AND 8 AND b = 2`，联合索引（a, b）哪一个字段用到了联合索引的 B+Tree？
+> Q3: `SELECT * FROM t_table WHERE a BETWEEN 2 AND 8 AND b = 2`，联合索引（a, b）哪一个字段用到了联合索引的 B+Tree？
 
 Q3 查询条件中 `a BETWEEN 2 AND 8` 的意思是查询 a 字段的值在 2 和 8 之间的记录。不同的数据库对 BETWEEN ... AND 处理方式是有差异的。在 MySQL 中，BETWEEN 包含了 value1 和 value2 边界值，类似于 \>= and =<。而有的数据库则不包含 value1 和 value2 边界值（类似于 > and <）。
 
@@ -361,7 +361,7 @@ Q3 查询条件中 `a BETWEEN 2 AND 8` 的意思是查询 a 字段的值在 2 �
 
 通过 Q3 查询语句我们可以知道，虽然 a 字段使用了 BETWEEN 进行范围查询，但是联合索引的最左匹配原则并没有在遇到 a 字段的范围查询（BETWEEN）后就停止匹配了，b 字段还是可以用到了联合索引的。
 
-> Q4: ` SELECT * FROM t_user WHERE name like 'j%' and age = 22`，联合索引（name, age）哪一个字段用到了联合索引的 B+Tree？
+> Q4: `SELECT * FROM t_user WHERE name like 'j%' and age = 22`，联合索引（name, age）哪一个字段用到了联合索引的 B+Tree？
 
 由于联合索引（二级索引）是先按照 name 字段的值排序的，所以前缀为‘j’的 name 字段的二级索引记录都是相邻的，于是在进行索引扫描的时候，可以定位到符合前缀为‘j’的 name 字段的第一条记录，然后沿着记录所在的链表向后扫描，直到某条记录的 name 前缀不为‘j’为止。
 

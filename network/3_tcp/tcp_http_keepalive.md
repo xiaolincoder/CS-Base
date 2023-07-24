@@ -50,13 +50,13 @@ HTTP 长连接的特点是，只要任意一端没有明确提出断开连接，
 在 HTTP 1.0 中默认是关闭的，如果浏览器要开启 Keep-Alive，它必须在请求的包头中添加：
 
 
-```
+```plain
 Connection: Keep-Alive
 ```
 
 然后当服务器收到请求，作出回应的时候，它也添加一个头在响应中：
 
-```
+```plain
 Connection: Keep-Alive
 ```
 
@@ -64,7 +64,7 @@ Connection: Keep-Alive
 
 **从 HTTP 1.1 开始，就默认是开启了 Keep-Alive**，如果要关闭 Keep-Alive，需要在 HTTP 请求的包头里添加：
 
-```
+```plain
 Connection:close
 ```
 

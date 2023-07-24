@@ -392,7 +392,7 @@ Compressed 和 Dynamic 这两个行格式和 Compact 非常类似，主要的区
 
 ## 总结
 
->  MySQL 的 NULL 值是怎么存放的？
+> MySQL 的 NULL 值是怎么存放的？
 
 MySQL 的 Compact 行格式中会用「NULL 值列表」来标记值为 NULL 的列，NULL 值并不会存储在行格式中的真实数据部分。
 

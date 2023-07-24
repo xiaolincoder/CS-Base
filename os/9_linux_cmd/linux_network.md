@@ -85,7 +85,7 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 
 接收队列（*Recv-Q*）和发送队列（*Send-Q*）比较特殊，在不同的 socket 状态。它们表示的含义是不同的。
 
-当 socket 状态处于 `Established `时：
+当 socket 状态处于 `Established`时：
 
 - *Recv-Q* 表示 socket 缓冲区中还没有被应用程序读取的字节数；
 - *Send-Q* 表示 socket 缓冲区中还没有被远端主机确认的字节数；

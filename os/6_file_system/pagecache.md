@@ -59,13 +59,13 @@ SReclaimable:      43532 kB
 
 根据上面的数据，你可以简单得出这样的公式（等式两边之和都是 112696 KB）：
 
-```
+```plain
 Buffers + Cached + SwapCached = Active(file) + Inactive(file) + Shmem + SwapCached
 ```
 
 两边等式都是 Page Cache，即：
 
-```
+```plain
 Page Cache = Buffers + Cached + SwapCached
 ```
 
@@ -125,7 +125,7 @@ Linux 通过一个 swappiness 参数来控制 Swap 机制：这个参数值可�
 
 执行 free 命令，注意到会有两列名为 buffers 和 cached，也有一行名为“-/+ buffers/cache”。
 
-```
+```plain
 ~ free -m
              total       used       free     shared    buffers     cached
 Mem:        128956      96440      32515          0       5368      39900

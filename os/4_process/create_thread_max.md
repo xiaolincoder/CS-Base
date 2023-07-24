@@ -64,7 +64,7 @@ Windows 系统我不了解，我就说说 Linux 系统。
 
 如果想使得进程创建上千个线程，那么我们可以调整创建线程时分配的栈空间大小，比如调整为 512k：
 
-```
+```plain
 $ ulimit -s 512
 ```
 
@@ -114,7 +114,7 @@ $ ulimit -s 512
 那么，我们可以把 threads-max 参数设置成 `99999`:
 
 
-```
+```plain
 echo 99999 > /proc/sys/kernel/threads-max
 ```
 
@@ -129,7 +129,7 @@ echo 99999 > /proc/sys/kernel/threads-max
 此时的上限个数很接近 `pid_max` 内核参数的默认值（32768），那么我们可以尝试将这个参数设置为 99999：
 
 
-```
+```plain
 echo 99999 > /proc/sys/kernel/pid_max
 ```
 
@@ -141,7 +141,7 @@ echo 99999 > /proc/sys/kernel/pid_max
 
 然后，我把 max_map_count 内核参数也设置成后 99999：
 
-```
+```plain
 echo 99999 > /proc/sys/kernel/max_map_count 
 ```
 
@@ -156,7 +156,7 @@ echo 99999 > /proc/sys/kernel/max_map_count
 
 接下来，我们换个思路测试下，把创建线程时分配的栈空间调大，比如调大为 100M，在大就会创建线程失败。
 
-```
+```plain
 ulimit -s 1024000
 ```
 

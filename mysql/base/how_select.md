@@ -266,7 +266,7 @@ select * from product where id = 1;
 
 举个全表扫描的例子：
 
-```
+```plain
 select * from product where name = 'iphone';
 ```
 

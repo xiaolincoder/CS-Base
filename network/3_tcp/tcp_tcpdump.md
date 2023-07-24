@@ -168,7 +168,7 @@ TCP 三次握手的过程相信大家都背的滚瓜烂熟，那么你有没有�
 - 那会重传几次？
 - 超时重传的时间 RTO 会如何变化？
 - 在 Linux 下如何设置重传次数？
-- ....
+- ……
 
 是不是哑口无言，无法回答？
 
@@ -278,7 +278,7 @@ $ echo 2 > /proc/sys/net/ipv4/tcp_syn_retries
 
 > tcp_syn_retries 是限制 SYN 重传次数，那第二次握手 SYN、ACK 限制最大重传次数是多少？
 
-TCP 第二次握手 SYN、ACK 包的最大重传次数是通过 `tcp_synack_retries ` 内核参数限制的，其默认值如下：
+TCP 第二次握手 SYN、ACK 包的最大重传次数是通过 `tcp_synack_retries` 内核参数限制的，其默认值如下：
 
 ```bash
 $ cat /proc/sys/net/ipv4/tcp_synack_retries
@@ -393,7 +393,7 @@ iptables 配置命令如下：
 
 TCP 建立连接后的数据包传输，最大超时重传次数是由 `tcp_retries2` 指定，默认值是 15 次，如下：
 
-```
+```plain
 $ cat /proc/sys/net/ipv4/tcp_retries2
 15
 ```
@@ -408,7 +408,7 @@ $ cat /proc/sys/net/ipv4/tcp_retries2
 
 在 Linux 内核可以有对应的参数可以设置保活时间、保活探测的次数、保活探测的时间间隔，以下都为默认值：
 
-```
+```plain
 net.ipv4.tcp_keepalive_time=7200
 net.ipv4.tcp_keepalive_intvl=75  
 net.ipv4.tcp_keepalive_probes=9
@@ -667,7 +667,7 @@ TCP 延迟确认可以在 Socket 设置 `TCP_QUICKACK` 选项来关闭这个算�
 
 ![关闭 TCP 延迟确认](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/60.jpg)
 
->  延迟确认 和 Nagle 算法混合使用时，会产生新的问题
+> 延迟确认 和 Nagle 算法混合使用时，会产生新的问题
 
 当 TCP 延迟确认 和 Nagle 算法混合使用时，会导致时耗增长，如下图：
 
@@ -690,9 +690,9 @@ TCP 延迟确认可以在 Socket 设置 `TCP_QUICKACK` 选项来关闭这个算�
 
 参考资料：
 
-[1] Wireshark 网络分析的艺术。林沛满.人民邮电出版社。
+[1] Wireshark 网络分析的艺术。林沛满。人民邮电出版社。
 
-[2] Wireshark 网络分析就这么简单。林沛满.人民邮电出版社。
+[2] Wireshark 网络分析就这么简单。林沛满。人民邮电出版社。
 
 [3] Wireshark 数据包分析实战.Chris Sanders .人民邮电出版社。读者问答
 

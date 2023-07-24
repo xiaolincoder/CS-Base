@@ -175,7 +175,7 @@ Insert into t_order (order_no, create_date) values (1008, now());
 
 Insert 语句在正常执行时是不会生成锁结构的，它是靠聚簇索引记录自带的 trx_id 隐藏列来作为**隐式锁**来保护记录的。
 
->  什么是隐式锁？
+> 什么是隐式锁？
 
 当事务需要加锁的时，如果这个锁不可能发生冲突，InnoDB 会跳过加锁环节，这种机制称为隐式锁。隐式锁是 InnoDB 实现的一种延迟加锁机制，其特点是只有在可能发生冲突时才加锁，从而减少了锁的数量，提高了系统整体性能。
 
@@ -224,7 +224,7 @@ mysql> insert into t_order(order_no, create_date) values(1010,now());
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/事务b插入意向锁.png)
 
-可以看到，事务 B 的状态为等待状态（LOCK_STATUS: WAITING），因为向事务 A 生成的 next-key 锁（记录锁 + 间隙锁）范围`（1005, +∞]` 中插入了一条记录，所以事务 B 的插入操作生成了一个插入意向锁（` LOCK_MODE: X,INSERT_INTENTION     `），锁的状态是等待状态，意味着事务 B 并没有成功获取到插入意向锁，因此事务 B 发生阻塞。
+可以看到，事务 B 的状态为等待状态（LOCK_STATUS: WAITING），因为向事务 A 生成的 next-key 锁（记录锁 + 间隙锁）范围`（1005, +∞]` 中插入了一条记录，所以事务 B 的插入操作生成了一个插入意向锁（`LOCK_MODE: X,INSERT_INTENTION`），锁的状态是等待状态，意味着事务 B 并没有成功获取到插入意向锁，因此事务 B 发生阻塞。
 
 ### 2、遇到唯一键冲突
 
@@ -358,7 +358,7 @@ t_order 表中的 order_no 字段为唯一二级索引，并且已经存在 orde
 
 面试官：卧槽滚！
 
-**...........**
+**……**
 
 ---
 

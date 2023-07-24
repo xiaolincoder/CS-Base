@@ -210,7 +210,7 @@ public long transferFrom(FileChannel fileChannel, long position, long count) thr
 
 另外，Nginx 也支持零拷贝技术，一般默认是开启零拷贝技术，这样有利于提高文件传输的效率，是否开启零拷贝技术的配置如下：
 
-```
+```plain
 http {
 ...
     sendfile on
@@ -321,7 +321,7 @@ sendfile 配置的具体意思：
 
 在 nginx 中，我们可以用如下配置，来根据文件的大小来使用不同的方式：
 
-```
+```plain
 location /video/ { 
     sendfile on; 
     aio on; 

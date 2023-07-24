@@ -256,7 +256,7 @@ Google 推出的 **BBR 算法是以测量带宽、时延来确定拥塞的拥塞
 
 Linux 4.9 版本之后都支持 BBR 算法，开启 BBR 算法的方式：
 
-```
+```plain
 net.ipv4.tcp_congestion_control=bbr
 ```
 

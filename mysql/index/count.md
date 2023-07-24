@@ -73,7 +73,7 @@ select count(id) from t_order;
 
 用下面这条语句作为例子：
 
-```
+```plain
 select count(1) from t_order;
 ```
 

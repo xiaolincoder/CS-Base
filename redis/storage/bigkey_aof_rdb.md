@@ -63,7 +63,7 @@ AOF 重写机制和 RDB 快照（bgsave 命令）的过程，都会分别通过 
 
 而且，fork 函数是由 Redis 主线程调用的，如果 fork 函数发生阻塞，那么意味着就会阻塞 Redis 主线程。由于 Redis 执行命令是在主线程处理的，所以当 Redis 主线程发生阻塞，就无法处理后续客户端发来的命令。
 
-我们可以执行 `info ` 命令获取到 latest_fork_usec 指标，表示 Redis 最近一次 fork 操作耗时。
+我们可以执行 `info` 命令获取到 latest_fork_usec 指标，表示 Redis 最近一次 fork 操作耗时。
 
 ```sql
 # 最近一次 fork 操作耗时

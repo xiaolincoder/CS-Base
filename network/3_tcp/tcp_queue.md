@@ -137,7 +137,7 @@ tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/13.jpg)
 
 
-- `somaxconn` 是 Linux 内核的参数，默认值是 128，可以通过 ` /proc/sys/net/core/somaxconn` 来设置其值；
+- `somaxconn` 是 Linux 内核的参数，默认值是 128，可以通过 `/proc/sys/net/core/somaxconn` 来设置其值；
 - `backlog` 是 `listen(int sockfd, int backlog)` 函数中的 backlog 大小，Nginx 默认值是 511，可以通过修改配置文件设置其长度；
 
 前面模拟测试中，我的测试环境：
@@ -407,7 +407,7 @@ syncookies 参数主要有以下三个值：
 
 参考资料：
 
-[1] 系统性能调优必知必会。陶辉.极客时间。
+[1] 系统性能调优必知必会。陶辉。极客时间。
 
 [2] https://www.cnblogs.com/zengkefu/p/5606696.html
 

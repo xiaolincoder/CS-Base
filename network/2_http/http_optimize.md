@@ -115,7 +115,7 @@
 另外，还可以将图片的二进制数据用 `base64` 编码后，以 URL 的形式嵌入到 HTML 文件，跟随 HTML 文件一并发送。
 
 
-```
+```plain
 <image src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAFKCAIAAAC7M9WrAAAACXBIWXMAA ... />
 ```
 
@@ -163,14 +163,14 @@
 gzip 就是比较常见的无损压缩。客户端支持的压缩算法，会在 HTTP 请求中通过头部中的 `Accept-Encoding` 字段告诉服务器：
 
 
-```
+```plain
 Accept-Encoding: gzip, deflate, br
 ```
 
 服务器收到后，会从中选择一个服务器支持的或者合适的压缩算法，然后使用此压缩算法对响应资源进行压缩，最后通过响应头部中的 `Content-Encoding` 字段告诉客户端该资源使用的压缩算法。
 
 
-```
+```plain
 Content-Encoding: gzip
 ```
 
@@ -184,7 +184,7 @@ gzip 的压缩效率相比 Google 推出的 Brotli 算法还是差点意思，�
 
 可以通过 HTTP 请求头部中的 `Accept` 字段里的「q 质量因子」，告诉服务器期望的资源质量。
 
-```
+```plain
 Accept: audio/*; q=0.2, audio/basic
 ```
 

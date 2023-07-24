@@ -141,7 +141,7 @@ OK，经过了对 HTTP 里这三个名词的详细解释，就可以给出比「
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/7-HOST字段.png)
 
-```
+```plain
 Host: www.A.com
 ```
 
@@ -153,7 +153,7 @@ Host: www.A.com
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/8-content-length字段.png)
 
-```
+```plain
 Content-Length: 1000
 ```
 
@@ -173,7 +173,7 @@ HTTP 长连接的特点是，只要任意一端没有明确提出断开连接，
 
 HTTP/1.1 版本的默认连接都是长连接，但为了兼容老版本的 HTTP，需要指定 `Connection` 首部字段的值为 `Keep-Alive`。
 
-```
+```plain
 Connection: Keep-Alive
 ```
 
@@ -187,7 +187,7 @@ PS：大家不要把 HTTP  Keep-Alive 和 TCP Keepalive 搞混了，这两个虽
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/10-content-type字段.png)
 
-```
+```plain
 Content-Type: text/html; Charset=utf-8
 ```
 
@@ -195,7 +195,7 @@ Content-Type: text/html; Charset=utf-8
 
 客户端请求的时候，可以使用 `Accept` 字段声明自己可以接受哪些数据格式。
 
-```
+```plain
 Accept: */*
 ```
 
@@ -208,7 +208,7 @@ Accept: */*
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/HTTP/11-content-encoding字段.png)
 
 
-```
+```plain
 Content-Encoding: gzip
 ```
 
@@ -216,7 +216,7 @@ Content-Encoding: gzip
 
 客户端在请求时，用 `Accept-Encoding` 字段说明自己可以接受哪些压缩方法。
 
-```
+```plain
 Accept-Encoding: gzip, deflate
 ```
 

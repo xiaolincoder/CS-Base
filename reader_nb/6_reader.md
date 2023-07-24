@@ -38,7 +38,7 @@
 
 通过学姐发的招聘信息，我被内推去参加了 tx 的实习面试。
 
-这一次面试的内容都十分简单，什么是多态，多态怎么实现的，进程和线程的内容是什么，计算机网络的几层结构是怎么样的…如果你有准备面试的话，你会发现这些问题简直就是送分题！
+这一次面试的内容都十分简单，什么是多态，多态怎么实现的，进程和线程的内容是什么，计算机网络的几层结构是怎么样的……如果你有准备面试的话，你会发现这些问题简直就是送分题！
 
 但由于我从来没有学习过相关的知识，被虐的惨不忍睹（面试官还和我说会进行评估，然后五分钟之后就把我挂了）才发现自己这一块有如此大的欠缺，开始着手一点点的从头开始补 CS 的知识。
 
@@ -98,7 +98,7 @@ http://nil.csail.mit.edu/6.824/2018/schedule.html
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/158b732d6e6b3ff6c5aea1285b67f09a.png)
 
-下图是 lab1 的 part1，告诉你你需要在 common_map.go 里实 现 domap（）函数等等…会写的很清楚让你去实现哪一部分的模块。
+下图是 lab1 的 part1，告诉你你需要在 common_map.go 里实 现 domap（）函数等等……会写的很清楚让你去实现哪一部分的模块。
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/17ccd88cb4276063c2a85864441d7511.png)
 
@@ -116,7 +116,7 @@ https://15445.courses.cs.cmu.edu/fall2020/schedule.html
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/2bfa6458fbde31d203366e3bcc33a119.png)
 
-下图是 lab1 的 LRU 模块，告诉你要去实现 src/…/lru_replacer.h 的 victim 函数啊，pin 函数啊等等，写的十分清楚。
+下图是 lab1 的 LRU 模块，告诉你要去实现 src/……/lru_replacer.h 的 victim 函数啊，pin 函数啊等等，写的十分清楚。
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/23da55e8b84a02ba7642bfe6ccc169e4.png)
 

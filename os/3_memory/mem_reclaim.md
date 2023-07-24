@@ -148,7 +148,7 @@ kswapd 会定期扫描内存的使用情况，根据剩余内存（pages_free）
 
 min_free_kbytes 虽然设置的是页最小阈值（pages_min），但是页高阈值（pages_high）和页低阈值（pages_low）都是根据页最小阈值（pages_min）计算生成的，它们之间的计算关系如下：
 
-```
+```plain
 pages_min = min_free_kbytes
 pages_low = pages_min*5/4
 pages_high = pages_min*3/2
