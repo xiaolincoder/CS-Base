@@ -1,0 +1,14 @@
+name: Autocorrect
+on: [push, pull_request]
+jobs:
+  autocorrect:
+    name: Check text autocorrect
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Exec autocorrect
+        uses: huacnlee/autocorrect-action@main
