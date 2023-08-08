@@ -3,7 +3,7 @@
 
 大家好，我是小林，是《图解网络》的作者，本站的内容都是整理于我[公众号](https://mp.weixin.qq.com/s/FYH1I8CRsuXDSybSGY_AFA)里的图解文章。
 
-还没关注的朋友，可以微信搜索「**小林coding**」，关注我的公众号，**后续最新版本的 PDF 会在我的公众号第一时间发布**，而且会有更多其他系列的图解文章，比如操作系统、计算机组成、数据库、算法等等。
+还没关注的朋友，可以微信搜索「**小林 coding**」，关注我的公众号，**后续最新版本的 PDF 会在我的公众号第一时间发布**，而且会有更多其他系列的图解文章，比如操作系统、计算机组成、数据库、算法等等。
 
 简单介绍下《图解网络》，整个内容共有 **`20W` 字 + `500` 张图**，每一篇都自己手绘了很多图，目的也很简单，击破大家对于「八股文」的恐惧。
 
@@ -29,7 +29,7 @@
 - TCP 为什么是可靠传输协议，而 UDP 不是？
 - 键入网址到网页显示，期间发生了什么？
 - HTTPS 握手过程是怎样的？
-- ….
+- …….
 
 不敢说 100 % 涵盖了面试的网络问题，但是至少 90% 是有的，而且内容的深度应对大厂也是绰绰有余，有非常多的读者跑来感激小林的图解网络，帮助他们拿到了国内很多一线大厂的 offer。
 
@@ -67,7 +67,7 @@
 	- [四次挥手中收到乱序的 FIN 包会如何处理？](/network/3_tcp/out_of_order_fin.md) 
 	- [在 TIME_WAIT 状态的 TCP 连接，收到 SYN 后会发生什么？](/network/3_tcp/time_wait_recv_syn.md) 
 	- [TCP 连接，一端断电和进程崩溃有什么区别？](/network/3_tcp/tcp_down_and_crash.md) 
-	- [拔掉网线后， 原本的 TCP 连接还存在吗？](/network/3_tcp/tcp_unplug_the_network_cable.md) 
+	- [拔掉网线后，原本的 TCP 连接还存在吗？](/network/3_tcp/tcp_unplug_the_network_cable.md) 
 	- [tcp_tw_reuse 为什么默认是关闭的？](/network/3_tcp/tcp_tw_reuse_close.md) 
 	- [HTTPS 中 TLS 和 TCP 能同时握手吗？](/network/3_tcp/tcp_tls.md) 
 	- [TCP Keepalive 和 HTTP Keep-Alive 是一个东西吗？](/network/3_tcp/tcp_http_keepalive.md) 

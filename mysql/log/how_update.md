@@ -21,11 +21,11 @@ UPDATE t_user SET name = 'xiaolin' WHERE id = 1;
 - 优化器确定执行计划，因为 where 条件中的 id 是主键索引，所以决定要使用 id 这个索引；
 - 执行器负责具体执行，找到这一行，然后更新。
 
-不过，更新语句的流程会涉及到  undo log（回滚日志）、redo log（重做日志） 、binlog （归档日志）这三种日志：
+不过，更新语句的流程会涉及到  undo log（回滚日志）、redo log（重做日志） 、binlog（归档日志）这三种日志：
 
 - **undo log（回滚日志）**：是 Innodb 存储引擎层生成的日志，实现了事务中的**原子性**，主要**用于事务回滚和 MVCC**。
 - **redo log（重做日志）**：是 Innodb 存储引擎层生成的日志，实现了事务中的**持久性**，主要**用于掉电等故障恢复**；
-- **binlog （归档日志）**：是 Server 层生成的日志，主要**用于数据备份和主从复制**；
+- **binlog（归档日志）**：是 Server 层生成的日志，主要**用于数据备份和主从复制**；
 
 所以这次就带着这个问题，看看这三种日志是怎么工作的。
 
@@ -37,7 +37,7 @@ UPDATE t_user SET name = 'xiaolin' WHERE id = 1;
 
 执行一条语句是否自动提交事务，是由 `autocommit` 参数决定的，默认是开启。所以，执行一条 update 语句也是会使用事务的。
 
-那么，考虑一个问题。一个事务在执行过程中，在还没有提交事务之前，如果MySQL 发生了崩溃，要怎么回滚到事务之前的数据呢？
+那么，考虑一个问题。一个事务在执行过程中，在还没有提交事务之前，如果 MySQL 发生了崩溃，要怎么回滚到事务之前的数据呢？
 
 如果我们每次在事务执行过程中，都记录下回滚时需要的信息到一个日志里，那么在事务执行中途发生了 MySQL 崩溃后，就不用担心无法回滚到事务之前的数据，我们可以通过这个日志回滚到事务之前的数据。
 
@@ -57,7 +57,7 @@ undo log 是一种用于撤销回退的日志。在事务没提交之前，MySQL
 
 不同的操作，需要记录的内容也是不同的，所以不同类型的操作（修改、删除、新增）产生的 undo log 的格式也是不同的，具体的每一个操作的 undo log 的格式我就不详细介绍了，感兴趣的可以自己去查查。
 
-一条记录的每一次更新操作产生的 undo log 格式都有一个 roll_pointer 指针和一个 trx_id 事务id：
+一条记录的每一次更新操作产生的 undo log 格式都有一个 roll_pointer 指针和一个 trx_id 事务 id：
 
 - 通过 trx_id 可以知道该记录是被哪个事务修改的；
 - 通过 roll_pointer 指针可以将这些 undo log 串成一个链表，这个链表就被称为版本链；
@@ -94,13 +94,13 @@ MySQL 的数据都是存在磁盘中的，那么我们要更新一条记录的�
 有了 Buffer Pool 后：
 
 - 当读取数据时，如果数据存在于 Buffer Pool 中，客户端就会直接读取 Buffer Pool 中的数据，否则再去磁盘中读取。
-- 当修改数据时，如果数据存在于  Buffer Pool  中，那直接修改 Buffer Pool 中数据所在的页，然后将其页设置为脏页（该页的内存数据和磁盘上的数据已经不一致），为了减少磁盘I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。
+- 当修改数据时，如果数据存在于  Buffer Pool  中，那直接修改 Buffer Pool 中数据所在的页，然后将其页设置为脏页（该页的内存数据和磁盘上的数据已经不一致），为了减少磁盘 I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。
 
 ### Buffer Pool 缓存什么？
 
 InnoDB 会把存储的数据划分为若干个「页」，以页作为磁盘和内存交互的基本单位，一个页的默认大小为 16KB。因此，Buffer Pool 同样需要按「页」来划分。
 
-在 MySQL 启动的时候，**InnoDB 会为 Buffer Pool 申请一片连续的内存空间，然后按照默认的`16KB`的大小划分出一个个的页， Buffer Pool 中的页就叫做缓存页**。此时这些缓存页都是空闲的，之后随着程序的运行，才会有磁盘上的页被缓存到 Buffer Pool 中。
+在 MySQL 启动的时候，**InnoDB 会为 Buffer Pool 申请一片连续的内存空间，然后按照默认的`16KB`的大小划分出一个个的页，Buffer Pool 中的页就叫做缓存页**。此时这些缓存页都是空闲的，之后随着程序的运行，才会有磁盘上的页被缓存到 Buffer Pool 中。
 
 所以，MySQL 刚启动的时候，你会观察到使用的虚拟内存空间很大，而使用到的物理内存空间却很小，这是因为只有这些虚拟内存被访问后，操作系统才会触发缺页中断，申请物理内存，接着将虚拟地址和物理地址建立映射关系。
 
@@ -120,15 +120,15 @@ Buffer Pool 除了缓存「索引页」和「数据页」，还包括了 Undo �
 
 关于页结构长什么样和索引怎么查询数据的问题可以在这篇找到答案：[换一个角度看 B+ 树](https://mp.weixin.qq.com/s/A5gNVXMNE-iIlY3oofXtLw)
 
-## 为什么需要 redo log ？
+## 为什么需要 redo log？
 
 Buffer Pool 是提高了读写效率没错，但是问题来了，Buffer Pool 是基于内存的，而内存总是不可靠，万一断电重启，还没来得及落盘的脏页数据就会丢失。
 
 为了防止断电导致数据丢失的问题，当有一条记录需要更新的时候，InnoDB 引擎就会先更新内存（同时标记为脏页），然后将本次对这个页的修改以 redo log 的形式记录下来，**这个时候更新就算完成了**。
 
-后续，InnoDB 引擎会在适当的时候，由后台线程将缓存在 Buffer Pool  的脏页刷新到磁盘里，这就是  **WAL （Write-Ahead Logging）技术**。
+后续，InnoDB 引擎会在适当的时候，由后台线程将缓存在 Buffer Pool  的脏页刷新到磁盘里，这就是  **WAL（Write-Ahead Logging）技术**。
 
-**WAL 技术指的是， MySQL 的写操作并不是立刻写到磁盘上，而是先写日志，然后在合适的时间再写到磁盘上**。
+**WAL 技术指的是，MySQL 的写操作并不是立刻写到磁盘上，而是先写日志，然后在合适的时间再写到磁盘上**。
 
 过程如下图：
 
@@ -136,7 +136,7 @@ Buffer Pool 是提高了读写效率没错，但是问题来了，Buffer Pool �
 
 > 什么是  redo log？
 
-redo log 是物理日志，记录了某个数据页做了什么修改，比如**对 XXX 表空间中的 YYY 数据页 ZZZ 偏移量的地方做了AAA 更新**，每当执行一个事务就会产生这样的一条或者多条物理日志。
+redo log 是物理日志，记录了某个数据页做了什么修改，比如**对 XXX 表空间中的 YYY 数据页 ZZZ 偏移量的地方做了 AAA 更新**，每当执行一个事务就会产生这样的一条或者多条物理日志。
 
 在事务提交时，只要先将 redo log 持久化到磁盘即可，可以不需要等到将缓存在  Buffer Pool  里的脏页数据持久化到磁盘。
 
@@ -163,17 +163,17 @@ redo log 是物理日志，记录了某个数据页做了什么修改，比如**
 
 所以有了 redo log，再通过 WAL 技术，InnoDB 就可以保证即使数据库发生异常重启，之前已提交的记录都不会丢失，这个能力称为 **crash-safe**（崩溃恢复）。可以看出来， **redo log 保证了事务四大特性中的持久性**。
 
->  redo log 要写到磁盘，数据也要写磁盘，为什么要多此一举？
+> redo log 要写到磁盘，数据也要写磁盘，为什么要多此一举？
 
-写入 redo log  的方式使用了追加操作， 所以磁盘操作是**顺序写**，而写入数据需要先找到写入位置，然后才写到磁盘，所以磁盘操作是**随机写**。
+写入 redo log  的方式使用了追加操作，所以磁盘操作是**顺序写**，而写入数据需要先找到写入位置，然后才写到磁盘，所以磁盘操作是**随机写**。
 
-磁盘的「顺序写 」比「随机写」 高效的多，因此  redo log 写入磁盘的开销更小。
+磁盘的「顺序写」比「随机写」高效的多，因此  redo log 写入磁盘的开销更小。
 
 针对「顺序写」为什么比「随机写」更快这个问题，可以比喻为你有一个本子，按照顺序一页一页写肯定比写一个字都要找到对应页写快得多。
 
-可以说这是 WAL 技术的另外一个优点：**MySQL 的写操作从磁盘的「随机写」变成了「顺序写」**，提升语句的执行性能。这是因为 MySQL 的写操作并不是立刻更新到磁盘上，而是先记录在日志上，然后在合适的时间再更新到磁盘上 。
+可以说这是 WAL 技术的另外一个优点：**MySQL 的写操作从磁盘的「随机写」变成了「顺序写」**，提升语句的执行性能。这是因为 MySQL 的写操作并不是立刻更新到磁盘上，而是先记录在日志上，然后在合适的时间再更新到磁盘上。
 
-至此， 针对为什么需要 redo log 这个问题我们有两个答案：
+至此，针对为什么需要 redo log 这个问题我们有两个答案：
 
 - **实现事务的持久性，让 MySQL 有 crash-safe 的能力**，能够保证 MySQL 在任何时间段突然崩溃，重启后之前已提交的记录都不会丢失；
 - **将写操作从「随机写」变成了「顺序写」**，提升 MySQL 写入磁盘的性能。
@@ -182,7 +182,7 @@ redo log 是物理日志，记录了某个数据页做了什么修改，比如**
 
 不是的。
 
-实际上， 执行一个事务的过程中，产生的 redo log 也不是直接写入磁盘的，因为这样会产生大量的 I/O 操作，而且磁盘的运行速度远慢于内存。
+实际上，执行一个事务的过程中，产生的 redo log 也不是直接写入磁盘的，因为这样会产生大量的 I/O 操作，而且磁盘的运行速度远慢于内存。
 
 所以，redo log 也有自己的缓存—— **redo log buffer**，每当产生一条 redo log 时，会先写入到 redo log buffer，后续在持久化到磁盘如下图：
 
@@ -209,9 +209,9 @@ redo log buffer 默认大小 16 MB，可以通过 `innodb_log_Buffer_size` 参�
 
 除此之外，InnoDB 还提供了另外两种策略，由参数 `innodb_flush_log_at_trx_commit` 参数控制，可取的值有：0、1、2，默认值为 1，这三个值分别代表的策略如下：
 
-- 当设置该**参数为 0 时**，表示每次事务提交时 ，还是**将 redo log 留在  redo log buffer 中** ，该模式下在事务提交时不会主动触发写入磁盘的操作。
+- 当设置该**参数为 0 时**，表示每次事务提交时，还是**将 redo log 留在  redo log buffer 中** ，该模式下在事务提交时不会主动触发写入磁盘的操作。
 - 当设置该**参数为 1 时**，表示每次事务提交时，都**将缓存在  redo log buffer 里的  redo log 直接持久化到磁盘**，这样可以保证 MySQL 异常重启之后数据不会丢失。
-- 当设置该**参数为 2 时**，表示每次事务提交时，都只是缓存在  redo log buffer 里的  redo log **写到 redo log 文件，注意写入到「 redo log 文件」并不意味着写入到了磁盘**，因为操作系统的文件系统中有个 Page Cache（如果你想了解  Page Cache，可以看[这篇](https://xiaolincoding.com/os/6_file_system/pagecache.html) ），Page Cache 是专门用来缓存文件数据的，所以写入「 redo log文件」意味着写入到了操作系统的文件缓存。
+- 当设置该**参数为 2 时**，表示每次事务提交时，都只是缓存在  redo log buffer 里的  redo log **写到 redo log 文件，注意写入到「redo log 文件」并不意味着写入到了磁盘**，因为操作系统的文件系统中有个 Page Cache（如果你想了解  Page Cache，可以看[这篇](https://xiaolincoding.com/os/6_file_system/pagecache.html) ），Page Cache 是专门用来缓存文件数据的，所以写入「redo log 文件」意味着写入到了操作系统的文件缓存。
 
 我画了一个图，方便大家理解：
 
@@ -221,8 +221,8 @@ redo log buffer 默认大小 16 MB，可以通过 `innodb_log_Buffer_size` 参�
 
 InnoDB 的后台线程每隔 1 秒：
 
-- 针对参数 0 ：会把缓存在 redo log buffer 中的 redo log ，通过调用 `write()` 写到操作系统的 Page Cache，然后调用 `fsync()` 持久化到磁盘。**所以参数为 0 的策略，MySQL 进程的崩溃会导致上一秒钟所有事务数据的丢失**;
-- 针对参数 2 ：调用 fsync，将缓存在操作系统中 Page Cache 里的 redo log 持久化到磁盘。**所以参数为 2 的策略，较取值为 0 情况下更安全，因为 MySQL 进程的崩溃并不会丢失数据，只有在操作系统崩溃或者系统断电的情况下，上一秒钟所有事务数据才可能丢失**。
+- 针对参数 0：会把缓存在 redo log buffer 中的 redo log，通过调用 `write()` 写到操作系统的 Page Cache，然后调用 `fsync()` 持久化到磁盘。**所以参数为 0 的策略，MySQL 进程的崩溃会导致上一秒钟所有事务数据的丢失**;
+- 针对参数 2：调用 fsync，将缓存在操作系统中 Page Cache 里的 redo log 持久化到磁盘。**所以参数为 2 的策略，较取值为 0 情况下更安全，因为 MySQL 进程的崩溃并不会丢失数据，只有在操作系统崩溃或者系统断电的情况下，上一秒钟所有事务数据才可能丢失**。
 
 加入了后台现线程后，innodb_flush_log_at_trx_commit 的刷盘时机如下图：
 
@@ -243,7 +243,7 @@ InnoDB 的后台线程每隔 1 秒：
 
 ### redo log 文件写满了怎么办？
 
-默认情况下， InnoDB 存储引擎有 1 个重做日志文件组( redo log Group），「重做日志文件组」由有 2 个 redo log 文件组成，这两个  redo  日志的文件名叫 ：`ib_logfile0` 和 `ib_logfile1` 。
+默认情况下，InnoDB 存储引擎有 1 个重做日志文件组 ( redo log Group），「重做日志文件组」由有 2 个 redo log 文件组成，这两个  redo  日志的文件名叫：`ib_logfile0` 和 `ib_logfile1` 。
 
 ![重做日志文件组](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/how_update/重做日志文件组.drawio.png)
 
@@ -271,7 +271,7 @@ redo log 是循环写的方式，相当于一个环形，InnoDB 用 write pos �
 
 所以，一次 check point 的过程就是脏页刷新到磁盘中变成干净页，然后标记 redo log  哪些记录可以被覆盖的过程。
 
-## 为什么需要 binlog ？
+## 为什么需要 binlog？
 
 前面介绍的 undo log 和 redo log 这两个日志都是 Innodb 存储引擎生成的。
 
@@ -279,7 +279,7 @@ MySQL 在完成一条更新操作后，Server 层还会生成一条 binlog，等
 
 binlog 文件是记录了所有数据库表结构变更和表数据修改的日志，不会记录查询类的操作，比如 SELECT 和 SHOW 操作。
 
-> 为什么有了 binlog， 还要有 redo log？
+> 为什么有了 binlog，还要有 redo log？
 
 这个问题跟 MySQL 的时间线有关系。
 
@@ -298,14 +298,14 @@ binlog 文件是记录了所有数据库表结构变更和表数据修改的日�
 
 *2、文件格式不同：*
 
-- binlog 有 3 种格式类型，分别是 STATEMENT、ROW、 MIXED，区别如下：
+- binlog 有 3 种格式类型，分别是 STATEMENT、ROW、MIXED，区别如下：
 
-  > 在MySQL 5.7.7之前，`binlog_format`的默认值是`STATEMENT`，而在5.7.7及之后的版本，默认值为`ROW`。
+  > 在 MySQL 5.7.7 之前，`binlog_format`的默认值是`STATEMENT`，而在 5.7.7 及之后的版本，默认值为`ROW`。
 
-  - STATEMENT：每一条修改数据的 SQL 都会被记录到 binlog 中（相当于记录了逻辑操作，所以针对这种格式， binlog 可以称为逻辑日志），主从复制中 slave 端再根据 SQL 语句重现。但 STATEMENT 有动态函数的问题，比如你用了 uuid 或者 now 这些函数，你在主库上执行的结果并不是你在从库执行的结果，这种随时在变的函数会导致复制的数据不一致；
+  - STATEMENT：每一条修改数据的 SQL 都会被记录到 binlog 中（相当于记录了逻辑操作，所以针对这种格式，binlog 可以称为逻辑日志），主从复制中 slave 端再根据 SQL 语句重现。但 STATEMENT 有动态函数的问题，比如你用了 uuid 或者 now 这些函数，你在主库上执行的结果并不是你在从库执行的结果，这种随时在变的函数会导致复制的数据不一致；
   - ROW：记录行数据最终被修改成什么样了（这种格式的日志，就不能称为逻辑日志了），不会出现 STATEMENT 下动态函数的问题。但 ROW 的缺点是每行数据的变化结果都会被记录，比如执行批量 update 语句，更新多少行数据就会产生多少条记录，使 binlog 文件过大，而在 STATEMENT 格式下只会记录一个 update 语句而已；
   - MIXED：包含了 STATEMENT 和 ROW 模式，它会根据不同的情况自动使用 ROW 模式和 STATEMENT 模式；
-- redo log 是物理日志，记录的是在某个数据页做了什么修改，比如对 XXX 表空间中的 YYY 数据页 ZZZ 偏移量的地方做了AAA 更新；
+- redo log 是物理日志，记录的是在某个数据页做了什么修改，比如对 XXX 表空间中的 YYY 数据页 ZZZ 偏移量的地方做了 AAA 更新；
 
 *3、写入方式不同：*
 
@@ -327,7 +327,7 @@ binlog 文件保存的是全量的日志，也就是保存了所有数据变更�
 
 ### 主从复制是怎么实现？
 
-MySQL 的主从复制依赖于 binlog ，也就是记录 MySQL 上的所有变化并以二进制形式保存在磁盘上。复制的过程就是将 binlog 中的数据从主库传输到从库上。
+MySQL 的主从复制依赖于 binlog，也就是记录 MySQL 上的所有变化并以二进制形式保存在磁盘上。复制的过程就是将 binlog 中的数据从主库传输到从库上。
 
 这个过程一般是**异步**的，也就是主库上执行事务操作的线程不会等待复制 binlog 的线程同步完成。
 
@@ -357,7 +357,7 @@ MySQL 集群的主从复制过程梳理成 3 个阶段：
 
 所以在实际使用中，一个主库一般跟 2～3 个从库（1 套数据库，1 主 2 从 1 备主），这就是一主多从的 MySQL 集群结构。
 
->  MySQL 主从复制还有哪些模型？
+> MySQL 主从复制还有哪些模型？
 
 主要有三种：
 
@@ -382,13 +382,13 @@ MySQL 给 binlog cache 分配了一片内存，每个线程一个，参数 binlo
 - 图中的 write，指的就是指把日志写入到 binlog 文件，但是并没有把数据持久化到磁盘，因为数据还缓存在文件系统的 page cache 里，write 的写入速度还是比较快的，因为不涉及磁盘 I/O。
 - 图中的 fsync，才是将数据持久化到磁盘的操作，这里就会涉及磁盘 I/O，所以频繁的 fsync 会导致磁盘的 I/O 升高。
 
-MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上的频率：
+MySQL 提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上的频率：
 
 - sync_binlog = 0 的时候，表示每次提交事务都只 write，不 fsync，后续交由操作系统决定何时将数据持久化到磁盘；
 - sync_binlog = 1 的时候，表示每次提交事务都会 write，然后马上执行 fsync；
 - sync_binlog = N(N>1) 的时候，表示每次提交事务都 write，但累积 N 个事务后才 fsync。
 
-在MySQL中系统默认的设置是 sync_binlog = 1，是最安全但是性能损耗最大的设置。因为当设置为 1 的时候，即使主机发生异常重启，最多丢失一个事务的 binlog，而已经持久化到磁盘的数据就不会有影响，不过就是对写入性能影响太大。
+在 MySQL 中系统默认的设置是 sync_binlog = 1，是最安全但是性能损耗最大的设置。因为当设置为 1 的时候，即使主机发生异常重启，最多丢失一个事务的 binlog，而已经持久化到磁盘的数据就不会有影响，不过就是对写入性能影响太大。
 
 而当 sync_binlog 设置为 0 的时候，也就是不做任何强制性的磁盘刷新指令，这时候的性能是最好的，但是风险也是最大的。因为一旦主机发生异常重启，还没持久化到磁盘的数据就会丢失。
 
@@ -398,7 +398,7 @@ MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上
 
 当优化器分析出成本最小的执行计划后，执行器就按照执行计划开始进行更新操作。
 
-具体更新一条记录 `UPDATE t_user SET name = 'xiaolin' WHERE id = 1;` 的流程如下:
+具体更新一条记录 `UPDATE t_user SET name = 'xiaolin' WHERE id = 1;` 的流程如下：
 
 1. 执行器负责具体执行，会调用存储引擎的接口，通过主键索引树搜索获取 id = 1 这一行记录：
    - 如果 id=1 这一行所在的数据页本来就在 buffer pool 中，就直接返回给执行器更新；
@@ -406,8 +406,8 @@ MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上
 2. 执行器得到聚簇索引记录后，会看一下更新前的记录和更新后的记录是否一样：
    - 如果一样的话就不进行后续更新流程；
    - 如果不一样的话就把更新前的记录和更新后的记录都当作参数传给 InnoDB 层，让 InnoDB 真正的执行更新记录的操作；
-3. 开启事务， InnoDB 层更新记录前，首先要记录相应的 undo log，因为这是更新操作，需要把被更新的列的旧值记下来，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面，不过在内存修改该 Undo 页面后，需要记录对应的 redo log。
-4. InnoDB 层开始更新记录，会先更新内存（同时标记为脏页），然后将记录写到 redo log 里面，这个时候更新就算完成了。为了减少磁盘I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。这就是 **WAL 技术**，MySQL 的写操作并不是立刻写到磁盘上，而是先写 redo 日志，然后在合适的时间再将修改的行数据写到磁盘上。
+3. 开启事务，InnoDB 层更新记录前，首先要记录相应的 undo log，因为这是更新操作，需要把被更新的列的旧值记下来，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面，不过在内存修改该 Undo 页面后，需要记录对应的 redo log。
+4. InnoDB 层开始更新记录，会先更新内存（同时标记为脏页），然后将记录写到 redo log 里面，这个时候更新就算完成了。为了减少磁盘 I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。这就是 **WAL 技术**，MySQL 的写操作并不是立刻写到磁盘上，而是先写 redo 日志，然后在合适的时间再将修改的行数据写到磁盘上。
 5. 至此，一条记录更新完了。
 6. 在一条更新语句执行完成后，然后开始记录该语句对应的 binlog，此时记录的 binlog 会被保存到 binlog cache，并没有刷新到硬盘上的 binlog 文件，在事务提交时才会统一将该事务运行过程中的所有 binlog 刷新到硬盘。
 7. 事务提交，剩下的就是「两阶段提交」的事情了，接下来就讲这个。
@@ -418,8 +418,8 @@ MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上
 
 举个例子，假设 id = 1 这行数据的字段 name 的值原本是 'jay'，然后执行 `UPDATE t_user SET name = 'xiaolin' WHERE id = 1;` 如果在持久化 redo log 和 binlog 两个日志的过程中，出现了半成功状态，那么就有两种情况：
 
-- **如果在将 redo log 刷入到磁盘之后， MySQL 突然宕机了，而 binlog 还没有来得及写入**。MySQL 重启后，通过 redo log 能将 Buffer Pool 中 id = 1 这行数据的 name 字段恢复到新值 xiaolin，但是 binlog 里面没有记录这条更新语句，在主从架构中，binlog 会被复制到从库，由于 binlog 丢失了这条更新语句，从库的这一行 name 字段是旧值 jay，与主库的值不一致性；
-- **如果在将 binlog 刷入到磁盘之后， MySQL 突然宕机了，而 redo log 还没有来得及写入**。由于 redo log 还没写，崩溃恢复以后这个事务无效，所以 id = 1 这行数据的 name 字段还是旧值 jay，而 binlog 里面记录了这条更新语句，在主从架构中，binlog 会被复制到从库，从库执行了这条更新语句，那么这一行 name 字段是新值 xiaolin，与主库的值不一致性；
+- **如果在将 redo log 刷入到磁盘之后，MySQL 突然宕机了，而 binlog 还没有来得及写入**。MySQL 重启后，通过 redo log 能将 Buffer Pool 中 id = 1 这行数据的 name 字段恢复到新值 xiaolin，但是 binlog 里面没有记录这条更新语句，在主从架构中，binlog 会被复制到从库，由于 binlog 丢失了这条更新语句，从库的这一行 name 字段是旧值 jay，与主库的值不一致性；
+- **如果在将 binlog 刷入到磁盘之后，MySQL 突然宕机了，而 redo log 还没有来得及写入**。由于 redo log 还没写，崩溃恢复以后这个事务无效，所以 id = 1 这行数据的 name 字段还是旧值 jay，而 binlog 里面记录了这条更新语句，在主从架构中，binlog 会被复制到从库，从库执行了这条更新语句，那么这一行 name 字段是新值 xiaolin，与主库的值不一致性；
 
 可以看到，在持久化 redo log 和 binlog 这两份日志的时候，如果出现半成功的状态，就会造成主从环境的数据不一致性。这是因为 redo log 影响主库的数据，binlog 影响从库的数据，所以 redo log 和 binlog 必须保持一致才能保证主从数据一致。
 
@@ -440,9 +440,9 @@ MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上
 
 ![两阶段提交](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/how_update/两阶段提交.drawio.png?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0)
 
-从图中可看出，事务的提交过程有两个阶段，就是**将 redo log 的写入拆成了两个步骤：prepare 和 commit，中间再穿插写入binlog**，具体如下：
+从图中可看出，事务的提交过程有两个阶段，就是**将 redo log 的写入拆成了两个步骤：prepare 和 commit，中间再穿插写入 binlog**，具体如下：
 
-- **prepare 阶段**：将 XID（内部 XA 事务的 ID） 写入到 redo log，同时将 redo log 对应的事务状态设置为 prepare，然后将 redo log 刷新到硬盘；
+- **prepare 阶段**：将 XID（内部 XA 事务的 ID）写入到 redo log，同时将 redo log 对应的事务状态设置为 prepare，然后将 redo log 刷新到硬盘；
 
 - **commit 阶段**：把 XID  写入到 binlog，然后将 binlog 刷新到磁盘，接着调用引擎的提交事务接口，将 redo log 状态设置为 commit（将事务设置为 commit 状态后，刷入到磁盘 redo log 文件，所以 commit 状态也是会刷盘的）；
 
@@ -452,7 +452,7 @@ MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上
 
 ![时刻 A 与时刻 B](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/how_update/两阶段提交崩溃点.drawio.png?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0)
 
-不管是时刻 A（已经 redo log，还没写入 binlog），还是时刻 B （已经写入 redo log 和 binlog，还没写入 commit 标识）崩溃，**此时的 redo log 都处于 prepare 状态**。
+不管是时刻 A（已经 redo log，还没写入 binlog），还是时刻 B（已经写入 redo log 和 binlog，还没写入 commit 标识）崩溃，**此时的 redo log 都处于 prepare 状态**。
 
 在 MySQL 重启后会按顺序扫描 redo log 文件，碰到处于 prepare 状态的 redo log，就拿着 redo log 中的 XID 去 binlog 查看是否存在此 XID：
 
@@ -463,7 +463,7 @@ MySQL提供一个 sync_binlog 参数来控制数据库的 binlog 刷到磁盘上
 
 所以说，**两阶段提交是以 binlog 写成功为事务提交成功的标识**，因为 binlog 写成功了，就意味着能在 binlog 中查找到与 redo log 相同的  XID。
 
-> 处于 prepare 阶段的 redo log 加上完整 binlog，重启就提交事务，MySQL 为什么要这么设计?
+> 处于 prepare 阶段的 redo log 加上完整 binlog，重启就提交事务，MySQL 为什么要这么设计？
 
 binlog 已经写入了，之后就会被从库（或者用这个 binlog 恢复出来的库）使用。
 
@@ -481,13 +481,13 @@ binlog 已经写入了，之后就会被从库（或者用这个 binlog 恢复�
 
 放心，这种情况 mysql 重启会进行回滚操作，因为事务没提交的时候，binlog 是还没持久化到磁盘的。
 
-所以， redo log 可以在事务没提交之前持久化到磁盘，但是 binlog 必须在事务提交之后，才可以持久化到磁盘。
+所以，redo log 可以在事务没提交之前持久化到磁盘，但是 binlog 必须在事务提交之后，才可以持久化到磁盘。
 
 ## 两阶段提交有什么问题？
 
 两阶段提交虽然保证了两个日志文件的数据一致性，但是性能很差，主要有两个方面的影响：
 
-- **磁盘 I/O 次数高**：对于“双1”配置，每个事务提交都会进行两次 fsync（刷盘），一次是 redo log 刷盘，另一次是 binlog 刷盘。
+- **磁盘 I/O 次数高**：对于“双 1”配置，每个事务提交都会进行两次 fsync（刷盘），一次是 redo log 刷盘，另一次是 binlog 刷盘。
 - **锁竞争激烈**：两阶段提交虽然能够保证「单事务」两个日志的内容一致，但在「多事务」的情况下，却不能保证两者的提交顺序一致，因此，在两阶段提交的流程基础上，还需要加一个锁来保证提交的原子性，从而保证多事务的情况下，两个日志的提交顺序一致。
 
 > 为什么两阶段提交的磁盘 I/O 次数会很高？
@@ -497,7 +497,7 @@ binlog 和 redo log 在内存中都对应的缓存空间，binlog 会缓存在 b
 - 当 sync_binlog = 1 的时候，表示每次提交事务都会将  binlog cache 里的 binlog 直接持久到磁盘；
 - 当 innodb_flush_log_at_trx_commit = 1 时，表示每次事务提交时，都将缓存在  redo log buffer 里的  redo log 直接持久化到磁盘；
 
-可以看到，如果 sync_binlog 和 当 innodb_flush_log_at_trx_commit 都设置为 1，那么在每个事务提交过程中， 都会至少调用 2 次刷盘操作，一次是 redo log 刷盘，一次是 binlog 落盘，所以这会成为性能瓶颈。
+可以看到，如果 sync_binlog 和 当 innodb_flush_log_at_trx_commit 都设置为 1，那么在每个事务提交过程中，都会至少调用 2 次刷盘操作，一次是 redo log 刷盘，一次是 binlog 落盘，所以这会成为性能瓶颈。
 
 > 为什么锁竞争激烈？
 
@@ -515,7 +515,7 @@ binlog 和 redo log 在内存中都对应的缓存空间，binlog 会缓存在 b
 - **sync 阶段**：对 binlog 文件做 fsync 操作（多个事务的 binlog 合并一次刷盘）；
 - **commit 阶段**：各个事务按顺序做 InnoDB commit 操作；
 
-上面的**每个阶段都有一个队列**，每个阶段有锁进行保护，因此保证了事务写入的顺序，第一个进入队列的事务会成为 leader，leader领导所在队列的所有事务，全权负责整队的操作，完成后通知队内其他事务操作结束。
+上面的**每个阶段都有一个队列**，每个阶段有锁进行保护，因此保证了事务写入的顺序，第一个进入队列的事务会成为 leader，leader 领导所在队列的所有事务，全权负责整队的操作，完成后通知队内其他事务操作结束。
 
 ![每个阶段都有一个队列](http://keithlan.github.io/image/mysql_innodb_arch/commit_4.png)
 
@@ -531,11 +531,11 @@ binlog 和 redo log 在内存中都对应的缓存空间，binlog 会缓存在 b
 
 这个优化是将 redo log 的刷盘延迟到了 flush 阶段之中，sync 阶段之前。通过延迟写 redo log 的方式，为 redolog 做了一次组写入，这样 binlog 和 redo log 都进行了优化。
 
-接下来介绍每个阶段的过程，注意下面的过程针对的是“双 1” 配置（sync_binlog 和 innodb_flush_log_at_trx_commit 都配置为 1）。
+接下来介绍每个阶段的过程，注意下面的过程针对的是“双 1”配置（sync_binlog 和 innodb_flush_log_at_trx_commit 都配置为 1）。
 
 > flush 阶段
 
-第一个事务会成为 flush 阶段的 Leader，此时后面到来的事务都是 Follower ：
+第一个事务会成为 flush 阶段的 Leader，此时后面到来的事务都是 Follower：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/how_update/组提交1.png)
 
@@ -565,10 +565,10 @@ binlog 和 redo log 在内存中都对应的缓存空间，binlog 会缓存在 b
 
 如果想提升 binlog 组提交的效果，可以通过设置下面这两个参数来实现：
 
-- `binlog_group_commit_sync_delay= N`，表示在等待 N 微妙后，直接调用 fsync，将处于文件系统中 page cache 中的 binlog 刷盘，也就是将「 binlog 文件」持久化到磁盘。
-- `binlog_group_commit_sync_no_delay_count = N`，表示如果队列中的事务数达到 N 个，就忽视binlog_group_commit_sync_delay 的设置，直接调用 fsync，将处于文件系统中 page cache 中的 binlog 刷盘。
+- `binlog_group_commit_sync_delay= N`，表示在等待 N 微妙后，直接调用 fsync，将处于文件系统中 page cache 中的 binlog 刷盘，也就是将「binlog 文件」持久化到磁盘。
+- `binlog_group_commit_sync_no_delay_count = N`，表示如果队列中的事务数达到 N 个，就忽视 binlog_group_commit_sync_delay 的设置，直接调用 fsync，将处于文件系统中 page cache 中的 binlog 刷盘。
 
-如果在这一步完成后数据库崩溃，由于 binlog 中已经有了事务记录，MySQL会在重启后通过 redo log 刷盘的数据继续进行事务的提交。
+如果在这一步完成后数据库崩溃，由于 binlog 中已经有了事务记录，MySQL 会在重启后通过 redo log 刷盘的数据继续进行事务的提交。
 
 > commit 阶段
 
@@ -580,15 +580,15 @@ commit 阶段队列的作用是承接 sync 阶段的事务，完成最后的引�
 
 ## MySQL 磁盘 I/O 很高，有什么优化的方法？
 
-现在我们知道事务在提交的时候，需要将 binlog 和 redo log 持久化到磁盘，那么如果出现 MySQL 磁盘 I/O 很高的现象，我们可以通过控制以下参数，来 “延迟” binlog 和 redo log 刷盘的时机，从而降低磁盘 I/O 的频率：
+现在我们知道事务在提交的时候，需要将 binlog 和 redo log 持久化到磁盘，那么如果出现 MySQL 磁盘 I/O 很高的现象，我们可以通过控制以下参数，来“延迟”binlog 和 redo log 刷盘的时机，从而降低磁盘 I/O 的频率：
 
-- 设置组提交的两个参数： binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数，延迟 binlog 刷盘的时机，从而减少 binlog 的刷盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但即使 MySQL 进程中途挂了，也没有丢失数据的风险，因为 binlog 早被写入到 page cache 了，只要系统没有宕机，缓存在 page cache 里的 binlog 就会被持久化到磁盘。
+- 设置组提交的两个参数：binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数，延迟 binlog 刷盘的时机，从而减少 binlog 的刷盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但即使 MySQL 进程中途挂了，也没有丢失数据的风险，因为 binlog 早被写入到 page cache 了，只要系统没有宕机，缓存在 page cache 里的 binlog 就会被持久化到磁盘。
 - 将 sync_binlog 设置为大于 1 的值（比较常见是 100~1000），表示每次提交事务都 write，但累积 N 个事务后才 fsync，相当于延迟了 binlog 刷盘的时机。但是这样做的风险是，主机掉电时会丢 N 个事务的 binlog 日志。
-- 将 innodb_flush_log_at_trx_commit 设置为 2。表示每次事务提交时，都只是缓存在  redo log buffer 里的  redo log 写到 redo log 文件，注意写入到「 redo log 文件」并不意味着写入到了磁盘，因为操作系统的文件系统中有个 Page Cache，专门用来缓存文件数据的，所以写入「 redo log文件」意味着写入到了操作系统的文件缓存，然后交由操作系统控制持久化到磁盘的时机。但是这样做的风险是，主机掉电的时候会丢数据。
+- 将 innodb_flush_log_at_trx_commit 设置为 2。表示每次事务提交时，都只是缓存在  redo log buffer 里的  redo log 写到 redo log 文件，注意写入到「redo log 文件」并不意味着写入到了磁盘，因为操作系统的文件系统中有个 Page Cache，专门用来缓存文件数据的，所以写入「redo log 文件」意味着写入到了操作系统的文件缓存，然后交由操作系统控制持久化到磁盘的时机。但是这样做的风险是，主机掉电的时候会丢数据。
 
 ## 总结
 
-具体更新一条记录 `UPDATE t_user SET name = 'xiaolin' WHERE id = 1;` 的流程如下:
+具体更新一条记录 `UPDATE t_user SET name = 'xiaolin' WHERE id = 1;` 的流程如下：
 
 1. 执行器负责具体执行，会调用存储引擎的接口，通过主键索引树搜索获取 id = 1 这一行记录：
    - 如果 id=1 这一行所在的数据页本来就在 buffer pool 中，就直接返回给执行器更新；
@@ -596,8 +596,8 @@ commit 阶段队列的作用是承接 sync 阶段的事务，完成最后的引�
 2. 执行器得到聚簇索引记录后，会看一下更新前的记录和更新后的记录是否一样：
    - 如果一样的话就不进行后续更新流程；
    - 如果不一样的话就把更新前的记录和更新后的记录都当作参数传给 InnoDB 层，让 InnoDB 真正的执行更新记录的操作；
-3. 开启事务， InnoDB 层更新记录前，首先要记录相应的 undo log，因为这是更新操作，需要把被更新的列的旧值记下来，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面，不过在内存修改该 Undo 页面后，需要记录对应的 redo log。
-4. InnoDB 层开始更新记录，会先更新内存（同时标记为脏页），然后将记录写到 redo log 里面，这个时候更新就算完成了。为了减少磁盘I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。这就是 **WAL 技术**，MySQL 的写操作并不是立刻写到磁盘上，而是先写 redo 日志，然后在合适的时间再将修改的行数据写到磁盘上。
+3. 开启事务，InnoDB 层更新记录前，首先要记录相应的 undo log，因为这是更新操作，需要把被更新的列的旧值记下来，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面，不过在内存修改该 Undo 页面后，需要记录对应的 redo log。
+4. InnoDB 层开始更新记录，会先更新内存（同时标记为脏页），然后将记录写到 redo log 里面，这个时候更新就算完成了。为了减少磁盘 I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。这就是 **WAL 技术**，MySQL 的写操作并不是立刻写到磁盘上，而是先写 redo 日志，然后在合适的时间再将修改的行数据写到磁盘上。
 5. 至此，一条记录更新完了。
 6. 在一条更新语句执行完成后，然后开始记录该语句对应的 binlog，此时记录的 binlog 会被保存到 binlog cache，并没有刷新到硬盘上的 binlog 文件，在事务提交时才会统一将该事务运行过程中的所有 binlog 刷新到硬盘。
 7. 事务提交（为了方便说明，这里不说组提交的过程，只说两阶段提交）：

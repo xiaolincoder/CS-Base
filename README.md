@@ -4,9 +4,9 @@
 
 👉 **点击**：[图解计算机基础在线阅读](https://xiaolincoding.com/)
 
-本站所有文章都是我[公众号：小林coding](https://mp.weixin.qq.com/s/FYH1I8CRsuXDSybSGY_AFA)的原创文章，内容包含图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 50 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文（口嗨一下，大家不要当真哈哈）！🚀
+本站所有文章都是我[公众号：小林 coding](https://mp.weixin.qq.com/s/FYH1I8CRsuXDSybSGY_AFA)的原创文章，内容包含图解计算机网络、操作系统、计算机组成、数据库，共 1000 张图 + 50 万字，破除晦涩难懂的计算机基础知识，让天下没有难懂的八股文（口嗨一下，大家不要当真哈哈）！🚀
 
-曾经我也苦恼于那些晦涩难弄的计算机基础知识，但在我啃了一本又一本的书，看了一个又一个的视频后，终于对这些“家伙”有了认识。我想着，这世界上肯定有一些朋友也跟我有一样的苦恼，为此下决心，用图解 + 通熟易懂的讲解来帮助大家理解，利用工作之余，坚持输出图解文章两年之久，这才有了今天的网站!
+曾经我也苦恼于那些晦涩难弄的计算机基础知识，但在我啃了一本又一本的书，看了一个又一个的视频后，终于对这些“家伙”有了认识。我想着，这世界上肯定有一些朋友也跟我有一样的苦恼，为此下决心，用图解 + 通熟易懂的讲解来帮助大家理解，利用工作之余，坚持输出图解文章两年之久，这才有了今天的网站！
 
 
 
@@ -39,7 +39,7 @@
   - [四次挥手中收到乱序的 FIN 包会如何处理？](https://xiaolincoding.com/network/3_tcp/out_of_order_fin.html) 
   - [在 TIME_WAIT 状态的 TCP 连接，收到 SYN 后会发生什么？](https://xiaolincoding.com/network/3_tcp/time_wait_recv_syn.html) 
   - [TCP 连接，一端断电和进程崩溃有什么区别？](https://xiaolincoding.com/network/3_tcp/tcp_down_and_crash.html) 
-  - [拔掉网线后， 原本的 TCP 连接还存在吗？](https://xiaolincoding.com/network/3_tcp/tcp_unplug_the_network_cable.html) 
+  - [拔掉网线后，原本的 TCP 连接还存在吗？](https://xiaolincoding.com/network/3_tcp/tcp_unplug_the_network_cable.html) 
   - [tcp_tw_reuse 为什么默认是关闭的？](https://xiaolincoding.com/network/3_tcp/tcp_tw_reuse_close.html) 
   - [HTTPS 中 TLS 和 TCP 能同时握手吗？](https://xiaolincoding.com/network/3_tcp/tcp_tls.html) 
   - [TCP Keepalive 和 HTTP Keep-Alive 是一个东西吗？](https://xiaolincoding.com/network/3_tcp/tcp_http_keepalive.html) 
@@ -69,7 +69,7 @@
   - [CPU 缓存一致性](https://xiaolincoding.com/os/1_hardware/cpu_mesi.html) 
   - [CPU 是如何执行任务的？](https://xiaolincoding.com/os/1_hardware/how_cpu_deal_task.html) 
   - [什么是软中断？](https://xiaolincoding.com/os/1_hardware/soft_interrupt.html) 
-  - [为什么 0.1 + 0.2 不等于 0.3 ？](https://xiaolincoding.com/os/1_hardware/float.html) 
+  - [为什么 0.1 + 0.2 不等于 0.3？](https://xiaolincoding.com/os/1_hardware/float.html) 
 - **操作系统结构** :point_down:
   - [Linux 内核 vs Windows 内核](https://xiaolincoding.com/os/2_os_structure/linux_vs_windows.html) 
 - **内存管理** :point_down:
@@ -107,7 +107,7 @@
   - [计算机网络怎么学？](https://xiaolincoding.com/os/10_learn/learn_os.html) 	
   - [画图经验分享](https://xiaolincoding.com/os/10_learn/draw.html) 
 
-## :open_book:《图解MySQL》
+## :open_book:《图解 MySQL》
 - **介绍**:point_down:：
   - [图解 MySQL 介绍](https://xiaolincoding.com/mysql/)
 - **基础篇**:point_down:：
@@ -119,7 +119,7 @@
   - [为什么 MySQL 采用 B+ 树作为索引？](https://xiaolincoding.com/mysql/index/why_index_chose_bpuls_tree.html)
   - [MySQL 单表不要超过 2000W 行，靠谱吗？](https://xiaolincoding.com/mysql/index/2000w.html)
   - [索引失效有哪些？](https://xiaolincoding.com/mysql/index/index_lose.html)
-  - [MySQL 使用 like “%x“，索引一定会失效吗？](https://xiaolincoding.com/mysql/index/index_issue.html)
+  - [MySQL 使用 like“%x“，索引一定会失效吗？](https://xiaolincoding.com/mysql/index/index_issue.html)
   - [count(\*) 和 count(1) 有什么区别？哪个性能最好？](https://xiaolincoding.com/mysql/index/count.html)
 - **事务篇** :point_down:
   - [事务隔离级别是怎么实现的？](https://xiaolincoding.com/mysql/transaction/mvcc.html)
@@ -135,7 +135,7 @@
 - **内存篇** :point_down:
   - [揭开 Buffer Pool 的面纱](https://xiaolincoding.com/mysql/buffer_pool/buffer_pool.html) 	
 
-##  :open_book: 《图解Redis》
+##  :open_book: 《图解 Redis》
 
 - **面试篇** :point_down:
    - [Redis 常见面试题](https://xiaolincoding.com/redis/base/redis_interview.html)

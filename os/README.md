@@ -2,7 +2,7 @@
 
 大家好，我是小林，是《图解系统》的作者，本站的内容都是整理于我[公众号](https://mp.weixin.qq.com/s/FYH1I8CRsuXDSybSGY_AFA)里的图解文章。
 
-还没关注的朋友，可以微信搜索「**小林coding**」，关注我的公众号，**后续最新版本的 PDF 会在我的公众号第一时间发布**，而且会有更多其他系列的图解文章，比如操作系统、计算机组成、数据库、算法等等。
+还没关注的朋友，可以微信搜索「**小林 coding**」，关注我的公众号，**后续最新版本的 PDF 会在我的公众号第一时间发布**，而且会有更多其他系列的图解文章，比如操作系统、计算机组成、数据库、算法等等。
 
 简单介绍下这个《图解系统》，整个内容共有 **`16W` 字 + `400` 张图**，文字都是小林一个字一个字敲出来的，图片都是小林一个点一条线画出来的，非常的不容易。
 
@@ -49,12 +49,12 @@
   - [CPU 缓存一致性](/os/1_hardware/cpu_mesi.md) 
   - [CPU 是如何执行任务的？](/os/1_hardware/how_cpu_deal_task.md) 
   - [什么是软中断？](/os/1_hardware/soft_interrupt.md) 
-  - [为什么 0.1 + 0.2 不等于 0.3 ？](/os/1_hardware/float.md) 
+  - [为什么 0.1 + 0.2 不等于 0.3？](/os/1_hardware/float.md) 
 - **操作系统结构** :point_down:
 	- [Linux 内核 vs Windows 内核](/os/2_os_structure/linux_vs_windows.md) 
 - **内存管理** :point_down:
 	- [为什么要有虚拟内存？](/os/3_memory/vmem.md) 
-	- [malloc是如何分配内存的？](/os/3_memory/malloc.md) 
+	- [malloc 是如何分配内存的？](/os/3_memory/malloc.md) 
 	- [内存满了，会发生什么？](/os/3_memory/mem_reclaim.md) 
 	- [在 4GB 物理内存的机器上，申请 8G 内存会怎么样？](/os/3_memory/alloc_mem.md) 
 	- [如何避免预读失效和缓存污染的问题？](/os/3_memory/cache_lru.md) 

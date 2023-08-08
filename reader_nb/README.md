@@ -8,8 +8,8 @@
 
 - [非科班本科拿下年薪 35w+ 的 offer](/reader_nb/1_reader.md)
 - [被字节捞了六七次，终于拿到 offer 了！](/reader_nb/2_reader.md)
-- [三本逆袭！拿到京东美团等offer](/reader_nb/3_reader.md)
-- [拿下腾讯天美offer的春招经历](/reader_nb/4_reader.md)
+- [三本逆袭！拿到京东美团等 offer](/reader_nb/3_reader.md)
+- [拿下腾讯天美 offer 的春招经历](/reader_nb/4_reader.md)
 - [机械工作 2 年，自学转行进腾讯了！](/reader_nb/5_reader.md)
 - [做了国外 CS 课程的 lab，拿到腾讯实习！](/reader_nb/6_reader.md)
 - [大三就啃框架源码！轻松因对字节面试](/reader_nb/7_reader.md)

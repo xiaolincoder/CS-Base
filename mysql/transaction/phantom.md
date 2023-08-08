@@ -5,7 +5,7 @@
 我在[上一篇文章](https://xiaolincoding.com/mysql/transaction/mvcc.html)提到，MySQL InnoDB 引擎的默认隔离级别虽然是「可重复读」，但是它很大程度上避免幻读现象（并不是完全解决了），解决的方案有两种：
 
 - 针对**快照读**（普通 select 语句），是**通过 MVCC 方式解决了幻读**，因为可重复读隔离级别下，事务执行过程中看到的数据，一直跟这个事务启动时看到的数据是一致的，即使中途有其他事务插入了一条数据，是查询不出来这条数据的，所以就很好了避免幻读问题。
-- 针对**当前读**（select ... for update 等语句），是**通过 next-key lock（记录锁+间隙锁）方式解决了幻读**，因为当执行 select ... for update 语句的时候，会加上 next-key lock，如果有其他事务在 next-key lock 锁范围内插入了一条记录，那么这个插入语句就会被阻塞，无法成功插入，所以就很好了避免幻读问题。
+- 针对**当前读**（select ... for update 等语句），是**通过 next-key lock（记录锁 + 间隙锁）方式解决了幻读**，因为当执行 select ... for update 语句的时候，会加上 next-key lock，如果有其他事务在 next-key lock 锁范围内插入了一条记录，那么这个插入语句就会被阻塞，无法成功插入，所以就很好了避免幻读问题。
 
 这两个解决方案是很大程度上解决了幻读现象，但是还是有个别的情况造成的幻读现象是无法解决的。
 
@@ -13,7 +13,7 @@
 
 ## 什么是幻读？
 
-首先来看看 MySQL 文档是怎么定义幻读（Phantom Read）的:
+首先来看看 MySQL 文档是怎么定义幻读（Phantom Read）的：
 
 ***The so-called phantom problem occurs within a transaction when the same query produces different sets of rows at different times. For example, if a SELECT is executed twice, but returns a row the second time that was not returned the first time, the row is a “phantom” row.***
 
@@ -69,7 +69,7 @@ MySQL 里除了普通查询是快照读，其他都是**当前读**，比如 upd
 
 ![](https://img-blog.csdnimg.cn/3af285a8e70f4d4198318057eb955520.png?)
 
-事务 A 执行了这面这条锁定读语句后，就在对表中的记录加上 id 范围为 (2, +∞] 的 next-key lock（next-key lock 是间隙锁+记录锁的组合）。
+事务 A 执行了这面这条锁定读语句后，就在对表中的记录加上 id 范围为 (2, +∞] 的 next-key lock（next-key lock 是间隙锁 + 记录锁的组合）。
 
 然后，事务 B 在执行插入语句的时候，判断到插入的位置被事务 A 加了  next-key lock，于是事物 B 会生成一个插入意向锁，同时进入等待状态，直到事务 A 提交了事务。这就避免了由于事务 B 插入新记录而导致事务 A 发生幻读的现象。
 
@@ -114,7 +114,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 ```sql
 # 事务 A
-mysql> update t_stu set name = '小林coding' where id = 5;
+mysql> update t_stu set name = '小林 coding' where id = 5;
 Query OK, 1 row affected (0.01 sec)
 Rows matched: 1  Changed: 1  Warnings: 0
 
@@ -141,7 +141,7 @@ mysql> select * from t_stu where id = 5;
 
 - T1 时刻：事务 A 先执行「快照读语句」：select * from t_test where id > 100 得到了 3 条记录。
 - T2 时刻：事务 B 往`t_test`表中插入一个 id= 200 的记录并提交；
-- T3 时刻：事务 A 再执行「当前读语句」 select * from t_test where id > 100 for update 就会得到 4 条记录，此时也发生了幻读现象。
+- T3 时刻：事务 A 再执行「当前读语句」select * from t_test where id > 100 for update 就会得到 4 条记录，此时也发生了幻读现象。
 
 **要避免这类特殊场景下发生幻读的现象的话，就是尽量在开启事务之后，马上执行 select ... for update 这类当前读的语句**，因为它会对记录加 next-key lock，从而避免其他事务插入一条新记录。
 
@@ -150,11 +150,11 @@ mysql> select * from t_stu where id = 5;
 MySQL InnoDB 引擎的可重复读隔离级别（默认隔离级），根据不同的查询方式，分别提出了避免幻读的方案：
 
 - 针对**快照读**（普通 select 语句），是通过 MVCC 方式解决了幻读。
-- 针对**当前读**（select ... for update 等语句），是通过 next-key lock（记录锁+间隙锁）方式解决了幻读。
+- 针对**当前读**（select ... for update 等语句），是通过 next-key lock（记录锁 + 间隙锁）方式解决了幻读。
 
 我举例了两个发生幻读场景的例子。
 
-第一个例子：对于快照读， MVCC 并不能完全避免幻读现象。因为当事务 A 更新了一条事务 B 插入的记录，那么事务 A 前后两次查询的记录条目就不一样了，所以就发生幻读。
+第一个例子：对于快照读，MVCC 并不能完全避免幻读现象。因为当事务 A 更新了一条事务 B 插入的记录，那么事务 A 前后两次查询的记录条目就不一样了，所以就发生幻读。
 
 第二个例子：对于当前读，如果事务开启后，并没有执行当前读，而是先快照读，然后这期间如果其他事务插入了一条记录，那么事务后续使用当前读进行查询的时候，就会发现两次查询的记录条目就不一样了，所以就发生幻读。
 

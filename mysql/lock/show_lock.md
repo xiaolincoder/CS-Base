@@ -115,11 +115,11 @@ Rows matched: 0  Changed: 0  Warnings: 0
 
 两个事务的间隙锁之间是相互兼容的，不会产生冲突。
 
-在MySQL官网上还有一段非常关键的描述：
+在 MySQL 官网上还有一段非常关键的描述：
 
 *Gap locks in InnoDB are “purely inhibitive”, which means that their only purpose is to prevent other transactions from Inserting to the gap. Gap locks can co-exist. A gap lock taken by one transaction does not prevent another transaction from taking a gap lock on the same gap. There is no difference between shared and exclusive gap locks. They do not conflict with each other, and they perform the same function.*
 
-**间隙锁的意义只在于阻止区间被插入**，因此是可以共存的。**一个事务获取的间隙锁不会阻止另一个事务获取同一个间隙范围的间隙锁**，共享（S型）和排他（X型）的间隙锁是没有区别的，他们相互不冲突，且功能相同。
+**间隙锁的意义只在于阻止区间被插入**，因此是可以共存的。**一个事务获取的间隙锁不会阻止另一个事务获取同一个间隙范围的间隙锁**，共享（S 型）和排他（X 型）的间隙锁是没有区别的，他们相互不冲突，且功能相同。
 
 ### Time 3 阶段加锁分析
 
@@ -143,7 +143,7 @@ mysql> insert into t_student(id, no, name, age,score) value (25, 'S0025', 'sony'
 
 注意！插入意向锁名字里虽然有意向锁这三个字，但是它并不是意向锁，它属于行级锁，是一种特殊的间隙锁。
 
-在MySQL的官方文档中有以下重要描述：
+在 MySQL 的官方文档中有以下重要描述：
 
 *An Insert intention lock is a type of gap lock set by Insert operations prior to row Insertion. This lock signals the intent to Insert in such a way that multiple transactions Inserting into the same index gap need not wait for each other if they are not Inserting at the same position within the gap. Suppose that there are index records with values of 4 and 7. Separate transactions that attempt to Insert values of 5 and 6, respectively, each lock the gap between 4 and 7 with Insert intention locks prior to obtaining the exclusive lock on the Inserted row, but do not block each other because the rows are nonconflicting.*
 

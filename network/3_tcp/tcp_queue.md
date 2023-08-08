@@ -79,7 +79,7 @@
 
 实验环境：
 
-- 客户端和服务端都是 CentOs 6.5 ，Linux 内核版本 2.6.32
+- 客户端和服务端都是 CentOs 6.5，Linux 内核版本 2.6.32
 - 服务端 IP 192.168.3.200，客户端 IP 192.168.3.100 
 - 服务端是 Nginx 服务，端口为 8088
 
@@ -102,7 +102,7 @@
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/10.jpg)
 
-上面看到的 41150 times ，表示全连接队列溢出的次数，注意这个是累计值。可以隔几秒钟执行下，如果这个数字一直在增加的话肯定全连接队列偶尔满了。
+上面看到的 41150 times，表示全连接队列溢出的次数，注意这个是累计值。可以隔几秒钟执行下，如果这个数字一直在增加的话肯定全连接队列偶尔满了。
 
 从上面的模拟结果，可以得知，**当服务端并发处理大量请求时，如果 TCP 全连接队列过小，就容易溢出。发生 TCP 全连接队溢出的时候，后续的请求就会被丢弃，这样就会出现服务端请求数量上不去的现象。**
 
@@ -116,8 +116,8 @@
 
 tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 
-- 0 ：如果全连接队列满了，那么 server 扔掉 client  发过来的 ack ；
-- 1 ：如果全连接队列满了，server 发送一个 `reset` 包给 client，表示废掉这个握手过程和这个连接；
+- 0：如果全连接队列满了，那么 server 扔掉 client  发过来的 ack；
+- 1：如果全连接队列满了，server 发送一个 `reset` 包给 client，表示废掉这个握手过程和这个连接；
 
 如果要想知道客户端连接不上服务端，是不是服务端 TCP 全连接队列满的原因，那么可以把 tcp_abort_on_overflow 设置为 1，这时如果在客户端异常中可以看到很多 `connection reset by peer` 的错误，那么就可以证明是由于服务端 TCP 全连接队列溢出的问题。
 
@@ -137,7 +137,7 @@ tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/13.jpg)
 
 
-- `somaxconn` 是 Linux 内核的参数，默认值是 128，可以通过 ` /proc/sys/net/core/somaxconn` 来设置其值；
+- `somaxconn` 是 Linux 内核的参数，默认值是 128，可以通过 `/proc/sys/net/core/somaxconn` 来设置其值；
 - `backlog` 是 `listen(int sockfd, int backlog)` 函数中的 backlog 大小，Nginx 默认值是 511，可以通过修改配置文件设置其长度；
 
 前面模拟测试中，我的测试环境：
@@ -208,7 +208,7 @@ tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 
 实验环境：
 
-- 客户端和服务端都是 CentOs 6.5 ，Linux 内核版本 2.6.32
+- 客户端和服务端都是 CentOs 6.5，Linux 内核版本 2.6.32
 - 服务端 IP 192.168.3.200，客户端 IP 192.168.3.100 
 - 服务端是 Nginx 服务，端口为 8088
 
@@ -254,7 +254,7 @@ TCP 第一次握手（收到 SYN 包）的 Linux 内核代码如下，其中缩�
 
 关于 tcp_syncookies 的设置，后面在详细说明，可以先给大家说一下，开启 tcp_syncookies 是缓解 SYN 攻击其中一个手段。
 
-接下来，我们继续跟一下检测半连接队列是否满的函数 inet_csk_reqsk_queue_is_full 和 检测全连接队列是否满的函数 sk_acceptq_is_full ：
+接下来，我们继续跟一下检测半连接队列是否满的函数 inet_csk_reqsk_queue_is_full 和 检测全连接队列是否满的函数 sk_acceptq_is_full：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/29.jpg)
 
@@ -267,7 +267,7 @@ TCP 第一次握手（收到 SYN 包）的 Linux 内核代码如下，其中缩�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/30.jpg)
 
-从上面的代码中，我们可以算出 max_qlen_log 是 8，于是代入到 检测半连接队列是否满的函数 reqsk_queue_is_full ：
+从上面的代码中，我们可以算出 max_qlen_log 是 8，于是代入到 检测半连接队列是否满的函数 reqsk_queue_is_full：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/31.jpg)
 
@@ -281,8 +281,8 @@ TCP 第一次握手（收到 SYN 包）的 Linux 内核代码如下，其中缩�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/32.jpg)
 
-- 当 max_syn_backlog > min(somaxconn, backlog) 时， 半连接队列最大值 max_qlen_log = min(somaxconn, backlog) * 2;
-- 当 max_syn_backlog < min(somaxconn, backlog) 时， 半连接队列最大值 max_qlen_log = max_syn_backlog * 2;
+- 当 max_syn_backlog > min(somaxconn, backlog) 时，半连接队列最大值 max_qlen_log = min(somaxconn, backlog) * 2;
+- 当 max_syn_backlog < min(somaxconn, backlog) 时，半连接队列最大值 max_qlen_log = max_syn_backlog * 2;
 
 
 > 半连接队列最大值 max_qlen_log 就表示服务端处于 SYN_RECV 状态的最大个数吗？
@@ -297,7 +297,7 @@ max_qlen_log 是**理论**半连接队列最大值，并不一定代表服务端
 2. 若全连接队列满了，且没有重传 SYN+ACK 包的连接请求多于 1 个，则会丢弃；
 3. **如果没有开启 tcp_syncookies，并且 max_syn_backlog 减去 当前半连接队列长度小于 (max_syn_backlog >> 2)，则会丢弃；**
 
-假设条件 1 当前半连接队列的长度 「没有超过」理论的半连接队列最大值  max_qlen_log，那么如果条件 3 成立，则依然会丢弃 SYN 包，也就会使得服务端处于 SYN_RECV 状态的最大个数不会是理论值 max_qlen_log。
+假设条件 1 当前半连接队列的长度「没有超过」理论的半连接队列最大值  max_qlen_log，那么如果条件 3 成立，则依然会丢弃 SYN 包，也就会使得服务端处于 SYN_RECV 状态的最大个数不会是理论值 max_qlen_log。
 
 似乎很难理解，我们继续接着做实验，实验见真知。
 
@@ -321,7 +321,7 @@ max_qlen_log 是**理论**半连接队列最大值，并不一定代表服务端
 
 可以发现，服务端处于 SYN_RECV 状态的最大个数并不是 max_qlen_log 变量的值。
 
-这就是前面所说的原因：**如果当前半连接队列的长度 「没有超过」理论半连接队列最大值  max_qlen_log，那么如果条件 3 成立，则依然会丢弃 SYN 包，也就会使得服务端处于 SYN_RECV 状态的最大个数不会是理论值 max_qlen_log。**
+这就是前面所说的原因：**如果当前半连接队列的长度「没有超过」理论半连接队列最大值  max_qlen_log，那么如果条件 3 成立，则依然会丢弃 SYN 包，也就会使得服务端处于 SYN_RECV 状态的最大个数不会是理论值 max_qlen_log。**
 
 我们来分析一波条件 3 :
 
@@ -396,7 +396,7 @@ syncookies 参数主要有以下三个值：
 
 *方式三：减少 SYN+ACK 重传次数*
 
-当服务端受到 SYN 攻击时，就会有大量处于 SYN_RECV 状态的 TCP 连接，处于这个状态的 TCP 会重传 SYN+ACK ，当重传超过次数达到上限后，就会断开连接。
+当服务端受到 SYN 攻击时，就会有大量处于 SYN_RECV 状态的 TCP 连接，处于这个状态的 TCP 会重传 SYN+ACK，当重传超过次数达到上限后，就会断开连接。
 
 那么针对 SYN 攻击的场景，我们可以减少 SYN+ACK 的重传次数，以加快处于 SYN_RECV 状态的 TCP 连接断开。
 
@@ -407,7 +407,7 @@ syncookies 参数主要有以下三个值：
 
 参考资料：
 
-[1] 系统性能调优必知必会.陶辉.极客时间.
+[1] 系统性能调优必知必会。陶辉。极客时间。
 
 [2] https://www.cnblogs.com/zengkefu/p/5606696.html
 
@@ -423,7 +423,7 @@ syncookies 参数主要有以下三个值：
 
 > 读者问：“syncookies 启用后就不需要半链接了？那请求的数据会存在哪里？”
 
-syncookies = 1 时，半连接队列满后，后续的请求就不会存放到半连接队列了，而是在第二次握手的时候，服务端会计算一个 cookie 值，放入到 SYN +ACK 包中的序列号发给客户端，客户端收到后并回 ack ，服务端就会校验连接是否合法，合法就直接把连接放入到全连接队列。
+syncookies = 1 时，半连接队列满后，后续的请求就不会存放到半连接队列了，而是在第二次握手的时候，服务端会计算一个 cookie 值，放入到 SYN +ACK 包中的序列号发给客户端，客户端收到后并回 ack，服务端就会校验连接是否合法，合法就直接把连接放入到全连接队列。
 
 ----
 
