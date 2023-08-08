@@ -109,7 +109,7 @@ TCP 四元组可以唯一的确定一个连接，四元组包括如下：
 
 UDP 不提供复杂的控制机制，利用 IP 提供面向「无连接」的通信服务。
 
-UDP 协议真的非常简，头部只有 `8` 个字节（64 位），UDP 的头部格式如下：
+UDP 协议真的非常简单，头部只有 `8` 个字节（64 位），UDP 的头部格式如下：
 
 ![UDP 头部格式](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3hpYW9saW5jb2Rlci9JbWFnZUhvc3QyLyVFOCVBRSVBMSVFNyVBRSU5NyVFNiU5QyVCQSVFNyVCRCU5MSVFNyVCQiU5Qy9UQ1AtJUU0JUI4JTg5JUU2JUFDJUExJUU2JThGJUExJUU2JTg5JThCJUU1JTkyJThDJUU1JTlCJTlCJUU2JUFDJUExJUU2JThDJUE1JUU2JTg5JThCLzEyLmpwZw?x-oss-process=image/format,png)
 

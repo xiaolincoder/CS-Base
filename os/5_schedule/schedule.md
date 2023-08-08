@@ -395,7 +395,7 @@ FCFS 对长作业有利，适用于 CPU 繁忙型作业的系统，而不适用�
 ![LOOK 算法](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/调度算法/磁盘调度-LOOK算法.png)
 
 
-而针 C-SCAN 算法的优化则叫 C-LOOK，它的工作方式，磁头在每个方向上仅仅移动到最远的请求位置，然后立即反向移动，而不需要移动到磁盘的最始端或最末端，**反向移动的途中不会响应请求**。
+而针对 C-SCAN 算法的优化则叫 C-LOOK，它的工作方式，磁头在每个方向上仅仅移动到最远的请求位置，然后立即反向移动，而不需要移动到磁盘的最始端或最末端，**反向移动的途中不会响应请求**。
 
 ![C-LOOK 算法](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost2/操作系统/调度算法/磁盘调度-C-LOOK算法.png)
 
