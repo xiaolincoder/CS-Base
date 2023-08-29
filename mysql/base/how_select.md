@@ -317,7 +317,7 @@ select * from t_user  where age > 20 and reward = 100000;
 
 可以看到，使用了索引下推后，虽然 reward 列无法使用到联合索引，但是因为它包含在联合索引（age，reward）里，所以直接在存储引擎过滤出满足  reward = 100000 的记录后，才去执行回表操作获取整个记录。相比于没有使用索引下推，节省了很多回表操作。
 
-当你发现执行计划里的 Extr 部分显示了“Using index condition”，说明使用了索引下推。
+当你发现执行计划里的 Extra 部分显示了“Using index condition”，说明使用了索引下推。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/sql执行过程/索引下推执行计划.png)
 
