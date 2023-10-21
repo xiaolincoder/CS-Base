@@ -42,7 +42,7 @@ SDS 和我们认识的 C 字符串不太一样，之所以没有使用 C 语言�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/redis/数据类型/int.png)
 
-如果字符串对象保存的是一个字符串，并且这个字符申的长度小于等于 32 字节（redis 2.+版本），那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串，并将对象的编码设置为`embstr`， `embstr`编码是专门用于保存短字符串的一种优化编码方式：
+如果字符串对象保存的是一个字符串，并且这个字符串的长度小于等于 32 字节（redis 2.+版本），那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串，并将对象的编码设置为`embstr`， `embstr`编码是专门用于保存短字符串的一种优化编码方式：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/redis/数据类型/embstr.png)
 
