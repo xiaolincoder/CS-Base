@@ -10,7 +10,7 @@
 
 但是，当我深入 count 函数的原理后，被啪啪啪的打脸了！
 
-不多说， 发车！
+不多说，发车！
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/d9b9817e92f805e9a16faf31a2c10d9a.png)
 
@@ -32,7 +32,7 @@ count() 是一个聚合函数，函数的参数不仅可以是字段名，也可
 select count(name) from t_order;
 ```
 
-这条语句是统计「 t_order 表中，name 字段不为 NULL 的记录」有多少个。也就是说，如果某一条记录中的 name 字段的值为 NULL，则就不会被统计进去。
+这条语句是统计「t_order 表中，name 字段不为 NULL 的记录」有多少个。也就是说，如果某一条记录中的 name 字段的值为 NULL，则就不会被统计进去。
 
 再来假设 count() 函数的参数是数字 1 这个表达式，如下：
 
@@ -40,7 +40,7 @@ select count(name) from t_order;
 select count(1) from t_order;
 ```
 
-这条语句是统计「 t_order 表中，1 这个表达式不为 NULL 的记录」有多少个。
+这条语句是统计「t_order 表中，1 这个表达式不为 NULL 的记录」有多少个。
 
 1 这个表达式就是单纯数字，它永远都不是 NULL，所以上面这条语句，其实是在统计 t_order 表中有多少个记录。
 
@@ -73,7 +73,7 @@ select count(id) from t_order;
 
 用下面这条语句作为例子：
 
-```
+```plain
 select count(1) from t_order;
 ```
 
@@ -105,15 +105,15 @@ select count(1) from t_order;
 
 *InnoDB handles SELECT COUNT(`*`) and SELECT COUNT(`1`) operations in the same way. There is no performance difference.*
 
-*翻译：InnoDB以相同的方式处理SELECT COUNT（`*`）和SELECT COUNT（`1`）操作，没有性能差异。*
+*翻译：InnoDB 以相同的方式处理 SELECT COUNT（`*`）和 SELECT COUNT（`1`）操作，没有性能差异。*
 
-而且 MySQL 会对 count(*) 和 count(1) 有个优化，如果有多个二级索引的时候，优化器会使用key_len 最小的二级索引进行扫描。
+而且 MySQL 会对 count(*) 和 count(1) 有个优化，如果有多个二级索引的时候，优化器会使用 key_len 最小的二级索引进行扫描。
 
 只有当没有二级索引的时候，才会采用主键索引来进行统计。
 
 ### count(字段) 执行过程是怎样的？
 
-count(字段) 的执行效率相比前面的 count(1)、 count(*)、 count(主键字段) 执行效率是最差的。
+count(字段) 的执行效率相比前面的 count(1)、count(*)、count(主键字段) 执行效率是最差的。
 
 用下面这条语句作为例子：
 
@@ -128,9 +128,9 @@ select count(name) from t_order;
 
 ### 小结
 
-count(1)、 count(*)、 count(主键字段)在执行的时候，如果表里存在二级索引，优化器就会选择二级索引进行扫描。
+count(1)、 count(*)、count(主键字段) 在执行的时候，如果表里存在二级索引，优化器就会选择二级索引进行扫描。
 
-所以，如果要执行 count(1)、 count(*)、 count(主键字段) 时，尽量在数据表上建立二级索引，这样优化器会自动采用 key_len 最小的二级索引进行扫描，相比于扫描主键索引效率会高一些。
+所以，如果要执行 count(1)、count(*)、count(主键字段) 时，尽量在数据表上建立二级索引，这样优化器会自动采用 key_len 最小的二级索引进行扫描，相比于扫描主键索引效率会高一些。
 
 再来，就是不要使用 count(字段)  来统计记录个数，因为它的效率是最差的，会采用全表扫描的方式来统计。如果你非要统计表中该字段不为 NULL 的记录个数，建议给这个字段建立一个二级索引。
 
@@ -140,15 +140,15 @@ count(1)、 count(*)、 count(主键字段)在执行的时候，如果表里存�
 
 我前面将的案例都是基于 Innodb 存储引擎来说明的，但是在 MyISAM 存储引擎里，执行 count 函数的方式是不一样的，通常在没有任何查询条件下的 count(*)，MyISAM 的查询速度要明显快于 InnoDB。
 
-使用 MyISAM 引擎时，执行 count 函数只需要 O(1 )复杂度，这是因为每张 MyISAM 的数据表都有一个 meta 信息有存储了row_count值，由表级锁保证一致性，所以直接读取 row_count  值就是 count 函数的执行结果。
+使用 MyISAM 引擎时，执行 count 函数只需要 O(1 ) 复杂度，这是因为每张 MyISAM 的数据表都有一个 meta 信息有存储了 row_count 值，由表级锁保证一致性，所以直接读取 row_count  值就是 count 函数的执行结果。
 
-而 InnoDB 存储引擎是支持事务的，同一个时刻的多个查询，由于多版本并发控制（MVCC）的原因，InnoDB 表“应该返回多少行”也是不确定的，所以无法像 MyISAM一样，只维护一个 row_count 变量。
+而 InnoDB 存储引擎是支持事务的，同一个时刻的多个查询，由于多版本并发控制（MVCC）的原因，InnoDB 表“应该返回多少行”也是不确定的，所以无法像 MyISAM 一样，只维护一个 row_count 变量。
 
 举个例子，假设表 t_order 有 100 条记录，现在有两个会话并行以下语句：
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/04d714293f5c687810562e984b67d2e7.png)
 
-在会话 A 和会话 B的最后一个时刻，同时查表 t_order 的记录总个数，可以发现，显示的结果是不一样的。所以，在使用 InnoDB 存储引擎时，就需要扫描表来统计具体的记录。
+在会话 A 和会话 B 的最后一个时刻，同时查表 t_order 的记录总个数，可以发现，显示的结果是不一样的。所以，在使用 InnoDB 存储引擎时，就需要扫描表来统计具体的记录。
 
 而当带上 where 条件语句之后，MyISAM 跟 InnoDB 就没有区别了，它们都需要扫描表来进行记录个数的统计。
 

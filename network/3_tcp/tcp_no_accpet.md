@@ -1,6 +1,6 @@
 # 4.20 没有 accept，能建立 TCP 连接吗？
 
-> 来源：公众号@小白debug
+> 来源：公众号@小白 debug
 > 原文地址：[阿里二面：没有 accept，能建立 TCP 连接吗？](https://mp.weixin.qq.com/s/oPX_JoZUaLn6sW54yppfvA)
 
 大家好，我是小林。
@@ -49,7 +49,7 @@ int main()
     /*Step 1: 创建客户端端 socket 描述符 cfd*/    
     cfd = socket(AF_INET, SOCK_STREAM, 0);
 
-    /*Step 2: connect 方法,对服务器端的 IP 和端口号发起连接*/    
+    /*Step 2: connect 方法，对服务器端的 IP 和端口号发起连接*/    
     ret = connect(cfd, xxxx);
 
     /*Step 3: 向服务器端写数据*/
@@ -190,7 +190,7 @@ Fri Sep 17 08:36:38 2021
 
 - `tcp_abort_on_overflow`设置为 `1`，全连接队列满了之后，就直接发 RST 给客户端，效果上看就是连接断了。
 
-这个现象是不是很熟悉，服务端**端口未监听**时，客户端尝试去连接，服务端也会回一个RST。这两个情况长一样，所以客户端这时候收到RST之后，其实无法区分到底是**端口未监听**，还是**全连接队列满了**。
+这个现象是不是很熟悉，服务端**端口未监听**时，客户端尝试去连接，服务端也会回一个 RST。这两个情况长一样，所以客户端这时候收到 RST 之后，其实无法区分到底是**端口未监听**，还是**全连接队列满了**。
 
 ![tcp_abort_on_overflow 为 1](https://img-blog.csdnimg.cn/img_convert/6a01c5df74748870a69921da89825d9c.png)
 
@@ -202,7 +202,7 @@ Fri Sep 17 08:36:38 2021
 
 所谓 **SYN Flood 攻击**，可以简单理解为，攻击方模拟客户端疯狂发第一次握手请求过来，在服务端憨憨地回复第二次握手过去之后，客户端死活不发第三次握手过来，这样做，可以把服务端半连接队列打满，从而导致正常连接不能正常进来。
 
-![syn攻击](https://img-blog.csdnimg.cn/img_convert/d894de5374a12bd5d75d86d4a718d186.png)
+![syn 攻击](https://img-blog.csdnimg.cn/img_convert/d894de5374a12bd5d75d86d4a718d186.png)
 
 那这种情况怎么处理？有没有一种方法可以**绕过半连接队列**？
 

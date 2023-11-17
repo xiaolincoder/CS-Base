@@ -1,6 +1,6 @@
 # 3.8 既然有 HTTP 协议，为什么还要有 RPC？
 
->来源：公众号@小白debug
+> 来源：公众号@小白 debug
 >
 >原文地址：[既然有 HTTP 协议，为什么还要有 RPC？](https://mp.weixin.qq.com/s/qmnfmUCdekEt1xG0hp_4MQ)
 
@@ -80,41 +80,41 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 **HTTP** 协议（**H**yper **T**ext **T**ransfer **P**rotocol），又叫做**超文本传输协议**。我们用的比较多，平时上网在浏览器上敲个网址就能访问网页，这里用到的就是 HTTP 协议。
 
-![HTTP调用](https://img-blog.csdnimg.cn/img_convert/809c33f7090c08b78d494445e39ae1b4.png)
+![HTTP 调用](https://img-blog.csdnimg.cn/img_convert/809c33f7090c08b78d494445e39ae1b4.png)
 
 而 **RPC**（**R**emote **P**rocedure **C**all），又叫做**远程过程调用**。它本身并不是一个具体的协议，而是一种**调用方式**。
 
 举个例子，我们平时调用一个**本地方法**就像下面这样。
 
-```
+```plain
  res = localFunc(req)
 ```
 
 如果现在这不是个本地方法，而是个**远端服务器**暴露出来的一个方法 `remoteFunc`，如果我们还能像调用本地方法那样去调用它，这样就可以**屏蔽掉一些网络细节**，用起来更方便，岂不美哉？
 
-```
+```plain
  res = remoteFunc(req)
 ```
 
-![RPC可以像调用本地方法那样调用远端方法](https://img-blog.csdnimg.cn/img_convert/2b2ea6d26af9ded517043e528b032307.png)
+![RPC 可以像调用本地方法那样调用远端方法](https://img-blog.csdnimg.cn/img_convert/2b2ea6d26af9ded517043e528b032307.png)
 
 基于这个思路，大佬们造出了非常多款式的 RPC 协议，比如比较有名的`gRPC`，`thrift`。
 
 值得注意的是，虽然大部分 RPC 协议底层使用 TCP，但实际上**它们不一定非得使用 TCP，改用 UDP 或者 HTTP，其实也可以做到类似的功能。**
 
-![基于TCP协议的HTTP和RPC协议](https://img-blog.csdnimg.cn/img_convert/054e9738bc492a6fb6e9a71737d95fc0.png)
+![基于 TCP 协议的 HTTP 和 RPC 协议](https://img-blog.csdnimg.cn/img_convert/054e9738bc492a6fb6e9a71737d95fc0.png)
 
 到这里，我们回到文章标题的问题。
 
 > 既然有 HTTP 协议，为什么还要有 RPC？
 
-其实，`TCP` 是**70年**代出来的协议，而 `HTTP` 是 **90 年代**才开始流行的。而直接使用裸 TCP 会有问题，可想而知，这中间这么多年有多少自定义的协议，而这里面就有**80年代**出来的 `RPC`。
+其实，`TCP` 是**70 年**代出来的协议，而 `HTTP` 是 **90 年代**才开始流行的。而直接使用裸 TCP 会有问题，可想而知，这中间这么多年有多少自定义的协议，而这里面就有**80 年代**出来的 `RPC`。
 
 所以我们该问的不是**既然有 HTTP 协议为什么要有 RPC**，而是**为什么有 RPC 还要有 HTTP 协议**。
 
 > 那既然有 RPC 了，为什么还要有 HTTP 呢？
 
-现在电脑上装的各种**联网**软件，比如 xx管家，xx卫士，它们都作为**客户端（Client）需要跟服务端（Server）建立连接收发消息**，此时都会用到应用层协议，在这种 Client/Server (C/S) 架构下，它们可以使用自家造的 RPC 协议，因为它只管连自己公司的服务器就 ok 了。
+现在电脑上装的各种**联网**软件，比如 xx 管家，xx 卫士，它们都作为**客户端（Client）需要跟服务端（Server）建立连接收发消息**，此时都会用到应用层协议，在这种 Client/Server (C/S) 架构下，它们可以使用自家造的 RPC 协议，因为它只管连自己公司的服务器就 ok 了。
 
 但有个软件不同，**浏览器（Browser）**，不管是 Chrome 还是 IE，它们不仅要能访问自家公司的**服务器（Server）**，还需要访问其他公司的网站服务器，因此它们需要有个统一的标准，不然大家没法交流。于是，HTTP 就是那个时代用于统一 **Browser/Server (B/S)** 的协议。
 
@@ -134,7 +134,7 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 在 **HTTP** 中，你知道服务的域名，就可以通过 **DNS 服务**去解析得到它背后的 IP 地址，默认 80 端口。
 
-而 **RPC** 的话，就有些区别，一般会有专门的**中间服务**去保存服务名和IP信息，比如 **Consul 或者 Etcd，甚至是 Redis**。想要访问某个服务，就去这些中间服务去获得 IP 和端口信息。由于 DNS 也是服务发现的一种，所以也有基于 DNS 去做服务发现的组件，比如**CoreDNS**。
+而 **RPC** 的话，就有些区别，一般会有专门的**中间服务**去保存服务名和 IP 信息，比如 **Consul 或者 Etcd，甚至是 Redis**。想要访问某个服务，就去这些中间服务去获得 IP 和端口信息。由于 DNS 也是服务发现的一种，所以也有基于 DNS 去做服务发现的组件，比如**CoreDNS**。
 
 可以看出服务发现这一块，两者是有些区别，但不太能分高低。
 
@@ -192,6 +192,6 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 ---
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」***
 
 ![img](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)

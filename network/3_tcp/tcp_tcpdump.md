@@ -1,6 +1,6 @@
 # 4.3 TCP 实战抓包分析
 
-为了让大家更容易「看得见」 TCP，我搭建不少测试环境，并且数据包抓很多次，花费了不少时间，才抓到比较容易分析的数据包。
+为了让大家更容易「看得见」TCP，我搭建不少测试环境，并且数据包抓很多次，花费了不少时间，才抓到比较容易分析的数据包。
 
 接下来丢包、乱序、超时重传、快速重传、选择性确认、流量控制等等 TCP 的特性，都能「一览无余」。
 
@@ -43,7 +43,7 @@ tcpdump 提供了大量的选项以及各式各样的过滤表达式，来帮助
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/4.jpg)
 
-那么当 tcpdump 抓取到 icmp 数据包后， 输出格式如下：
+那么当 tcpdump 抓取到 icmp 数据包后，输出格式如下：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/5.jpg)
 
@@ -121,16 +121,16 @@ Wireshark 用了分层的方式，展示了各个层的包头信息，把“不�
 - 而最后的 3 个包则是 TCP 断开连接的挥手包
 
 
-Wireshark 可以用时序图的方式显示数据包交互的过程，从菜单栏中，点击 统计 (Statistics) -> 流量图 (Flow Graph)，然后，在弹出的界面中的「流量类型」选择 「TCP Flows」，你可以更清晰的看到，整个过程中 TCP 流的执行过程：
+Wireshark 可以用时序图的方式显示数据包交互的过程，从菜单栏中，点击 统计 (Statistics) -> 流量图 (Flow Graph)，然后，在弹出的界面中的「流量类型」选择「TCP Flows」，你可以更清晰的看到，整个过程中 TCP 流的执行过程：
 
 
 ![TCP 流量图](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/16.jpg)
 
-> 你可能会好奇，为什么三次握手连接过程的 Seq 是 0 ？
+> 你可能会好奇，为什么三次握手连接过程的 Seq 是 0？
 
 实际上是因为 Wireshark 工具帮我们做了优化，它默认显示的是序列号 seq 是相对值，而不是真实值。
 
-如果你想看到实际的序列号的值，可以右键菜单， 然后找到「协议首选项」，接着找到「Relative Seq」后，把它给取消，操作如下：
+如果你想看到实际的序列号的值，可以右键菜单，然后找到「协议首选项」，接着找到「Relative Seq」后，把它给取消，操作如下：
 
 ![取消序列号相对值显示](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/17.jpg)
 
@@ -168,7 +168,7 @@ TCP 三次握手的过程相信大家都背的滚瓜烂熟，那么你有没有�
 - 那会重传几次？
 - 超时重传的时间 RTO 会如何变化？
 - 在 Linux 下如何设置重传次数？
-- ....
+- ……
 
 是不是哑口无言，无法回答？
 
@@ -194,7 +194,7 @@ TCP 三次握手的过程相信大家都背的滚瓜烂熟，那么你有没有�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/23.jpg)
 
-过了一会， curl 返回了超时连接的错误：
+过了一会，curl 返回了超时连接的错误：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/24.jpg)
 
@@ -204,7 +204,7 @@ TCP 三次握手的过程相信大家都背的滚瓜烂熟，那么你有没有�
 
 ![SYN 超时重传五次](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/25.jpg)
 
-从上图可以发现， 客户端发起了 SYN 包后，一直没有收到服务端的 ACK ，所以一直超时重传了 5 次，并且每次 RTO 超时时间是不同的：
+从上图可以发现，客户端发起了 SYN 包后，一直没有收到服务端的 ACK，所以一直超时重传了 5 次，并且每次 RTO 超时时间是不同的：
 
 - 第一次是在 1 秒超时重传
 - 第二次是在 3 秒超时重传
@@ -259,14 +259,14 @@ $ echo 2 > /proc/sys/net/ipv4/tcp_syn_retries
 从图中可以发现：
 
 - 客户端发起 SYN 后，由于防火墙屏蔽了服务端的所有数据包，所以 curl 是无法收到服务端的 SYN、ACK 包，当发生超时后，就会重传 SYN 包
-- 服务端收到客户的 SYN 包后，就会回 SYN、ACK 包，但是客户端一直没有回 ACK，服务端在超时后，重传了 SYN、ACK 包，**接着一会，客户端超时重传的 SYN 包又抵达了服务端，服务端收到后，然后回了 SYN、ACK 包，但是SYN、ACK包的重传定时器并没有重置，还持续在重传，因为第二次握手在没收到第三次握手的 ACK 确认报文时，就会重传到最大次数。**
+- 服务端收到客户的 SYN 包后，就会回 SYN、ACK 包，但是客户端一直没有回 ACK，服务端在超时后，重传了 SYN、ACK 包，**接着一会，客户端超时重传的 SYN 包又抵达了服务端，服务端收到后，然后回了 SYN、ACK 包，但是 SYN、ACK 包的重传定时器并没有重置，还持续在重传，因为第二次握手在没收到第三次握手的 ACK 确认报文时，就会重传到最大次数。**
 - 最后，客户端 SYN 超时重传次数达到了 5 次（tcp_syn_retries 默认值 5 次），就不再继续发送 SYN 包了。
 
 所以，我们可以发现，**当第二次握手的 SYN、ACK 丢包时，客户端会超时重发 SYN 包，服务端也会超时重传 SYN、ACK 包。**
 
 > 咦？客户端设置了防火墙，屏蔽了服务端的网络包，为什么 tcpdump 还能抓到服务端的网络包？
 
-添加 iptables 限制后， tcpdump 是否能抓到包 ，这要看添加的 iptables 限制条件：
+添加 iptables 限制后，tcpdump 是否能抓到包，这要看添加的 iptables 限制条件：
 
 - 如果添加的是 `INPUT` 规则，则可以抓得到包
 - 如果添加的是 `OUTPUT` 规则，则抓不到包
@@ -278,7 +278,7 @@ $ echo 2 > /proc/sys/net/ipv4/tcp_syn_retries
 
 > tcp_syn_retries 是限制 SYN 重传次数，那第二次握手 SYN、ACK 限制最大重传次数是多少？
 
-TCP 第二次握手 SYN、ACK 包的最大重传次数是通过 `tcp_synack_retries ` 内核参数限制的，其默认值如下：
+TCP 第二次握手 SYN、ACK 包的最大重传次数是通过 `tcp_synack_retries` 内核参数限制的，其默认值如下：
 
 ```bash
 $ cat /proc/sys/net/ipv4/tcp_synack_retries
@@ -387,13 +387,13 @@ iptables 配置命令如下：
 通过这一波分析，刚才的两个疑点已经解除了：
 
 - 服务端在重传 SYN、ACK 包时，超过了最大重传次数 `tcp_synack_retries`，于是服务端的 TCP 连接主动断开了。
-- 客户端向服务端发送数据报文时，如果迟迟没有收到数据包的确认报文，也会触发超时重传，一共重传了 15 次数据报文， 最后 telnet 就断开了连接。
+- 客户端向服务端发送数据报文时，如果迟迟没有收到数据包的确认报文，也会触发超时重传，一共重传了 15 次数据报文，最后 telnet 就断开了连接。
 
 > TCP 第一次握手的 SYN 包超时重传最大次数是由 tcp_syn_retries 指定，TCP 第二次握手的 SYN、ACK 包超时重传最大次数是由 tcp_synack_retries 指定，那 TCP 建立连接后的数据包最大超时重传次数是由什么参数指定呢？
 
 TCP 建立连接后的数据包传输，最大超时重传次数是由 `tcp_retries2` 指定，默认值是 15 次，如下：
 
-```
+```plain
 $ cat /proc/sys/net/ipv4/tcp_retries2
 15
 ```
@@ -408,13 +408,13 @@ $ cat /proc/sys/net/ipv4/tcp_retries2
 
 在 Linux 内核可以有对应的参数可以设置保活时间、保活探测的次数、保活探测的时间间隔，以下都为默认值：
 
-```
+```plain
 net.ipv4.tcp_keepalive_time=7200
 net.ipv4.tcp_keepalive_intvl=75  
 net.ipv4.tcp_keepalive_probes=9
 ```
 
-- tcp_keepalive_time=7200：表示保活时间是 7200 秒（2小时），也就 2 小时内如果没有任何连接相关的活动，则会启动保活机制
+- tcp_keepalive_time=7200：表示保活时间是 7200 秒（2 小时），也就 2 小时内如果没有任何连接相关的活动，则会启动保活机制
 - tcp_keepalive_intvl=75：表示每次检测间隔 75 秒；
 - tcp_keepalive_probes=9：表示检测 9 次无响应，认为对方是不可达的，从而中断本次的连接。
 
@@ -461,7 +461,7 @@ net.ipv4.tcp_keepalive_probes=9
 
 可以通过设置 `net.ipv4.tcp_fastopn` 内核参数，来打开 Fast Open 功能。
 
-net.ipv4.tcp_fastopn 各个值的意义: 
+net.ipv4.tcp_fastopn 各个值的意义：
 
 - 0 关闭
 - 1 作为客户端使用 Fast Open 功能
@@ -488,14 +488,14 @@ TCP 重复确认和快速重传的一个案例，用 Wireshark 分析，显示�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/48.jpg)
 
-- 数据包 1 期望的下一个数据包 Seq 是 1，但是数据包 2 发送的 Seq 却是 10945，说明收到的是乱序数据包，于是回了数据包 3 ，还是同样的 Seq = 1，Ack = 1，这表明是重复的 ACK；
+- 数据包 1 期望的下一个数据包 Seq 是 1，但是数据包 2 发送的 Seq 却是 10945，说明收到的是乱序数据包，于是回了数据包 3，还是同样的 Seq = 1，Ack = 1，这表明是重复的 ACK；
 - 数据包 4 和 6 依然是乱序的数据包，于是依然回了重复的 ACK；
-- 当对方收到三次重复的 ACK 后，于是就快速重传了 Seq = 1 、Len = 1368 的数据包 8；
+- 当对方收到三次重复的 ACK 后，于是就快速重传了 Seq = 1、Len = 1368 的数据包 8；
 - 当收到重传的数据包后，发现 Seq = 1 是期望的数据包，于是就发送了个确认收到快速重传的 ACK
 
 注意：快速重传和重复 ACK 标记信息是 Wireshark 的功能，非数据包本身的信息。
 
-以上案例在 TCP 三次握手时协商开启了**选择性确认 SACK**，因此一旦数据包丢失并收到重复 ACK ，即使在丢失数据包之后还成功接收了其他数据包，也只需要重传丢失的数据包。如果不启用 SACK，就必须重传丢失包之后的每个数据包。
+以上案例在 TCP 三次握手时协商开启了**选择性确认 SACK**，因此一旦数据包丢失并收到重复 ACK，即使在丢失数据包之后还成功接收了其他数据包，也只需要重传丢失的数据包。如果不启用 SACK，就必须重传丢失包之后的每个数据包。
 
 如果要支持 `SACK`，必须双方都要支持。在 Linux 下，可以通过 `net.ipv4.tcp_sack` 参数打开这个功能（Linux 2.4 后默认打开）。
 
@@ -538,8 +538,8 @@ TCP 为了防止发送方无脑的发送数据，导致接收方缓冲区被填�
 - 发送方发送了数据包 1 给接收方，接收方收到后，由于缓冲区被占满，回了个零窗口通知；
 - 发送方收到零窗口通知后，就不再发送数据了，直到过了 `3.4` 秒后，发送了一个 TCP Keep-Alive 报文，也就是窗口大小探测报文；
 - 当接收方收到窗口探测报文后，就立马回一个窗口通知，但是窗口大小还是 0；
-- 发送方发现窗口还是 0，于是继续等待了 `6.8`（翻倍） 秒后，又发送了窗口探测报文，接收方依然还是回了窗口为 0 的通知；
-- 发送方发现窗口还是 0，于是继续等待了 `13.5`（翻倍） 秒后，又发送了窗口探测报文，接收方依然还是回了窗口为 0 的通知；
+- 发送方发现窗口还是 0，于是继续等待了 `6.8`（翻倍）秒后，又发送了窗口探测报文，接收方依然还是回了窗口为 0 的通知；
+- 发送方发现窗口还是 0，于是继续等待了 `13.5`（翻倍）秒后，又发送了窗口探测报文，接收方依然还是回了窗口为 0 的通知；
 
 可以发现，这些窗口探测报文以 3.4s、6.5s、13.5s 的间隔出现，说明超时时间会**翻倍**递增。
 
@@ -667,7 +667,7 @@ TCP 延迟确认可以在 Socket 设置 `TCP_QUICKACK` 选项来关闭这个算�
 
 ![关闭 TCP 延迟确认](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-Wireshark/60.jpg)
 
->  延迟确认 和 Nagle 算法混合使用时，会产生新的问题
+> 延迟确认 和 Nagle 算法混合使用时，会产生新的问题
 
 当 TCP 延迟确认 和 Nagle 算法混合使用时，会导致时耗增长，如下图：
 
@@ -690,33 +690,33 @@ TCP 延迟确认可以在 Socket 设置 `TCP_QUICKACK` 选项来关闭这个算�
 
 参考资料：
 
-[1] Wireshark网络分析的艺术.林沛满.人民邮电出版社.
+[1] Wireshark 网络分析的艺术。林沛满。人民邮电出版社。
 
-[2] Wireshark网络分析就这么简单.林沛满.人民邮电出版社.
+[2] Wireshark 网络分析就这么简单。林沛满。人民邮电出版社。
 
-[3] Wireshark数据包分析实战.Chris Sanders .人民邮电出版社.读者问答
+[3] Wireshark 数据包分析实战.Chris Sanders .人民邮电出版社。读者问答
 
 ---
 
 ## 读者问答
 
-> 读者问：“两个问题，请教一下作者:
+> 读者问：“两个问题，请教一下作者：
 > tcp_retries1 参数，是什么场景下生效？
-> tcp_retries2是不是只受限于规定的次数，还是受限于次数和时间限制的最小值？”
+> tcp_retries2 是不是只受限于规定的次数，还是受限于次数和时间限制的最小值？”
 
-tcp_retries1和tcp_retries2都是在TCP三次握手之后的场景。
+tcp_retries1 和 tcp_retries2 都是在 TCP 三次握手之后的场景。
 
-- 当重传次数超过tcp_retries1就会指示 IP 层进行 MTU 探测、刷新路由等过程，并不会断开TCP连接，当重传次数超过 tcp_retries2 才会断开TCP流。
+- 当重传次数超过 tcp_retries1 就会指示 IP 层进行 MTU 探测、刷新路由等过程，并不会断开 TCP 连接，当重传次数超过 tcp_retries2 才会断开 TCP 流。
 - tcp_retries1 和 tcp_retries2 两个重传次数都是受一个 timeout 值限制的，timeout 的值是根据它俩的值计算出来的，当重传时间超过 timeout，就不会继续重传了，即使次数还没到达。
 
-> 读者问：“tcp_orphan_retries也是控制tcp连接的关闭。这个跟tcp_retries1 tcp_retries2有什么区别吗？”
+> 读者问：“tcp_orphan_retries 也是控制 tcp 连接的关闭。这个跟 tcp_retries1 tcp_retries2 有什么区别吗？”
 
 主动方发送 FIN 报文后，连接就处于 FIN_WAIT1 状态下，该状态通常应在数十毫秒内转为 FIN_WAIT2。如果迟迟收不到对方返回的 ACK 时，此时，内核会定时重发 FIN 报文，其中重发次数由 tcp_orphan_retries 参数控制。
 
-> 读者问：“请问，为什么连续两个报文的seq会是一样的呢，比如三次握手之后的那个报文？还是说，序号相同的是同一个报文，只是拆开显示了？”
+> 读者问：“请问，为什么连续两个报文的 seq 会是一样的呢，比如三次握手之后的那个报文？还是说，序号相同的是同一个报文，只是拆开显示了？”
 
 1. 三次握手中的前两次，是 seq+1；
-2. 三次握手中的最后一个 ack，实际上是可以携带数据的，由于我文章的例子是没有发送数据的，你可以看到第三次握手的 len=0 ，在数据传输阶段「下一个 seq=seq+len 」，所以第三次握手的 seq 和下一个数据报的 seq 是一样的，因为 len 为 0；
+2. 三次握手中的最后一个 ack，实际上是可以携带数据的，由于我文章的例子是没有发送数据的，你可以看到第三次握手的 len=0，在数据传输阶段「下一个 seq=seq+len」，所以第三次握手的 seq 和下一个数据报的 seq 是一样的，因为 len 为 0；
 
 ---
 

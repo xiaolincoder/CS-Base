@@ -22,7 +22,7 @@
 
 索引的存储结构跟 MySQL 使用哪种存储引擎有关，因为存储引擎就是负责将数据持久化在磁盘中，而不同的存储引擎采用的索引数据结构也会不相同。
 
-MySQL 默认的存储引擎是 InnoDB，它采用 B+Tree 作为索引的数据结构，至于为什么选择  B+ 树作为索引的数据结构 ，详细的分析可以看我这篇文章：[为什么 MySQL 喜欢 B+ 树？](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247502168&idx=1&sn=ff63afcea1e8835fca3fe7a97e6922b4&scene=21#wechat_redirect)
+MySQL 默认的存储引擎是 InnoDB，它采用 B+Tree 作为索引的数据结构，至于为什么选择  B+ 树作为索引的数据结构，详细的分析可以看我这篇文章：[为什么 MySQL 喜欢 B+ 树？](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247502168&idx=1&sn=ff63afcea1e8835fca3fe7a97e6922b4&scene=21#wechat_redirect)
 
 在创建表时，InnoDB 存储引擎默认会创建一个主键索引，也就是聚簇索引，其它索引都属于二级索引。
 
@@ -43,7 +43,7 @@ MySQL 的 MyISAM 存储引擎支持多种索引数据结构，比如 B+ 树索�
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/f287701eba9bf6f32a2d09b013bb451b.png)
 
-如果使用的是 InnoDB 存储引擎， B+ 树索引的叶子节点保存数据本身，如下图所示：
+如果使用的是 InnoDB 存储引擎，B+ 树索引的叶子节点保存数据本身，如下图所示：
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/ef726d7287b854ea4862f7442d8012ec.png)
 
@@ -57,26 +57,26 @@ InnoDB 存储引擎根据索引类型不同，分为聚簇索引（上图就是�
 
 在我们使用「主键索引」字段作为条件查询的时候，如果要查询的数据都在「聚簇索引」的叶子节点里，那么就会在「聚簇索引」中的 B+ 树检索到对应的叶子节点，然后直接读取要查询的数据。如下面这条语句：
 
-```
+```plain
 // id 字段为主键索引
 select * from t_user where id=1;
 ```
 
-在我们使用「二级索引」字段作为条件查询的时候，如果要查询的数据都在「聚簇索引」的叶子节点里，那么需要检索两颗B+树：
+在我们使用「二级索引」字段作为条件查询的时候，如果要查询的数据都在「聚簇索引」的叶子节点里，那么需要检索两颗 B+树：
 
 - 先在「二级索引」的 B+ 树找到对应的叶子节点，获取主键值；
 - 然后用上一步获取的主键值，在「聚簇索引」中的 B+ 树检索到对应的叶子节点，然后获取要查询的数据。
 
 上面这个过程叫做**回表**，如下面这条语句：
 
-```
+```plain
 // name 字段为二级索引
 select * from t_user where name="林某";
 ```
 
 在我们使用「二级索引」字段作为条件查询的时候，如果要查询的数据在「二级索引」的叶子节点，那么只需要在「二级索引」的 B+ 树找到对应的叶子节点，然后读取要查询的数据，这个过程叫做**覆盖索引**。如下面这条语句：
 
-```
+```plain
 // name 字段为二级索引
 select id from t_user where name="林某";
 ```
@@ -93,7 +93,7 @@ select id from t_user where name="林某";
 
 比如下面的 like 语句，查询 name 后缀为「林」的用户，执行计划中的 type=ALL 就代表了全表扫描，而没有走索引。
 
-```
+```plain
 // name 字段为二级索引
 select * from t_user where name like '%林';
 ```
@@ -102,7 +102,7 @@ select * from t_user where name like '%林';
 
 如果是查询 name 前缀为林的用户，那么就会走索引扫描，执行计划中的 type=range 表示走索引扫描，key=index_name 看到实际走了 index_name 索引：
 
-```
+```plain
 // name 字段为二级索引
 select * from t_user where name like '林%';
 ```
@@ -119,9 +119,9 @@ select * from t_user where name like '林%';
 
 假设我们要查询 name 字段前缀为「林」的数据，也就是 `name like '林%'`，扫描索引的过程：
 
-- 首节点查询比较：林这个字的拼音大小比首节点的第一个索引值中的陈字大，但是比首节点的第二个索引值中的周字小，所以选择去节点2继续查询；
-- 节点 2 查询比较：节点2的第一个索引值中的陈字的拼音大小比林字小，所以继续看下一个索引值，发现节点2有与林字前缀匹配的索引值，于是就往叶子节点查询，即叶子节点4；
-- 节点 4 查询比较：节点4的第一个索引值的前缀符合林字，于是就读取该行数据，接着继续往右匹配，直到匹配不到前缀为林的索引值。
+- 首节点查询比较：林这个字的拼音大小比首节点的第一个索引值中的陈字大，但是比首节点的第二个索引值中的周字小，所以选择去节点 2 继续查询；
+- 节点 2 查询比较：节点 2 的第一个索引值中的陈字的拼音大小比林字小，所以继续看下一个索引值，发现节点 2 有与林字前缀匹配的索引值，于是就往叶子节点查询，即叶子节点 4；
+- 节点 4 查询比较：节点 4 的第一个索引值的前缀符合林字，于是就读取该行数据，接着继续往右匹配，直到匹配不到前缀为林的索引值。
 
 如果使用 `name like '%林'` 方式来查询，因为查询的结果可能是「陈林、张林、周林」等之类的，所以不知道从哪个索引值开始比较，于是就只能通过全表扫描的方式来查询。
 
@@ -133,7 +133,7 @@ select * from t_user where name like '林%';
 
 比如下面这条语句查询条件中对 name 字段使用了 LENGTH 函数，执行计划中的 type=ALL，代表了全表扫描：
 
-```
+```plain
 // name 为二级索引
 select * from t_user where length(name)=6;
 ```
@@ -148,7 +148,7 @@ select * from t_user where length(name)=6;
 
 举个例子，我通过下面这条语句，对 length(name) 的计算结果建立一个名为 idx_name_length 的索引。
 
-```
+```plain
 alter table t_user add key idx_name_length ((length(name)));
 ```
 
@@ -162,7 +162,7 @@ alter table t_user add key idx_name_length ((length(name)));
 
 比如，下面这条查询语句，执行计划中 type = ALL，说明是通过全表扫描的方式查询数据的：
 
-```
+```plain
 explain select * from t_user where id + 1 = 10;
 ```
 
@@ -194,7 +194,7 @@ explain select * from t_user where id + 1 = 10;
 
 然后我在条件查询中，用整型作为输入参数，此时执行计划中 type = ALL，所以是通过全表扫描来查询数据的。
 
-```
+```plain
 select * from t_user where phone = 1300000001;
 ```
 
@@ -204,7 +204,7 @@ select * from t_user where phone = 1300000001;
 
 我们再看第二个例子，id 是整型，但是下面这条语句还是走了索引扫描的。
 
-```
+```plain
  explain select * from t_user where id = '1';
 ```
 
@@ -214,10 +214,10 @@ select * from t_user where phone = 1300000001;
 
 要明白这个原因，首先我们要知道 MySQL 的数据类型转换规则是什么？就是看 MySQL 是会将字符串转成数字处理，还是将数字转换成字符串处理。
 
-我在看《mysql45讲的时候》看到一个简单的测试方式，就是通过 select “10” > 9 的结果来知道MySQL 的数据类型转换规则是什么：
+我在看《mysql45 讲的时候》看到一个简单的测试方式，就是通过 select“10” > 9 的结果来知道 MySQL 的数据类型转换规则是什么：
 
 - 如果规则是 MySQL 会将自动「字符串」转换成「数字」，就相当于 select 10 > 9，这个就是数字比较，所以结果应该是 1；
-- 如果规则是 MySQL 会将自动「数字」转换成「字符串」，就相当于 select "10" > "9"，这个是字符串比较，字符串比较大小是逐位从高位到低位逐个比较（按ascii码） ，那么"10"字符串相当于 “1”和“0”字符的组合，所以先是拿 “1” 字符和 “9” 字符比较，因为 “1” 字符比 “9” 字符小，所以结果应该是 0。
+- 如果规则是 MySQL 会将自动「数字」转换成「字符串」，就相当于 select "10" > "9"，这个是字符串比较，字符串比较大小是逐位从高位到低位逐个比较（按 ascii 码） ，那么"10"字符串相当于“1”和“0”字符的组合，所以先是拿“1”字符和“9”字符比较，因为“1”字符比“9”字符小，所以结果应该是 0。
 
 在 MySQL 中，执行的结果如下图：
 
@@ -227,14 +227,14 @@ select * from t_user where phone = 1300000001;
 
 前面的例子一中的查询语句，我也跟大家说了是会走全表扫描：
 
-```
+```plain
 //例子一的查询语句
 select * from t_user where phone = 1300000001;
 ```
 
 这是因为 phone 字段为字符串，所以 MySQL 要会自动把字符串转为数字，所以这条语句相当于：
 
-```
+```plain
 select * from t_user where CAST(phone AS signed int) = 1300000001;
 ```
 
@@ -242,14 +242,14 @@ select * from t_user where CAST(phone AS signed int) = 1300000001;
 
 例子二中的查询语句，我跟大家说了是会走索引扫描：
 
-```
+```plain
 //例子二的查询语句
 select * from t_user where id = "1";
 ```
 
 这时因为字符串部分是输入参数，也就需要将字符串转为数字，所以这条语句相当于：
 
-```
+```plain
 select * from t_user where id = CAST("1" AS signed int);
 ```
 
@@ -267,19 +267,19 @@ select * from t_user where id = CAST("1" AS signed int);
 
 比如，如果创建了一个 `(a, b, c)` 联合索引，如果查询条件是以下这几种，就可以匹配上联合索引：
 
-- where a=1；
-- where a=1 and b=2 and c=3；
-- where a=1 and b=2；
+- where a=1.
+- where a=1 and b=2 and c=3.
+- where a=1 and b=2.
 
 需要注意的是，因为有查询优化器，所以 a 字段在 where 子句的顺序并不重要。
 
-但是，如果查询条件是以下这几种，因为不符合最左匹配原则，所以就无法匹配上联合索引，联合索引就会失效:
+但是，如果查询条件是以下这几种，因为不符合最左匹配原则，所以就无法匹配上联合索引，联合索引就会失效：
 
-- where b=2；
-- where c=3；
-- where b=2 and c=3；
+- where b=2.
+- where c=3.
+- where b=2 and c=3.
 
-有一个比较特殊的查询条件：where a = 1 and c = 3 ，符合最左匹配吗？
+有一个比较特殊的查询条件：where a = 1 and c = 3，符合最左匹配吗？
 
 这种其实严格意义上来说是属于索引截断，不同版本处理方式也不一样。
 
@@ -305,7 +305,7 @@ MySQL 5.5 的话，前面 a 会走索引，在联合索引找到主键值后，�
 
 举个例子，比如下面的查询语句，id 是主键，age 是普通列，从执行计划的结果看，是走了全表扫描。
 
-```
+```plain
 select * from t_user where id = 1 or age = 18;
 ```
 
@@ -317,7 +317,7 @@ select * from t_user where id = 1 or age = 18;
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/7f72c4ef72b7b979c844798d7be06916.png)
 
-可以看到 type=index merge， index merge 的意思就是对 id 和 age 分别进行了扫描，然后将这两个结果集进行了合并，这样做的好处就是避免了全表扫描。
+可以看到 type=index merge，index merge 的意思就是对 id 和 age 分别进行了扫描，然后将这两个结果集进行了合并，这样做的好处就是避免了全表扫描。
 
 ## 总结
 

@@ -20,7 +20,7 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 
 通常是以 4 个指标来衡量网络的性能，分别是带宽、延时、吞吐率、PPS（Packet Per Second），它们表示的意义如下：
 
-- *带宽*，表示链路的最大传输速率，单位是 b/s （比特 / 秒），带宽越大，其传输能力就越强。
+- *带宽*，表示链路的最大传输速率，单位是 b/s（比特 / 秒），带宽越大，其传输能力就越强。
 - *延时*，表示请求数据包发送后，收到对端响应，所需要的时间延迟。不同的场景有着不同的含义，比如可以表示建立 TCP 连接所需的时间延迟，或一个数据包往返所需的时间延迟。
 - *吞吐率*，表示单位时间内成功传输的数据量，单位是 b/s（比特 / 秒）或者 B/s（字节 / 秒），吞吐受带宽限制，带宽越大，吞吐率的上限才可能越高。
 - *PPS*，全称是 Packet Per Second（包 / 秒），表示以网络包为单位的传输速率，一般用来评估系统对于网络的转发能力。
@@ -57,7 +57,7 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 
 第三，网口的 IP 地址、子网掩码、MAC 地址、网关地址。这些信息必须要配置正确，网络功能才能正常工作。
 
-第四，网路包收发的统计信息。通常有网络收发的字节数、包数、错误数以及丢包情况的信息，如果 `TX`（发送） 和 `RX`（接收） 部分中 errors、dropped、overruns、carrier 以及 collisions 等指标不为 0 时，则说明网络发送或者接收出问题了，这些出错统计信息的指标意义如下：
+第四，网路包收发的统计信息。通常有网络收发的字节数、包数、错误数以及丢包情况的信息，如果 `TX`（发送）和 `RX`（接收）部分中 errors、dropped、overruns、carrier 以及 collisions 等指标不为 0 时，则说明网络发送或者接收出问题了，这些出错统计信息的指标意义如下：
 
 - *errors* 表示发生错误的数据包数，比如校验错误、帧同步错误等；
 - *dropped* 表示丢弃的数据包数，即数据包已经收到了 Ring Buffer（这个缓冲区是在内核内存中，更具体一点是在网卡驱动程序里），但因为系统内存不足等原因而发生的丢包；
@@ -81,11 +81,11 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 
 
 
-可以发现，输出的内容都差不多， 比如都包含了 socket 的状态（*State*）、接收队列（*Recv-Q*）、发送队列（*Send-Q*）、本地地址（*Local Address*）、远端地址（*Foreign Address*）、进程 PID 和进程名称（*PID/Program name*）等。
+可以发现，输出的内容都差不多，比如都包含了 socket 的状态（*State*）、接收队列（*Recv-Q*）、发送队列（*Send-Q*）、本地地址（*Local Address*）、远端地址（*Foreign Address*）、进程 PID 和进程名称（*PID/Program name*）等。
 
 接收队列（*Recv-Q*）和发送队列（*Send-Q*）比较特殊，在不同的 socket 状态。它们表示的含义是不同的。
 
-当 socket 状态处于 `Established `时：
+当 socket 状态处于 `Established`时：
 
 - *Recv-Q* 表示 socket 缓冲区中还没有被应用程序读取的字节数；
 - *Send-Q* 表示 socket 缓冲区中还没有被远端主机确认的字节数；
@@ -96,7 +96,7 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 - *Send-Q* 表示全连接队列的最大长度；
 
 
-在 TCP 三次握手过程中，当服务器收到客户端的 SYN 包后，内核会把该连接存储到半连接队列，然后再向客户端发送 SYN+ACK 包，接着客户端会返回 ACK，服务端收到第三次握手的 ACK 后，内核会把连接从半连接队列移除，然后创建新的完全的连接，并将其增加到全连接队列 ，等待进程调用 `accept()` 函数时把连接取出来。
+在 TCP 三次握手过程中，当服务器收到客户端的 SYN 包后，内核会把该连接存储到半连接队列，然后再向客户端发送 SYN+ACK 包，接着客户端会返回 ACK，服务端收到第三次握手的 ACK 后，内核会把连接从半连接队列移除，然后创建新的完全的连接，并将其增加到全连接队列，等待进程调用 `accept()` 函数时把连接取出来。
 
 ![半连接队列与全连接队列](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8D%8A%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%85%A8%E8%BF%9E%E6%8E%A5/3.jpg)
 
@@ -109,7 +109,7 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/操作系统/网络/showinfo.png)
 
 
-`ss` 命令输出的统计信息相比 `netsat` 比较少，`ss` 只显示已经连接（*estab*）、关闭（*closed*）、孤儿（*orphaned*） socket 等简要统计。
+`ss` 命令输出的统计信息相比 `netsat` 比较少，`ss` 只显示已经连接（*estab*）、关闭（*closed*）、孤儿（*orphaned*）socket 等简要统计。
 
 而 `netstat` 则有更详细的网络协议栈信息，比如上面显示了 TCP 协议的主动连接（*active connections openings*）、被动连接（*passive connection openings*）、失败重试（*failed connection attempts*）、发送（*segments send out*）和接收（*segments received*）的分段数量等各种信息。
 
@@ -134,7 +134,7 @@ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应�
 - `rxkB/s` 和 `txkB/s` 分别是接收和发送的吞吐率，单位是 KB/ 秒。
 - `rxcmp/s` 和 `txcmp/s` 分别是接收和发送的压缩数据包数，单位是包 / 秒。
 
-对于带宽，我们可以使用 `ethtool` 命令来查询，它的单位通常是 `Gb/s` 或者 `Mb/s`，不过注意这里小写字母 `b` ，表示比特而不是字节。我们通常提到的千兆网卡、万兆网卡等，单位也都是比特（*bit*）。如下你可以看到， eth0 网卡就是一个千兆网卡：
+对于带宽，我们可以使用 `ethtool` 命令来查询，它的单位通常是 `Gb/s` 或者 `Mb/s`，不过注意这里小写字母 `b` ，表示比特而不是字节。我们通常提到的千兆网卡、万兆网卡等，单位也都是比特（*bit*）。如下你可以看到，eth0 网卡就是一个千兆网卡：
 
 ```bash
 $ ethtool eth0 | grep Speed
@@ -160,7 +160,7 @@ $ ethtool eth0 | grep Speed
 
 ## 关注作者
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」，关注后，回复「网络」再送你图解网络 PDF***
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)
 

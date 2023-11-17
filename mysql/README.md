@@ -1,6 +1,6 @@
-# 图解MySQL介绍
+# 图解 MySQL 介绍
 
-《图解MySQL》目前还在连载更新中，大家不要催啦:joy: ，更新完会第一时间整理 PDF 的。
+《图解 MySQL》目前还在连载更新中，大家不要催啦:joy: ，更新完会第一时间整理 PDF 的。
 
 目前已经更新好的文章：
 
@@ -16,7 +16,7 @@
    - [为什么 MySQL 采用 B+ 树作为索引？](/mysql/index/why_index_chose_bpuls_tree.md)
    - [MySQL 单表不要超过 2000W 行，靠谱吗？](/mysql/index/2000w.md)
    - [索引失效有哪些？](/mysql/index/index_lose.md)
-   - [MySQL 使用 like “%x“，索引一定会失效吗？](/mysql/index/index_issue.md)
+   - [MySQL 使用 like“%x“，索引一定会失效吗？](/mysql/index/index_issue.md)
    - [count(\*) 和 count(1) 有什么区别？哪个性能最好？](/mysql/index/count.md)
    
 - **事务篇** :point_down:
@@ -26,8 +26,8 @@
 - **锁篇** :point_down:
 	- [MySQL 有哪些锁？](/mysql/lock/mysql_lock.md) 	
 	- [MySQL 是怎么加锁的？](/mysql/lock/how_to_lock.md) 	
-	- [update 没加索引会锁全表?](/mysql/lock/update_index.md) 	
-	- [MySQL 记录锁+间隙锁可以防止删除操作而导致的幻读吗？](/mysql/lock/lock_phantom.md) 	
+	- [update 没加索引会锁全表？](/mysql/lock/update_index.md) 	
+	- [MySQL 记录锁 + 间隙锁可以防止删除操作而导致的幻读吗？](/mysql/lock/lock_phantom.md) 	
 	- [MySQL 死锁了，怎么办？](/mysql/lock/deadlock.md) 	
 	- [字节面试：加了什么锁，导致死锁的？](/mysql/lock/show_lock.md)
 	

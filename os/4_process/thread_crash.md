@@ -14,12 +14,12 @@
 
 很多同学就好奇，**为什么 C/C++ 语言里，线程崩溃后，进程也会崩溃，而 Java 语言里却不会呢？**
 
-刚好看到朋友（[公众号：码海](https://mp.weixin.qq.com/s/JnlTdUk8Jvao8L6FAtKqhQ)）写了一篇：「**美团面试题：为什么线程崩溃崩溃不会导致 JVM 崩溃?**」
+刚好看到朋友（[公众号：码海](https://mp.weixin.qq.com/s/JnlTdUk8Jvao8L6FAtKqhQ)）写了一篇：「**美团面试题：为什么线程崩溃崩溃不会导致 JVM 崩溃？**」
 
 我觉得写的很好，所以分享给大家一起拜读拜读，本文分以下几节来探讨：
 
 1. 线程崩溃，进程一定会崩溃吗
-2. 进程是如何崩溃的-信号机制简介
+2. 进程是如何崩溃的 - 信号机制简介
 3. 为什么在 JVM 中线程崩溃不会导致 JVM 进程崩溃
 4. openJDK 源码解析
 
@@ -74,7 +74,7 @@
 
 以上错误都是访问内存时的错误，所以统一会报 Segment Fault 错误（即段错误），这些都会导致进程崩溃
 
-## 进程是如何崩溃的-信号机制简介
+## 进程是如何崩溃的 - 信号机制简介
 
 那么线程崩溃后，进程是如何崩溃的呢，这背后的机制到底是怎样的，答案是**信号**。
 
@@ -116,7 +116,7 @@ int main(void) {
   *p = 10; // 针对不属于进程的内核空间写入数据，崩溃
 }
 
-// 以上结果输出: Signal 11 catched!
+// 以上结果输出：Signal 11 catched!
 ```
 
 **如代码所示**：注册信号处理函数后，当收到 SIGSEGV 信号后，先执行相关的逻辑再退出
@@ -169,7 +169,7 @@ int main(void) {
 
 好了，现在我们知道了 StackoverflowError 怎么产生的。
 
-那问题来了，既然 StackoverflowError 或者 NPE 都属于非法访问内存， JVM 为什么不会崩溃呢？
+那问题来了，既然 StackoverflowError 或者 NPE 都属于非法访问内存，JVM 为什么不会崩溃呢？
 
 有了上一节的铺垫，相信你不难回答，其实就是**因为 JVM 自定义了自己的信号处理函数，拦截了 SIGSEGV 信号，针对这两者不让它们崩溃**。
 
@@ -177,7 +177,7 @@ int main(void) {
 
 ## openJDK 源码解析
 
-HotSpot 虚拟机目前使用范围最广的 Java 虚拟机，据 R 大所述， Oracle JDK 与 OpenJDK 里的 JVM 都是 HotSpot VM，从源码层面说，两者基本上是同一个东西。
+HotSpot 虚拟机目前使用范围最广的 Java 虚拟机，据 R 大所述，Oracle JDK 与 OpenJDK 里的 JVM 都是 HotSpot VM，从源码层面说，两者基本上是同一个东西。
 
 OpenJDK 是开源的，所以我们主要研究下 Java 8 的 OpenJDK 即可，地址如下：[https://github.com/AdoptOpenJDK/openjdk-jdk8u](https://github.com/AdoptOpenJDK/openjdk-jdk8u)，有兴趣的可以下载来看看。
 
@@ -267,6 +267,6 @@ JVM_handle_linux_signal(int sig,
 
 ---
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」，关注后，回复「网络」再送你图解网络 PDF***
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png)

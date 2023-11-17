@@ -137,7 +137,7 @@ access.log 日志里虽然没有用户的身份信息，但是我们可以用「
 
 假设我们按天来分组分析每天的 UV 数量，这种情况就稍微比较复杂，需要比较多的命令来实现。
 
-既然要按天统计 UV，那就得把「日期 + IP地址」过滤出来，并去重，命令如下：
+既然要按天统计 UV，那就得把「日期 + IP 地址」过滤出来，并去重，命令如下：
 
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/log/uv分组.png)
@@ -169,7 +169,7 @@ nginx 的 access.log 日志最末尾关于 User Agent 的信息，主要是客�
 
 因此，我们可以利用这一信息来分析有哪些终端访问了服务器。
 
-User Agent 的信息在日志里的第 12 列，因此我们先使用 `awk` 过滤出第 12 列的内容后，进行 `sort` 排序，再用 `uniq -c` 去重并统计，最后再使用 `sort -rn`（*r 表示逆向排序， n 表示按数值排序*） 对统计的结果排序，结果如下图：
+User Agent 的信息在日志里的第 12 列，因此我们先使用 `awk` 过滤出第 12 列的内容后，进行 `sort` 排序，再用 `uniq -c` 去重并统计，最后再使用 `sort -rn`（*r 表示逆向排序，n 表示按数值排序*）对统计的结果排序，结果如下图：
 
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost4@main/网络/log/terminal.png)
@@ -187,6 +187,6 @@ access.log 日志中，第 7 列是客户端请求的路径，先使用 `awk` �
 
 ## 关注作者
 
-***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」，关注后，回复「网络」再送你图解网络 PDF***
+***哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林 coding」，关注后，回复「网络」再送你图解网络 PDF***
 
 ![](https://cdn.jsdelivr.net/gh/xiaolincoder/ImageHost3@main/其他/公众号介绍.png)

@@ -82,9 +82,9 @@ int main(int argc, char *argv[])
 
 接下来，带大家源码分析一下。
 
-Linux 内核处理收到 TCP 报文的入口函数是  tcp_v4_rcv，在收到 TCP 报文后，会调用 __inet_lookup_skb 函数找到 TCP 报文所属 socket 。
+Linux 内核处理收到 TCP 报文的入口函数是  tcp_v4_rcv，在收到 TCP 报文后，会调用 __inet_lookup_skb 函数找到 TCP 报文所属 socket。
 
-```
+```plain
 int tcp_v4_rcv(struct sk_buff *skb)
 {
  ...
@@ -96,7 +96,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
 }
 ```
 
-__inet_lookup_skb 函数首先查找连接建立状态的socket（__inet_lookup_established），在没有命中的情况下，才会查找监听套接口（__inet_lookup_listener）。
+__inet_lookup_skb 函数首先查找连接建立状态的 socket（__inet_lookup_established），在没有命中的情况下，才会查找监听套接口（__inet_lookup_listener）。
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/88416aa95d255495e07fb3a002b2167b.png)
 
@@ -104,7 +104,7 @@ __inet_lookup_skb 函数首先查找连接建立状态的socket（__inet_lookup_
 
 本次的案例中，服务端是没有调用 listen 函数的，所以自然也是找不到监听该端口的 socket。
 
-所以，__inet_lookup_skb 函数最终找不到对应的 socket，于是跳转到no_tcp_socket。
+所以，__inet_lookup_skb 函数最终找不到对应的 socket，于是跳转到 no_tcp_socket。
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/54ee363e149ee3dfba30efb1a542ef5c.png)
 
@@ -122,11 +122,11 @@ __inet_lookup_skb 函数首先查找连接建立状态的socket（__inet_lookup_
 
 之前看群消息，看到有读者面试腾讯的时候，被问到这么一个问题。
 
-> 不使用 listen ，可以建立 TCP 连接吗？
+> 不使用 listen，可以建立 TCP 连接吗？
 
-答案，**是可以的，客户端是可以自己连自己的形成连接（TCP自连接），也可以两个客户端同时向对方发出请求建立连接（TCP同时打开），这两个情况都有个共同点，就是没有服务端参与，也就是没有listen，就能建立连接**。
+答案，**是可以的，客户端是可以自己连自己的形成连接（TCP 自连接），也可以两个客户端同时向对方发出请求建立连接（TCP 同时打开），这两个情况都有个共同点，就是没有服务端参与，也就是没有 listen，就能建立连接**。
 
-> 那没有listen，为什么还能建立连接？
+> 那没有 listen，为什么还能建立连接？
 
 我们知道执行 listen 方法时，会创建半连接队列和全连接队列。
 
@@ -136,11 +136,11 @@ __inet_lookup_skb 函数首先查找连接建立状态的socket（__inet_lookup_
 
 > 那么客户端会有半连接队列吗？
 
-显然没有，因为客户端没有执行listen，因为半连接队列和全连接队列都是在执行 listen 方法时，内核自动创建的。
+显然没有，因为客户端没有执行 listen，因为半连接队列和全连接队列都是在执行 listen 方法时，内核自动创建的。
 
 但内核还有个全局 hash 表，可以用于存放 sock 连接的信息。
 
-这个全局 hash 表其实还细分为 ehash，bhash和listen_hash等，但因为过于细节，大家理解成有一个全局 hash 就够了，
+这个全局 hash 表其实还细分为 ehash，bhash 和 listen_hash 等，但因为过于细节，大家理解成有一个全局 hash 就够了，
 
 **在 TCP 自连接的情况中，客户端在 connect 方法时，最后会将自己的连接信息放入到这个全局 hash 表中，然后将信息发出，消息在经过回环地址重新回到 TCP 传输层的时候，就会根据 IP + 端口信息，再一次从这个全局 hash 中取出信息。于是握手包一来一回，最后成功建立连接**。
 

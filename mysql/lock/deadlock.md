@@ -32,7 +32,7 @@ CREATE TABLE `t_order` (
 
 ![图片](https://img-blog.csdnimg.cn/img_convert/54fc00f9f87a60ab7b5ba92d824a892d.png)
 
-假设这时有两事务，一个事务要插入订单 1007 ，另外一个事务要插入订单 1008，因为需要对订单做幂等性校验，所以两个事务先要查询该订单是否存在，不存在才插入记录，过程如下：
+假设这时有两事务，一个事务要插入订单 1007，另外一个事务要插入订单 1008，因为需要对订单做幂等性校验，所以两个事务先要查询该订单是否存在，不存在才插入记录，过程如下：
 
 ![](https://img-blog.csdnimg.cn/img_convert/90c1e01d0345de639e3426cea0390e80.png)
 
@@ -130,11 +130,11 @@ Insert into t_order (order_no, create_date) values (1008, now());
 
 因为当我们执行以下插入语句时，会在插入间隙上获取插入意向锁，**而插入意向锁与间隙锁是冲突的，所以当其它事务持有该间隙的间隙锁时，需要等待其它事务释放间隙锁之后，才能获取到插入意向锁。而间隙锁与间隙锁之间是兼容的，所以所以两个事务中 `select ... for update` 语句并不会相互影响**。
 
-案例中的事务 A 和事务 B 在执行完后 `select ... for update` 语句后都持有范围为`(1006,+∞]`的next-key 锁，而接下来的插入操作为了获取到插入意向锁，都在等待对方事务的间隙锁释放，于是就造成了循环等待，导致死锁。
+案例中的事务 A 和事务 B 在执行完后 `select ... for update` 语句后都持有范围为`(1006,+∞]`的 next-key 锁，而接下来的插入操作为了获取到插入意向锁，都在等待对方事务的间隙锁释放，于是就造成了循环等待，导致死锁。
 
 > 为什么间隙锁与间隙锁之间是兼容的？
 
-在MySQL官网上还有一段非常关键的描述：
+在 MySQL 官网上还有一段非常关键的描述：
 
 *Gap locks in InnoDB are “purely inhibitive”, which means that their only purpose is to prevent other transactions from Inserting to the gap. Gap locks can co-exist. A gap lock taken by one transaction does not prevent another transaction from taking a gap lock on the same gap. There is no difference between shared and exclusive gap locks. They do not conflict with each other, and they perform the same function.*
 
@@ -145,7 +145,7 @@ Insert into t_order (order_no, create_date) values (1008, now());
 - 其一是两个间隙锁的间隙区间完全一样；
 - 其二是一个间隙锁包含的间隙区间是另一个间隙锁包含间隙区间的子集。
 
-但是有一点要注意，**next-key lock 是包含间隙锁+记录锁的，如果一个事务获取了 X 型的 next-key lock，那么另外一个事务在获取相同范围的 X 型的 next-key lock 时，是会被阻塞的**。
+但是有一点要注意，**next-key lock 是包含间隙锁 + 记录锁的，如果一个事务获取了 X 型的 next-key lock，那么另外一个事务在获取相同范围的 X 型的 next-key lock 时，是会被阻塞的**。
 
 比如，一个事务持有了范围为 (1, 10] 的 X 型的 next-key lock，那么另外一个事务在获取相同范围的 X 型的 next-key lock 时，就会被阻塞。
 
@@ -157,7 +157,7 @@ Insert into t_order (order_no, create_date) values (1008, now());
 
 注意！插入意向锁名字虽然有意向锁，但是它并不是意向锁，它是一种特殊的间隙锁。
 
-在MySQL的官方文档中有以下重要描述：
+在 MySQL 的官方文档中有以下重要描述：
 
 *An Insert intention lock is a type of gap lock set by Insert operations prior to row Insertion. This lock signals the intent to Insert in such a way that multiple transactions Inserting into the same index gap need not wait for each other if they are not Inserting at the same position within the gap. Suppose that there are index records with values of 4 and 7. Separate transactions that attempt to Insert values of 5 and 6, respectively, each lock the gap between 4 and 7 with Insert intention locks prior to obtaining the exclusive lock on the Inserted row, but do not block each other because the rows are nonconflicting.*
 
@@ -175,9 +175,9 @@ Insert into t_order (order_no, create_date) values (1008, now());
 
 Insert 语句在正常执行时是不会生成锁结构的，它是靠聚簇索引记录自带的 trx_id 隐藏列来作为**隐式锁**来保护记录的。
 
->  什么是隐式锁？
+> 什么是隐式锁？
 
-当事务需要加锁的时，如果这个锁不可能发生冲突，InnoDB会跳过加锁环节，这种机制称为隐式锁。隐式锁是 InnoDB 实现的一种延迟加锁机制，其特点是只有在可能发生冲突时才加锁，从而减少了锁的数量，提高了系统整体性能。
+当事务需要加锁的时，如果这个锁不可能发生冲突，InnoDB 会跳过加锁环节，这种机制称为隐式锁。隐式锁是 InnoDB 实现的一种延迟加锁机制，其特点是只有在可能发生冲突时才加锁，从而减少了锁的数量，提高了系统整体性能。
 
 隐式锁就是在 Insert 过程中不加锁，只有在特殊情况下，才会将隐式锁转换为显式锁，这里我们列举两个场景。
 
@@ -203,11 +203,11 @@ mysql> select * from t_order where order_no = 1006 for update;
 Empty set (0.01 sec)
 ```
 
-接着，我们执行 `select * from performance_schema.data_locks\G;` 语句  ，确定事务 A 加了什么类型的锁，这里只关注在记录上加锁的类型。
+接着，我们执行 `select * from performance_schema.data_locks\G;` 语句，确定事务 A 加了什么类型的锁，这里只关注在记录上加锁的类型。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/事务A间隙锁.png)
 
-本次的例子加的是 next-key 锁（记录锁+间隙锁），锁范围是`（1005, +∞]`。
+本次的例子加的是 next-key 锁（记录锁 + 间隙锁），锁范围是`（1005, +∞]`。
 
 然后，有个事务 B 在这个间隙锁中，插入了一个记录，那么此时该事务 B 就会被阻塞：
 
@@ -220,15 +220,15 @@ mysql> insert into t_order(order_no, create_date) values(1010,now());
 ### 阻塞状态。。。。
 ```
 
-接着，我们执行 `select * from performance_schema.data_locks\G;` 语句  ，确定事务 B 加了什么类型的锁，这里只关注在记录上加锁的类型。
+接着，我们执行 `select * from performance_schema.data_locks\G;` 语句，确定事务 B 加了什么类型的锁，这里只关注在记录上加锁的类型。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/事务b插入意向锁.png)
 
-可以看到，事务 B 的状态为等待状态（LOCK_STATUS: WAITING），因为向事务 A 生成的 next-key 锁（记录锁+间隙锁）范围`（1005, +∞]` 中插入了一条记录，所以事务 B 的插入操作生成了一个插入意向锁（` LOCK_MODE: X,INSERT_INTENTION     `），锁的状态是等待状态，意味着事务 B 并没有成功获取到插入意向锁，因此事务 B 发生阻塞。
+可以看到，事务 B 的状态为等待状态（LOCK_STATUS: WAITING），因为向事务 A 生成的 next-key 锁（记录锁 + 间隙锁）范围`（1005, +∞]` 中插入了一条记录，所以事务 B 的插入操作生成了一个插入意向锁（`LOCK_MODE: X,INSERT_INTENTION`），锁的状态是等待状态，意味着事务 B 并没有成功获取到插入意向锁，因此事务 B 发生阻塞。
 
 ### 2、遇到唯一键冲突
 
-如果在插入新记录时，插入了一个与「已有的记录的主键或者唯一二级索引列值相同」的记录（不过可以有多条记录的唯一二级索引列的值同时为NULL，这里不考虑这种情况），此时插入就会失败，然后对于这条记录加上了 **S 型的锁**。
+如果在插入新记录时，插入了一个与「已有的记录的主键或者唯一二级索引列值相同」的记录（不过可以有多条记录的唯一二级索引列的值同时为 NULL，这里不考虑这种情况），此时插入就会失败，然后对于这条记录加上了 **S 型的锁**。
 
 至于是行级锁的类型是记录锁，还是 next-key 锁，跟是「主键冲突」还是「唯一二级索引冲突」有关系。
 
@@ -255,7 +255,7 @@ t_order 表中的 id 字段为主键索引，并且已经存在 id 值为 5 的�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/主键冲突锁.png)
 
-可以看到，主键索引为 5 （LOCK_DATA）的这条记录中加了锁类型为 S 型的记录锁。注意，这里 LOCK_TYPE 中的 RECORD 表示行级锁，而不是记录锁的意思。如果是 S 型记录锁的话，LOCK_MODE 会显示 `S, REC_NOT_GAP`。
+可以看到，主键索引为 5（LOCK_DATA）的这条记录中加了锁类型为 S 型的记录锁。注意，这里 LOCK_TYPE 中的 RECORD 表示行级锁，而不是记录锁的意思。如果是 S 型记录锁的话，LOCK_MODE 会显示 `S, REC_NOT_GAP`。
 
 所以，在隔离级别是「可重复读」的情况下，如果在插入数据的时候，发生了主键索引冲突，插入新记录的事务会给已存在的主键值重复的聚簇索引记录**添加 S 型记录锁**。
 
@@ -269,17 +269,17 @@ t_order 表中的 order_no 字段为唯一二级索引，并且已经存在 orde
 
 但是除了报错之外，还做一个很重要的事情，就是对 order_no 值为 1001 这条记录加上了 **S 型的 next-key 锁**。
 
-我们可以执行 `select * from performance_schema.data_locks\G;` 语句  ，确定事务加了什么类型的锁，这里只关注在记录上加锁的类型。
+我们可以执行 `select * from performance_schema.data_locks\G;` 语句，确定事务加了什么类型的锁，这里只关注在记录上加锁的类型。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/s类型锁.png)
 
-可以看到，**index_order 二级索引加了 S 型的 next-key 锁，范围是(-∞, 1001]**。注意，这里 LOCK_TYPE 中的 RECORD 表示行级锁，而不是记录锁的意思。如果是记录锁的话，LOCK_MODE 会显示 `S, REC_NOT_GAP`。
+可以看到，**index_order 二级索引加了 S 型的 next-key 锁，范围是 (-∞, 1001]**。注意，这里 LOCK_TYPE 中的 RECORD 表示行级锁，而不是记录锁的意思。如果是记录锁的话，LOCK_MODE 会显示 `S, REC_NOT_GAP`。
 
 此时，事务 B 执行了 select * from t_order where order_no = 1001 for update;  就会阻塞，因为这条语句想加 X 型的锁，是与 S 型的锁是冲突的，所以就会被阻塞。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/唯一索引冲突.drawio.png)
 
-我们也可以从 performance_schema.data_locks 这个表中看到，事务 B 的状态（LOCK_STATUS）是等待状态，加锁的类型 X 型的记录锁（LOCK_MODE: X,REC_NOT_GAP    ）。
+我们也可以从 performance_schema.data_locks 这个表中看到，事务 B 的状态（LOCK_STATUS）是等待状态，加锁的类型 X 型的记录锁（LOCK_MODE: X,REC_NOT_GAP）。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/事务b等待状态.png)
 
@@ -300,7 +300,7 @@ t_order 表中的 order_no 字段为唯一二级索引，并且已经存在 orde
 - 事务 A 先插入 order_no 为 1006 的记录，可以插入成功，此时对应的唯一二级索引记录被「隐式锁」保护，此时还没有实际的锁结构（执行完这里的时候，你可以看查 performance_schema.data_locks 信息，可以看到这条记录是没有加任何锁的）；
 - 接着，事务 B 也插入 order_no 为 1006 的记录，由于事务 A 已经插入 order_no 值为 1006 的记录，所以事务 B 在插入二级索引记录时会遇到重复的唯一二级索引列值，此时事务 B 想获取一个 S 型 next-key 锁，但是事务 A 并未提交，**事务 A 插入的 order_no 值为 1006 的记录上的「隐式锁」会变「显示锁」且锁类型为  X 型的记录锁，所以事务 B 向获取 S 型 next-key 锁时会遇到锁冲突，事务 B 进入阻塞状态**。
 
-我们可以执行 `select * from performance_schema.data_locks\G;` 语句  ，确定事务加了什么类型的锁，这里只关注在记录上加锁的类型。
+我们可以执行 `select * from performance_schema.data_locks\G;` 语句，确定事务加了什么类型的锁，这里只关注在记录上加锁的类型。
 
 先看事务 A 对 order_no 为 1006 的记录加了什么锁？
 
@@ -348,17 +348,17 @@ t_order 表中的 order_no 字段为唯一二级索引，并且已经存在 orde
 
 最后说个段子：
 
-面试官: 解释下什么是死锁?
+面试官：解释下什么是死锁？
 
-应聘者: 你录用我,我就告诉你
+应聘者：你录用我，我就告诉你
 
-面试官: 你告诉我,我就录用你
+面试官：你告诉我，我就录用你
 
-应聘者: 你录用我,我就告诉你
+应聘者：你录用我，我就告诉你
 
-面试官: 卧槽滚！
+面试官：卧槽滚！
 
-**...........**
+**……**
 
 ---
 

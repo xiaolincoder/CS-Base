@@ -21,7 +21,7 @@
 
 冷静冷静，你说的没错，客户端当然要向服务器发送请求的。
 
-但是，对于一些具有重复性的 HTTP 请求，比如每次请求得到的数据都一样的，我们可以把这对「请求-响应」的数据都**缓存在本地**，那么下次就直接读取本地的数据，不必在通过网络获取服务器的响应了，这样的话 HTTP/1.1 的性能肯定肉眼可见的提升。
+但是，对于一些具有重复性的 HTTP 请求，比如每次请求得到的数据都一样的，我们可以把这对「请求 - 响应」的数据都**缓存在本地**，那么下次就直接读取本地的数据，不必在通过网络获取服务器的响应了，这样的话 HTTP/1.1 的性能肯定肉眼可见的提升。
 
 所以，避免发送 HTTP 请求的方法就是通过**缓存技术**，HTTP 设计者早在之前就考虑到了这点，因此 HTTP 协议的头部有不少是针对缓存的字段。
 
@@ -105,17 +105,17 @@
 
 有的网页会含有很多小图片、小图标，有多少个小图片，客户端就要发起多少次请求。那么对于这些小图片，我们可以考虑使用 `CSS Image Sprites` 技术把它们合成一个大图片，这样浏览器就可以用一次请求获得一个大图片，然后再根据 CSS 数据把大图片切割成多张小图片。
 
-![图来源于：墨染枫林的CSDN](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/css精灵.png)
+![图来源于：墨染枫林的 CSDN](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/css精灵.png)
 
 这种方式就是**通过将多个小图片合并成一个大图片来减少 HTTP 请求的次数，以减少 HTTP 请求的次数，从而减少网络的开销**。
 
 
 除了将小图片合并成大图片的方式，还有服务端使用 `webpack` 等打包工具将 js、css 等资源合并打包成大文件，也是能达到类似的效果。
 
-另外，还可以将图片的二进制数据用 `base64` 编码后，以 URL 的形式嵌入到 HTML 文件，跟随 HTML 文件一并发送.
+另外，还可以将图片的二进制数据用 `base64` 编码后，以 URL 的形式嵌入到 HTML 文件，跟随 HTML 文件一并发送。
 
 
-```
+```plain
 <image src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAFKCAIAAAC7M9WrAAAACXBIWXMAA ... />
 ```
 
@@ -123,7 +123,7 @@
 
 这样客户端收到 HTML 后，就可以直接解码出数据，然后直接显示图片，就不用再发起图片相关的请求，这样便减少了请求的次数。
 
-![图来源于：陈健平的CSDN ](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/base64图片.png)
+![图来源于：陈健平的 CSDN ](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/http1.1优化/base64图片.png)
 
 
 
@@ -163,14 +163,14 @@
 gzip 就是比较常见的无损压缩。客户端支持的压缩算法，会在 HTTP 请求中通过头部中的 `Accept-Encoding` 字段告诉服务器：
 
 
-```
+```plain
 Accept-Encoding: gzip, deflate, br
 ```
 
 服务器收到后，会从中选择一个服务器支持的或者合适的压缩算法，然后使用此压缩算法对响应资源进行压缩，最后通过响应头部中的 `Content-Encoding` 字段告诉客户端该资源使用的压缩算法。
 
 
-```
+```plain
 Content-Encoding: gzip
 ```
 
@@ -182,9 +182,9 @@ gzip 的压缩效率相比 Google 推出的 Brotli 算法还是差点意思，�
 
 有损压缩主要将次要的数据舍弃，牺牲一些质量来减少数据量、提高压缩比，这种方法经常用于压缩多媒体数据，比如音频、视频、图片。
 
-可以通过 HTTP 请求头部中的 `Accept` 字段里的「 q 质量因子」，告诉服务器期望的资源质量。
+可以通过 HTTP 请求头部中的 `Accept` 字段里的「q 质量因子」，告诉服务器期望的资源质量。
 
-```
+```plain
 Accept: audio/*; q=0.2, audio/basic
 ```
 

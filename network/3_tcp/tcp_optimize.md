@@ -47,7 +47,7 @@ TCP 是面向连接的、可靠的、双向传输的传输层通信协议，所�
 
 客户端作为主动发起连接方，首先它将发送 SYN 包，于是客户端的连接就会处于 `SYN_SENT` 状态。
 
-客户端在等待服务端回复的 ACK 报文，正常情况下，服务器会在几毫秒内返回 SYN+ACK ，但如果客户端长时间没有收到 SYN+ACK 报文，则会重发 SYN 包，**重发的次数由 tcp_syn_retries 参数控制**，默认是 5 次：
+客户端在等待服务端回复的 ACK 报文，正常情况下，服务器会在几毫秒内返回 SYN+ACK，但如果客户端长时间没有收到 SYN+ACK 报文，则会重发 SYN 包，**重发的次数由 tcp_syn_retries 参数控制**，默认是 5 次：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/7.jpg)
 
@@ -74,7 +74,7 @@ SYN 攻击，攻击的是就是这个半连接队列。
 
 > 如何查看由于 SYN 半连接队列已满，而被丢弃连接的情况？
 
-我们可以通过该 `netstat -s` 命令给出的统计结果中，  可以得到由于半连接队列已满，引发的失败次数：
+我们可以通过该 `netstat -s` 命令给出的统计结果中，可以得到由于半连接队列已满，引发的失败次数：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/10.jpg)
 
@@ -140,8 +140,8 @@ tcp_synack_retries 的默认重试次数是 5 次，与客户端重传 SYN 类�
 
 tcp_abort_on_overflow 共有两个值分别是 0 和 1，其分别表示：
 
-- 0 ：如果 accept 队列满了，那么 server 扔掉 client  发过来的 ack ；
-- 1 ：如果 accept 队列满了，server 发送一个 `RST` 包给 client，表示废掉这个握手过程和这个连接；
+- 0：如果 accept 队列满了，那么 server 扔掉 client  发过来的 ack；
+- 1：如果 accept 队列满了，server 发送一个 `RST` 包给 client，表示废掉这个握手过程和这个连接；
 
 如果要想知道客户端连接不上服务端，是不是服务端 TCP 全连接队列满的原因，那么可以把 tcp_abort_on_overflow 设置为 1，这时如果在客户端异常中可以看到很多 `connection reset by peer` 的错误，那么就可以证明是由于服务端 TCP 全连接队列溢出的问题。
 
@@ -179,7 +179,7 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/20.jpg)
 
-上面看到的 41150 times ，表示 accept 队列溢出的次数，注意这个是累计值。可以隔几秒钟执行下，如果这个数字一直在增加的话，说明 accept 连接队列偶尔满了。
+上面看到的 41150 times，表示 accept 队列溢出的次数，注意这个是累计值。可以隔几秒钟执行下，如果这个数字一直在增加的话，说明 accept 连接队列偶尔满了。
 
 如果持续不断地有连接因为 accept 队列溢出被丢弃，就应该调大 backlog 以及 somaxconn 参数。
 
@@ -227,7 +227,7 @@ Tomcat、Nginx、Apache 常见的 Web 服务的 backlog 默认值都是 511。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/23.jpg)
 
-tcp_fastopn 各个值的意义: 
+tcp_fastopn 各个值的意义：
 
 - 0 关闭
 - 1 作为客户端使用 Fast Open 功能
@@ -254,7 +254,7 @@ tcp_fastopn 各个值的意义:
 
 服务端收到客户端返回的 ACK，会把连接移入 accpet 队列，等待进行调用 accpet() 函数取出连接。
 
-可以通过 `ss -lnt` 查看服务端进程的 accept 队列长度，如果 accept 队列溢出，系统默认丢弃 ACK，如果可以把 `tcp_abort_on_overflow` 设置为 1 ，表示用 RST 通知客户端连接建立失败。
+可以通过 `ss -lnt` 查看服务端进程的 accept 队列长度，如果 accept 队列溢出，系统默认丢弃 ACK，如果可以把 `tcp_abort_on_overflow` 设置为 1，表示用 RST 通知客户端连接建立失败。
 
 如果 accpet 队列溢出严重，可以通过 listen 函数的 `backlog` 参数和 `somaxconn` 系统参数提高队列大小，accept 队列长度取决于 min(backlog, somaxconn)。
 
@@ -279,7 +279,7 @@ TCP Fast Open 功能可以绕过三次握手，使得 HTTP 请求减少了 1 个
 - FIN 就是结束连接的意思，谁发出 FIN 报文，就表示它将不会再发送任何数据，关闭这一方向上的传输通道；
 - ACK 就是确认的意思，用来通知对方：你方的发送通道已经关闭；
 
-四次挥手的过程:
+四次挥手的过程：
 
 - 当主动方关闭连接时，会发送 FIN 报文，此时发送方的 TCP 连接将从 ESTABLISHED 变成 FIN_WAIT1。
 - 当被动方收到 FIN 报文后，内核会自动回复 ACK 报文，连接状态将从 ESTABLISHED 变成 CLOSE_WAIT，表示被动方在等待进程调用 close 函数关闭连接。
@@ -304,7 +304,7 @@ TCP Fast Open 功能可以绕过三次握手，使得 HTTP 请求减少了 1 个
 
 > 调用 close 函数和 shutdown 函数有什么区别？
 
-调用了 close 函数意味着完全断开连接，**完全断开不仅指无法传输数据，而且也不能发送数据。 此时，调用了 close 函数的一方的连接叫做「孤儿连接」，如果你用 netstat -p 命令，会发现连接对应的进程名为空。**
+调用了 close 函数意味着完全断开连接，**完全断开不仅指无法传输数据，而且也不能发送数据。此时，调用了 close 函数的一方的连接叫做「孤儿连接」，如果你用 netstat -p 命令，会发现连接对应的进程名为空。**
 
 使用 close 函数关闭连接是不优雅的。于是，就出现了一种优雅关闭连接的 `shutdown` 函数，**它可以控制只关闭一个方向的连接**：
 
@@ -335,7 +335,7 @@ close 和 shutdown 函数都可以关闭连接，但这两种方式关闭的连�
 对于普遍正常情况时，调低 tcp_orphan_retries 就已经可以了。如果遇到恶意攻击，FIN 报文根本无法发送出去，这由 TCP 两个特性导致的：
 
 - 首先，TCP 必须保证报文是有序发送的，FIN 报文也不例外，当发送缓冲区还有数据没有发送时，FIN 报文也不能提前发送。
-- 其次，TCP 有流量控制功能，当接收方接收窗口为 0 时，发送方就不能再发送数据。所以，当攻击者下载大文件时，就可以通过接收窗口设为 0 ，这就会使得 FIN 报文都无法发送出去，那么连接会一直处于 FIN_WAIT1 状态。
+- 其次，TCP 有流量控制功能，当接收方接收窗口为 0 时，发送方就不能再发送数据。所以，当攻击者下载大文件时，就可以通过接收窗口设为 0，这就会使得 FIN 报文都无法发送出去，那么连接会一直处于 FIN_WAIT1 状态。
 
 解决这种问题的方法，是**调整 tcp_max_orphans 参数，它定义了「孤儿连接」的最大数量**：
 
@@ -440,13 +440,13 @@ tcp_tw_reuse 从协议角度理解是安全可控的，可以复用处于 TIME_W
 - 只适用于连接发起方，也就是 C/S 模型中的客户端；
 - 对应的 TIME_WAIT 状态的连接创建时间超过 1 秒才可以被复用。
 
-使用这个选项，还有一个前提，需要打开对 TCP 时间戳的支持（对方也要打开 ）：
+使用这个选项，还有一个前提，需要打开对 TCP 时间戳的支持（对方也要打开）：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/35.jpg)
 
 由于引入了时间戳，它能带来了些好处：
 
-- 我们在前面提到的 2MSL（TIME_WAIT状态的持续时间） 问题就不复存在了，因为重复的数据包会因为时间戳过期被自然丢弃；
+- 我们在前面提到的 2MSL（TIME_WAIT 状态的持续时间）问题就不复存在了，因为重复的数据包会因为时间戳过期被自然丢弃；
 - 同时，它还可以防止序列号绕回，也是因为重复的数据包会由于时间戳过期被自然丢弃；
 
 时间戳是在 TCP 的选项字段里定义的，开启了时间戳功能，在 TCP 报文传输的时候会带上发送报文的时间戳。
@@ -455,7 +455,7 @@ tcp_tw_reuse 从协议角度理解是安全可控的，可以复用处于 TIME_W
 
 另外，老版本的 Linux 还提供了 `tcp_tw_recycle` 参数，但是当开启了它，允许处于 TIME_WAIT 状态的连接被快速回收，但是有个**大坑**。
 
-开启了 recycle 和 timestamps 选项，就会开启一种叫 per-host 的 PAWS（判断TCP 报文中时间戳是否是历史报文） 机制，**per-host 是对「对端 IP 做 PAWS 检查」**，而非对「IP + 端口」四元组做 PAWS 检查。
+开启了 recycle 和 timestamps 选项，就会开启一种叫 per-host 的 PAWS（判断 TCP 报文中时间戳是否是历史报文）机制，**per-host 是对「对端 IP 做 PAWS 检查」**，而非对「IP + 端口」四元组做 PAWS 检查。
 
 如果客户端网络环境是用了 NAT 网关，那么客户端环境的每一台机器通过 NAT 网关后，都会是相同的 IP 地址，在服务端看来，就好像只是在跟一个客户端打交道一样，无法区分出来。
 
@@ -467,7 +467,7 @@ Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断�
 
 网上很多博客都说开启 tcp_tw_recycle 参数来优化 TCP，我信你个鬼，糟老头坏的很！
 
-所以，不建议设置为 1 ，在 Linux 4.12 版本后，Linux 内核直接取消了这一参数，建议关闭它：
+所以，不建议设置为 1，在 Linux 4.12 版本后，Linux 内核直接取消了这一参数，建议关闭它：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/36.jpg)
 
@@ -477,9 +477,9 @@ Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/37.jpg)
 
-如果 `l_onoff` 为非 0， 且 `l_linger` 值为 0，**那么调用 close 后，会立该发送一个 RST 标志给对端，该 TCP 连接将跳过四次挥手，也就跳过了 TIME_WAIT 状态，直接关闭。**
+如果 `l_onoff` 为非 0，且 `l_linger` 值为 0，**那么调用 close 后，会立该发送一个 RST 标志给对端，该 TCP 连接将跳过四次挥手，也就跳过了 TIME_WAIT 状态，直接关闭。**
 
-这种方式只推荐在客户端使用，服务端千万不要使用。因为服务端一调用 close，就发送 RST 报文的话，客户端就总是看到 TCP 连接错误 “connnection reset by peer”。
+这种方式只推荐在客户端使用，服务端千万不要使用。因为服务端一调用 close，就发送 RST 报文的话，客户端就总是看到 TCP 连接错误“connnection reset by peer”。
 
 ### 被动方的优化
 
@@ -522,7 +522,7 @@ Per-host PAWS 机制利用 TCP option 里的 timestamp 字段的增长来判断�
 
 当主动方接收到 FIN 报文，并返回 ACK 后，主动方的连接进入 TIME_WAIT 状态。这一状态会持续 1 分钟，为了防止 TIME_WAIT 状态占用太多的资源，`tcp_max_tw_buckets` 定义了最大数量，超过时连接也会直接释放。
 
-当 TIME_WAIT 状态过多时，还可以通过设置 `tcp_tw_reuse` 和 `tcp_timestamps` 为 1 ，将 TIME_WAIT 状态的端口复用于作为客户端的新连接，注意该参数只适用于客户端。
+当 TIME_WAIT 状态过多时，还可以通过设置 `tcp_tw_reuse` 和 `tcp_timestamps` 为 1，将 TIME_WAIT 状态的端口复用于作为客户端的新连接，注意该参数只适用于客户端。
 
 > 被动方的优化
 
@@ -552,7 +552,7 @@ TCP 会保证每一个报文都能够抵达对方，它的机制是这样：报�
 由于 TCP 是内核维护的，所以报文存放在内核缓冲区。如果连接非常多，我们可以通过 free 命令观察到 `buff/cache` 内存是会增大。
 
 
-如果 TCP 是每发送一个数据，都要进行一次确认应答。当上一个数据包收到了应答了， 再发送下一个。这个模式就有点像我和你面对面聊天，你一句我一句，但这种方式的缺点是效率比较低的。
+如果 TCP 是每发送一个数据，都要进行一次确认应答。当上一个数据包收到了应答了，再发送下一个。这个模式就有点像我和你面对面聊天，你一句我一句，但这种方式的缺点是效率比较低的。
 
 ![按数据包进行确认应答](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/计算机网络/TCP-参数/40.jpg)
 
@@ -603,7 +603,7 @@ Linux 中打开这一功能，需要把 tcp_window_scaling 配置设为 1（默�
 
 问题来了，如何计算网络的传输能力呢？
 
-相信大家都知道网络是有「带宽」限制的，带宽描述的是网络传输能力，它与内核缓冲区的计量单位不同:
+相信大家都知道网络是有「带宽」限制的，带宽描述的是网络传输能力，它与内核缓冲区的计量单位不同：
 
 - 带宽是单位时间内的流量，表达是「速度」，比如常见的带宽 100 MB/s；
 - 缓冲区单位是字节，当网络速度乘以时间才能得到字节数；
@@ -710,9 +710,9 @@ Linux 会对缓冲区动态调节，我们应该把缓冲区的上限设置为�
 参考资料：
 
 
-[1] 系统性能调优必知必会.陶辉.极客时间.
+[1] 系统性能调优必知必会。陶辉。极客时间。
 
-[2] 网络编程实战专栏.盛延敏.极客时间.
+[2] 网络编程实战专栏。盛延敏。极客时间。
 
 [3] http://www.blogjava.net/yongboy/archive/2013/04/11/397677.html
 
@@ -726,13 +726,13 @@ Linux 会对缓冲区动态调节，我们应该把缓冲区的上限设置为�
 
 ## 读者问答
 
-> 读者问：“小林，请教个问题，somaxconn和backlog是不是都是指的是accept队列？然后somaxconn是内核参数，backlog是通过系统调用间隔地修改somaxconn，比如Linux中listen()函数？”
+> 读者问：“小林，请教个问题，somaxconn 和 backlog 是不是都是指的是 accept 队列？然后 somaxconn 是内核参数，backlog 是通过系统调用间隔地修改 somaxconn，比如 Linux 中 listen() 函数？”
 
 两者取最小值才是 accpet 队列。
 
-> 读者问：“小林，还有个问题要请教下，“如果 accept 队列满了，那么 server 扔掉 client  发过来的 ack”，也就是说该TCP连接还是位于半连接队列中，没有丢弃吗？”
+> 读者问：“小林，还有个问题要请教下，“如果 accept 队列满了，那么 server 扔掉 client  发过来的 ack”，也就是说该 TCP 连接还是位于半连接队列中，没有丢弃吗？”
 
-1. 当 accept 队列满了，后续新进来的syn包都会被丢失
+1. 当 accept 队列满了，后续新进来的 syn 包都会被丢失
 2. 我文章的突发流量例子是，那个连接进来的时候 accept 队列还没满，但是在第三次握手的时候，accept 队列突然满了，就会导致 ack 被丢弃，就一直处于半连接队列。
 
 ----
