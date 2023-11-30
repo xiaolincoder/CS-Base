@@ -79,12 +79,12 @@
 	- [I/O 多路复用：select/poll/epoll](/os/8_network_system/selete_poll_epoll.md) 
 	- [高性能网络模式：Reactor 和 Proactor](/os/8_network_system/reactor.md) 
 	- [什么是一致性哈希？](/os/8_network_system/hash.md) 
-- **学习心得** :point_down:
+- **Linux 命令** :point_down:
 	- [如何查看网络的性能指标？](/os/9_linux_cmd/linux_network.md) 	
-  - [画图经验分享](/os/9_linux_cmd/pv_uv.md) 	
+    - [如何从日志分析 PV、UV？](/os/9_linux_cmd/pv_uv.md) 	
 - **学习心得** :point_down:
-	- [计算机网络怎么学？](/os/10_learn/learn_os.md) 	
-  - [画图经验分享](/os/10_learn/draw.md) 	
+	- [操作系统怎么学？](/os/10_learn/learn_os.md) 	
+    - [画图经验分享](/os/10_learn/draw.md) 	
 
 ## 有错误怎么办？
 
