@@ -131,7 +131,7 @@ TLS 协议是如何解决 HTTP 的风险的呢？
 
 #### 数字证书签发和验证流程
 
-如下图图所示，为数字证书签发和验证流程：
+如下图所示，为数字证书签发和验证流程：
 
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/网络/https/证书的校验.png)
