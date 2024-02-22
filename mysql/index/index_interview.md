@@ -278,6 +278,7 @@ CREATE INDEX index_product_no_name ON product(product_no, name);
 - where a=1.
 - where a=1 and b=2 and c=3.
 - where a=1 and b=2.
+- where a=1 and c=3.
 
 需要注意的是，因为有查询优化器，所以 a 字段在 where 子句的顺序并不重要。
 
