@@ -210,7 +210,7 @@ Redis 有个叫 slave-priority 配置项，可以给从节点设置优先级。
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/redis/哨兵/从节点转换成功.png)
 
-### 步骤三：通知客户的主节点已更换
+### 步骤三：通知客户端主节点已更换
 
 经过前面一系列的操作后，哨兵集群终于完成主从切换的工作，那么新主节点的信息要如何通知给客户端呢？
 
