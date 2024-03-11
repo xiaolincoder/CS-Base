@@ -275,7 +275,7 @@ redo log 是循环写的方式，相当于一个环形，InnoDB 用 write pos �
 
 前面介绍的 undo log 和 redo log 这两个日志都是 Innodb 存储引擎生成的。
 
-MySQL 在完成一条更新操作后，Server 层还会生成一条 binlog，等之后事务提交的时候，会将该事物执行过程中产生的所有 binlog 统一写 入 binlog 文件。
+MySQL 在完成一条更新操作后，Server 层还会生成一条 binlog，等之后事务提交的时候，会将该事务执行过程中产生的所有 binlog 统一写 入 binlog 文件。
 
 binlog 文件是记录了所有数据库表结构变更和表数据修改的日志，不会记录查询类的操作，比如 SELECT 和 SHOW 操作。
 
