@@ -238,14 +238,14 @@ $ kill -l
 我们来看看创建 socket 的系统调用：
 
 ```c
-int socket(int domain, int type, int protocOl)
+int socket(int domain, int type, int protocol)
 ```
 
 三个参数分别代表：
 
 - domain 参数用来指定协议族，比如 AF_INET 用于 IPV4、AF_INET6 用于 IPV6、AF_LOCAL/AF_UNIX 用于本机；
 - type 参数用来指定通信特性，比如 SOCK_STREAM 表示的是字节流，对应 TCP、SOCK_DGRAM  表示的是数据报，对应 UDP、SOCK_RAW 表示的是原始套接字；
-- protocOl 参数原本是用来指定通信协议的，但现在基本废弃。因为协议已经通过前面两个参数指定完成，protocol 目前一般写成 0 即可；
+- protocol 参数原本是用来指定通信协议的，但现在基本废弃。因为协议已经通过前面两个参数指定完成，protocol 目前一般写成 0 即可；
 
 根据创建 socket 类型的不同，通信的方式也就不同：
 
