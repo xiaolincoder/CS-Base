@@ -187,7 +187,7 @@ Redis 是由 C 语言实现的，它采用的正是「单 Reactor 单进程」�
 
 方案详细说明如下：
 
-- 主线程中的 MainReactor 对象通过 select 监控连接建立事件，收到事件后通过 Acceptor 对象中的 accept  获取连接，将新的连接分配给某个子线程；
+- 主线程中的 MainReactor 对象通过 select 监控连接建立事件，收到事件后通过 Acceptor 对象中的 accept 获取连接，将新的连接分配给某个子线程；
 - 子线程中的 SubReactor 对象将 MainReactor 对象分配的连接加入 select 继续进行监听，并创建一个 Handler 用于处理连接的响应事件。
 - 如果有新的事件发生时，SubReactor 对象会调用当前连接对应的 Handler 对象来进行响应。
 - Handler 对象通过 read -> 业务处理 -> send 的流程来完成完整的业务流程。
