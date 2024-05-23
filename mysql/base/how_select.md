@@ -347,7 +347,6 @@ select * from t_user  where age > 20 and reward = 100000;
 
 - 《MySQL 45 讲》
 - 《MySQL 是怎样运行的：从根儿上理解 MySQL》
-- https://gohalo.me/post/mysql-executor.html
 - http://www.iskm.org/mysql56/sql__executor_8cc_source.html
 - https://tangocc.github.io/2018/10/11/mysql-sourcecode/
 
