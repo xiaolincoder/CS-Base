@@ -59,7 +59,7 @@ mysql -h$ip -u$user -p
 
 > 空闲连接会一直占用着吗？
 
-当然不是了，MySQL 定义了空闲连接的最大空闲时长，由 `wait_timeout` 参数控制的，默认值是 8 小时（28880 秒），如果空闲连接超过了这个时间，连接器就会自动将它断开。
+当然不是了，MySQL 定义了空闲连接的最大空闲时长，由 `wait_timeout` 参数控制的，默认值是 8 小时（28800 秒），如果空闲连接超过了这个时间，连接器就会自动将它断开。
 
 ```sql
 mysql> show variables like 'wait_timeout';
