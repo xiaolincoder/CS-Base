@@ -60,8 +60,8 @@ OOM Killer 机制会根据算法选择一个占用物理内存较高的进程，
 活跃和非活跃的内存页，按照类型的不同，又分别分为文件页和匿名页。可以从 /proc/meminfo 中，查询它们的大小，比如：
 
 ```shell
-# grep表示只保留包含active的指标（忽略大小写）
-# sort表示按照字母顺序排序
+# grep 表示只保留包含 active 的指标（忽略大小写）
+# sort 表示按照字母顺序排序
 [root@xiaolin ~]# cat /proc/meminfo | grep -i active | sort
 Active:           901456 kB
 Active(anon):     227252 kB
