@@ -50,11 +50,11 @@ SDS 和我们认识的 C 字符串不太一样，之所以没有使用 C 语言�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/redis/数据类型/raw.png)
 
-注意，embstr 编码和 raw 编码的边界在 redis 不同版本中是不一样的：
+注意，embstr 编码和 raw 编码的边界在 Redis 不同版本中是不一样的：
 
-- redis 2.+ 是 32 字节
-- redis 3.0-4.0 是 39 字节
-- redis 5.0 是 44 字节
+- Redis 2.+ 是 32 字节
+- Redis 3.0-4.0 是 39 字节
+- Redis 5.0 是 44 字节
 
 可以看到`embstr`和`raw`编码都会使用`SDS`来保存值，但不同之处在于`embstr`会通过一次内存分配函数来分配一块连续的内存空间来保存`redisObject`和`SDS`，而`raw`编码会通过调用两次内存分配函数来分别分配两块空间来保存`redisObject`和`SDS`。Redis 这样做会有很多好处：
 
@@ -64,7 +64,7 @@ SDS 和我们认识的 C 字符串不太一样，之所以没有使用 C 语言�
 
 但是 embstr 也有缺点的：
 
-- 如果字符串的长度增加需要重新分配内存时，整个 redisObject 和 sds 都需要重新分配空间，所以**embstr 编码的字符串对象实际上是只读的**，redis 没有为 embstr 编码的字符串对象编写任何相应的修改程序。当我们对 embstr 编码的字符串对象执行任何修改命令（例如 append）时，程序会先将对象的编码从 embstr 转换成 raw，然后再执行修改命令。
+- 如果字符串的长度增加需要重新分配内存时，整个 redisObject 和 sds 都需要重新分配空间，所以**embstr 编码的字符串对象实际上是只读的**，Redis 没有为 embstr 编码的字符串对象编写任何相应的修改程序。当我们对 embstr 编码的字符串对象执行任何修改命令（例如 append）时，程序会先将对象的编码从 embstr 转换成 raw，然后再执行修改命令。
 
 ### 常用指令
 
@@ -109,13 +109,13 @@ OK
 # 将 key 中储存的数字值增一
 > INCR number
 (integer) 1
-# 将key中存储的数字值加 10
+# 将 key 中存储的数字值加 10
 > INCRBY number 10
 (integer) 11
 # 将 key 中储存的数字值减一
 > DECR number
 (integer) 10
-# 将key中存储的数字值键 10
+# 将 key 中存储的数字值键 10
 > DECRBY number 10
 (integer) 0
 ```
@@ -164,13 +164,13 @@ OK
 # 初始化文章的阅读量
 > SET aritcle:readcount:1001 0
 OK
-#阅读量+1
+#阅读量 +1
 > INCR aritcle:readcount:1001
 (integer) 1
-#阅读量+1
+#阅读量 +1
 > INCR aritcle:readcount:1001
 (integer) 2
-#阅读量+1
+#阅读量 +1
 > INCR aritcle:readcount:1001
 (integer) 3
 # 获取对应文章的阅读量
@@ -249,21 +249,21 @@ List 类型的底层数据结构是由**双向链表或压缩列表**实现的�
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/redis/数据类型/list.png)
 
 ```shell
-# 将一个或多个值value插入到key列表的表头(最左边)，最后的值在最前面
+# 将一个或多个值 value 插入到 key 列表的表头 (最左边)，最后的值在最前面
 LPUSH key value [value ...] 
-# 将一个或多个值value插入到key列表的表尾(最右边)
+# 将一个或多个值 value 插入到 key 列表的表尾 (最右边)
 RPUSH key value [value ...]
-# 移除并返回key列表的头元素
+# 移除并返回 key 列表的头元素
 LPOP key     
-# 移除并返回key列表的尾元素
+# 移除并返回 key 列表的尾元素
 RPOP key 
 
-# 返回列表key中指定区间内的元素，区间以偏移量start和stop指定，从0开始
+# 返回列表 key 中指定区间内的元素，区间以偏移量 start 和 stop 指定，从 0 开始
 LRANGE key start stop
 
-# 从key列表表头弹出一个元素，没有就阻塞timeout秒，如果timeout=0则一直阻塞
+# 从 key 列表表头弹出一个元素，没有就阻塞 timeout 秒，如果 timeout=0 则一直阻塞
 BLPOP key [key ...] timeout
-# 从key列表表尾弹出一个元素，没有就阻塞timeout秒，如果timeout=0则一直阻塞
+# 从 key 列表表尾弹出一个元素，没有就阻塞 timeout 秒，如果 timeout=0 则一直阻塞
 BRPOP key [key ...] timeout
 ```
 
@@ -358,24 +358,24 @@ Hash 类型的底层数据结构是由**压缩列表或哈希表**实现的：
 ### 常用命令
 
 ```shell
-# 存储一个哈希表key的键值
-HSET key field value   
-# 获取哈希表key对应的field键值
+# 存储一个哈希表 key 的键值
+HSET key field value
+# 获取哈希表 key 对应的 field 键值
 HGET key field
 
-# 在一个哈希表key中存储多个键值对
+# 在一个哈希表 key 中存储多个键值对
 HMSET key field value [field value...] 
-# 批量获取哈希表key中多个field键值
+# 批量获取哈希表 key 中多个 field 键值
 HMGET key field [field ...]       
-# 删除哈希表key中的field键值
+# 删除哈希表 key 中的 field 键值
 HDEL key field [field ...]    
 
-# 返回哈希表key中field的数量
+# 返回哈希表 key 中 field 的数量
 HLEN key       
-# 返回哈希表key中所有的键值
+# 返回哈希表 key 中所有的键值
 HGETALL key 
 
-# 为哈希表key中field键的值加上增量n
+# 为哈希表 key 中 field 键的值加上增量 n
 HINCRBY key field n                         
 ```
 
@@ -392,13 +392,13 @@ Hash 类型的（key，field，value）的结构与对象的（对象 id，属�
 我们可以使用如下命令，将用户对象的信息存储到 Hash 类型：
 
 ```shell
-# 存储一个哈希表uid:1的键值
+# 存储一个哈希表 uid:1 的键值
 > HMSET uid:1 name Tom age 15
 2
-# 存储一个哈希表uid:2的键值
+# 存储一个哈希表 uid:2 的键值
 > HMSET uid:2 name Jerry age 13
 2
-# 获取哈希表用户id为1中所有的键值
+# 获取哈希表用户 id 为 1 中所有的键值
 > HGETALL uid:1
 1) "name"
 2) "Tom"
@@ -410,9 +410,9 @@ Redis Hash 存储其结构如下图：
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/redis/数据类型/hash存储结构.png)
 
-在介绍 String 类型的应用场景时有所介绍，String + Json 也是存储对象的一种方式，那么存储对象时，到底用 String + json 还是用 Hash 呢？
+在介绍 String 类型的应用场景时有所介绍，String + JSON 也是存储对象的一种方式，那么存储对象时，到底用 String + JSON 还是用 Hash 呢？
 
-一般对象用 String + Json 存储，对象中某些频繁变化的属性可以考虑抽出来用 Hash 类型存储。
+一般对象用 String + JSON 存储，对象中某些频繁变化的属性可以考虑抽出来用 Hash 类型存储。
 
 #### 购物车
 
@@ -457,21 +457,21 @@ Set 类型的底层数据结构是由**哈希表或整数集合**实现的：
 Set 常用操作：
 
 ```shell
-# 往集合key中存入元素，元素存在则忽略，若key不存在则新建
+# 往集合 key 中存入元素，元素存在则忽略，若 key 不存在则新建
 SADD key member [member ...]
-# 从集合key中删除元素
+# 从集合 key 中删除元素
 SREM key member [member ...] 
-# 获取集合key中所有元素
+# 获取集合 key 中所有元素
 SMEMBERS key
-# 获取集合key中的元素个数
+# 获取集合 key 中的元素个数
 SCARD key
 
-# 判断member元素是否存在于集合key中
+# 判断 member 元素是否存在于集合 key 中
 SISMEMBER key member
 
-# 从集合key中随机选出count个元素，元素不从key中删除
+# 从集合 key 中随机选出 count 个元素，元素不从 key 中删除
 SRANDMEMBER key [count]
-# 从集合key中随机选出count个元素，元素从key中删除
+# 从集合 key 中随机选出 count 个元素，元素从 key 中删除
 SPOP key [count]
 ```
 
@@ -480,17 +480,17 @@ Set 运算操作：
 ```shell
 # 交集运算
 SINTER key [key ...]
-# 将交集结果存入新集合destination中
+# 将交集结果存入新集合 destination 中
 SINTERSTORE destination key [key ...]
 
 # 并集运算
 SUNION key [key ...]
-# 将并集结果存入新集合destination中
+# 将并集结果存入新集合 destination 中
 SUNIONSTORE destination key [key ...]
 
 # 差集运算
 SDIFF key [key ...]
-# 将差集结果存入新集合destination中
+# 将差集结果存入新集合 destination 中
 SDIFFSTORE destination key [key ...]
 ```
 
@@ -548,7 +548,7 @@ Set 类型可以保证一个用户只能点一个赞，这里举例子一个场�
 
 ```shell
 > SISMEMBER article:1 uid:1
-(integer) 0  # 返回0说明没点赞，返回1则说明点赞了
+(integer) 0  # 返回 0 说明没点赞，返回 1 则说明点赞了
 ```
 
 #### 共同关注
@@ -590,9 +590,9 @@ key 可以是用户 id，value 则是已关注的公众号的 id。
 
 ```shell
 > SISMEMBER uid:1 5
-(integer) 1 # 返回1，说明关注了
+(integer) 1 # 返回 1，说明关注了
 > SISMEMBER uid:2 5
-(integer) 0 # 返回0，说明没关注
+(integer) 0 # 返回 0，说明没关注
 ```
 
 #### 抽奖活动
@@ -626,14 +626,14 @@ key 为抽奖活动名，value 为员工名称，把所有员工名称放入抽�
 如果不允许重复中奖，可以使用 SPOP 命令。
 
 ```shell
-# 抽取一等奖1个
+# 抽取一等奖 1 个
 > SPOP lucky 1
 1) "Sary"
-# 抽取二等奖2个
+# 抽取二等奖 2 个
 > SPOP lucky 2
 1) "Jerry"
 2) "Mark"
-# 抽取三等奖3个
+# 抽取三等奖 3 个
 > SPOP lucky 3
 1) "John"
 2) "Sean"
@@ -664,38 +664,38 @@ Zset 类型的底层数据结构是由**压缩列表或跳表**实现的：
 Zset 常用操作：
 
 ```shell
-# 往有序集合key中加入带分值元素
+# 往有序集合 key 中加入带分值元素
 ZADD key score member [[score member]...]   
-# 往有序集合key中删除元素
+# 往有序集合 key 中删除元素
 ZREM key member [member...]                 
-# 返回有序集合key中元素member的分值
+# 返回有序集合 key 中元素 member 的分值
 ZSCORE key member
-# 返回有序集合key中元素个数
+# 返回有序集合 key 中元素个数
 ZCARD key 
 
-# 为有序集合key中元素member的分值加上increment
+# 为有序集合 key 中元素 member 的分值加上 increment
 ZINCRBY key increment member 
 
-# 正序获取有序集合key从start下标到stop下标的元素
+# 正序获取有序集合 key 从 start 下标到 stop 下标的元素
 ZRANGE key start stop [WITHSCORES]
-# 倒序获取有序集合key从start下标到stop下标的元素
+# 倒序获取有序集合 key 从 start 下标到 stop 下标的元素
 ZREVRANGE key start stop [WITHSCORES]
 
 # 返回有序集合中指定分数区间内的成员，分数由低到高排序。
 ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]
 
-# 返回指定成员区间内的成员，按字典正序排列, 分数必须相同。
+# 返回指定成员区间内的成员，按字典正序排列，分数必须相同。
 ZRANGEBYLEX key min max [LIMIT offset count]
-# 返回指定成员区间内的成员，按字典倒序排列, 分数必须相同
+# 返回指定成员区间内的成员，按字典倒序排列，分数必须相同。
 ZREVRANGEBYLEX key max min [LIMIT offset count]
 ```
 
 Zset 运算操作（相比于 Set 类型，ZSet 类型没有支持差集运算）：
 
 ```shell
-# 并集计算(相同元素分值相加)，numberkeys一共多少个key，WEIGHTS每个key对应的分值乘积
+# 并集计算 (相同元素分值相加)，numberkeys 一共多少个 key，WEIGHTS 每个 key 对应的分值乘积
 ZUNIONSTORE destkey numberkeys key [key...] 
-# 交集计算(相同元素分值相加)，numberkeys一共多少个key，WEIGHTS每个key对应的分值乘积
+# 交集计算 (相同元素分值相加)，numberkeys 一共多少个 key，WEIGHTS 每个 key 对应的分值乘积
 ZINTERSTORE destkey numberkeys key [key...]
 ```
 
@@ -712,19 +712,19 @@ Zset 类型（Sorted Set，有序集合）可以根据元素的权重来排序�
 我们以博文点赞排名为例，小林发表了五篇博文，分别获得赞为 200、40、100、50、150。
 
 ```shell
-# arcticle:1 文章获得了200个赞
+# arcticle:1 文章获得了 200 个赞
 > ZADD user:xiaolin:ranking 200 arcticle:1
 (integer) 1
-# arcticle:2 文章获得了40个赞
+# arcticle:2 文章获得了 40 个赞
 > ZADD user:xiaolin:ranking 40 arcticle:2
 (integer) 1
-# arcticle:3 文章获得了100个赞
+# arcticle:3 文章获得了 100 个赞
 > ZADD user:xiaolin:ranking 100 arcticle:3
 (integer) 1
-# arcticle:4 文章获得了50个赞
+# arcticle:4 文章获得了 50 个赞
 > ZADD user:xiaolin:ranking 50 arcticle:4
 (integer) 1
-# arcticle:5 文章获得了150个赞
+# arcticle:5 文章获得了 150 个赞
 > ZADD user:xiaolin:ranking 150 arcticle:5
 (integer) 1
 ```
@@ -880,7 +880,7 @@ String 类型是会保存为二进制的字节数组，所以，Redis 就把字�
 bitmap 基本操作：
 
 ```shell
-# 设置值，其中value只能是 0 和 1
+# 设置值，其中 value 只能是 0 和 1
 SETBIT key offset value
 
 # 获取值
@@ -894,18 +894,18 @@ BITCOUNT key start end
 bitmap 运算操作：
 
 ```shell
-# BitMap间的运算
+# BitMap 间的运算
 # operations 位移操作符，枚举值
   AND 与运算 &
   OR 或运算 |
   XOR 异或 ^
   NOT 取反 ~
-# result 计算的结果，会存储在该key中
-# key1 … keyn 参与运算的key，可以有多个，空格分割，not运算只能一个key
-# 当 BITOP 处理不同长度的字符串时，较短的那个字符串所缺少的部分会被看作 0。返回值是保存到 destkey 的字符串的长度（以字节byte为单位），和输入 key 中最长的字符串长度相等。
+# result 计算的结果，会存储在该 key 中
+# key1 … keyn 参与运算的 key，可以有多个，空格分割，not 运算只能一个 key
+# 当 BITOP 处理不同长度的字符串时，较短的那个字符串所缺少的部分会被看作 0。返回值是保存到 destkey 的字符串的长度（以字节 byte 为单位），和输入 key 中最长的字符串长度相等。
 BITOP [operations] [result] [key1] [keyn…]
 
-# 返回指定key中第一次出现指定value(0/1)的位置
+# 返回指定 key 中第一次出现指定 value(0/1) 的位置
 BITPOS [key] [value]
 ```
 
@@ -1082,10 +1082,10 @@ GEO 类型使用 GeoHash 编码方法实现了经纬度到 Sorted Set 中元素�
 ### 常用命令
 
 ```shell
-# 存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中。
+# 存储指定的地理空间位置，可以将一个或多个经度 (longitude)、纬度 (latitude)、位置名称 (member) 添加到指定的 key 中。
 GEOADD key longitude latitude member [longitude latitude member ...]
 
-# 从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。
+# 从给定的 key 里返回所有指定名称 (member) 的位置（经度和纬度），不存在的返回 nil。
 GEOPOS key member [member ...]
 
 # 返回两个给定位置之间的距离。
@@ -1382,7 +1382,7 @@ Redis 常见的五种数据类型：**String（字符串），Hash（哈希）�
 
 这五种数据类型都由多种数据结构实现的，主要是出于时间和空间的考虑，当数据量小的时候使用更简单的数据结构，有利于节省内存，提高性能。
 
-这五种数据类型与底层数据结构对应关系图如下，左边是 Redis 3.0 版本的，也就是《Redis 设计与实现》这本书讲解的版本，现在看还是有点过时了，右边是现在 Github 最新的 Redis 代码的。
+这五种数据类型与底层数据结构对应关系图如下，左边是 Redis 3.0 版本的，也就是《Redis 设计与实现》这本书讲解的版本，现在看还是有点过时了，右边是现在 GitHub 最新的 Redis 代码的。
 
 ![](https://img-blog.csdnimg.cn/img_convert/9fa26a74965efbf0f56b707a03bb9b7f.png)
 

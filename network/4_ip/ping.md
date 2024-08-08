@@ -255,7 +255,7 @@ ICMP 数据包内包含多个字段，最重要的是两个：
 
 ## traceroute —— 差错报文类型的使用
 
-有一款充分利用 ICMP **差错报文类型**的应用叫做 `traceroute`（在 UNIX、MacOS 中是这个命令，而在 Windows 中对等的命令叫做 tracert）。 
+有一款充分利用 ICMP **差错报文类型**的应用叫做 `traceroute`（在 UNIX、macOS 中是这个命令，而在 Windows 中对等的命令叫做 `tracert`）。 
 
 *1. traceroute 作用一*
 

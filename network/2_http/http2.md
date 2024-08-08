@@ -212,7 +212,7 @@ HTTP/2 **二进制帧**的结构如下图：
 你可以从上图中看到：
 
 - 1 个 TCP 连接包含一个或者多个 Stream，Stream 是 HTTP/2 并发的关键技术；
-- 1 个 Stream 里包含 2个 Message，Message 对应 HTTP/1 中的请求或响应，由 HTTP 头部和包体构成；
+- 1 个 Stream 里包含 2 个 Message，Message 对应 HTTP/1 中的请求或响应，由 HTTP 头部和包体构成；
 - Message 里包含一条或者多个 Frame，Frame 是 HTTP/2 最小单位，以二进制压缩格式存放 HTTP/1 中的内容（头部和包体）；
 
 因此，我们可以得出个结论：多个 Stream 跑在一条 TCP 连接，同一个 HTTP 请求与响应是跑在同一个 Stream 中，HTTP 消息可以由多个 Frame 构成，一个 Frame 可以由多个 TCP 报文构成。

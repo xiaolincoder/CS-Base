@@ -477,9 +477,9 @@ binlog 已经写入了，之后就会被从库（或者用这个 binlog 恢复�
 
 也就是说，事务没提交的时候，redo log 也是可能被持久化到磁盘的。
 
-有的同学可能会问，如果 mysql 崩溃了，还没提交事务的 redo log 已经被持久化磁盘了，mysql 重启后，数据不就不一致了？
+有的同学可能会问，如果 MySQL 崩溃了，还没提交事务的 redo log 已经被持久化磁盘了，MySQL 重启后，数据不就不一致了？
 
-放心，这种情况 mysql 重启会进行回滚操作，因为事务没提交的时候，binlog 是还没持久化到磁盘的。
+放心，这种情况 MySQL 重启会进行回滚操作，因为事务没提交的时候，binlog 是还没持久化到磁盘的。
 
 所以，redo log 可以在事务没提交之前持久化到磁盘，但是 binlog 必须在事务提交之后，才可以持久化到磁盘。
 
@@ -597,7 +597,7 @@ commit 阶段队列的作用是承接 sync 阶段的事务，完成最后的引�
    - 如果一样的话就不进行后续更新流程；
    - 如果不一样的话就把更新前的记录和更新后的记录都当作参数传给 InnoDB 层，让 InnoDB 真正的执行更新记录的操作；
 3. 开启事务，InnoDB 层更新记录前，首先要记录相应的 undo log，因为这是更新操作，需要把被更新的列的旧值记下来，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面，不过在内存修改该 Undo 页面后，需要记录对应的 redo log。
-4. InnoDB 层开始更新记录，先生成对应redo log，并存入redo log buffer里面，当事务提交时，将redo log写入redo log file，并更新buffer pool中的数据页，将其放入flush 链表并标记脏页和记录redo log对应的lsn到该页的oldest_modification，这个时候更新就算完成了。为了减少磁盘 I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。这就是 **WAL 技术**，MySQL 的写操作并不是立刻写到磁盘上，而是先写 redo 日志，然后在合适的时间再将修改的行数据写到磁盘上。
+4. InnoDB 层开始更新记录，先生成对应 redo log，并存入 redo log buffer 里面，当事务提交时，将 redo log 写入 redo log file，并更新 buffer pool 中的数据页，将其放入 flush 链表并标记脏页和记录 redo log 对应的 lsn 到该页的 oldest_modification，这个时候更新就算完成了。为了减少磁盘 I/O，不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。这就是
 5. 至此，一条记录更新完了。
 6. 在一条更新语句执行完成后，然后开始记录该语句对应的 binlog，此时记录的 binlog 会被保存到 binlog cache，并没有刷新到硬盘上的 binlog 文件，在事务提交时才会统一将该事务运行过程中的所有 binlog 刷新到硬盘。
 7. 事务提交（为了方便说明，这里不说组提交的过程，只说两阶段提交）：

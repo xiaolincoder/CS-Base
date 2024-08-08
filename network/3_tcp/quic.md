@@ -200,7 +200,7 @@ QUIC 实现了两种级别的流量控制，分别为 Stream 和 Connection 两�
 
 ### Stream 级别的流量控制
 
-最开始，接收方的接收窗口初始状态如下（网上的讲 QUIC 流量控制的资料太少了，下面的例子我是参考 google 文档的：[Flow control in QUIC](https://docs.google.com/document/d/1F2YfdDXKpy20WVKJueEf4abn_LVZHhMUMS5gX6Pgjl4/mobilebasic)）：
+最开始，接收方的接收窗口初始状态如下（网上的讲 QUIC 流量控制的资料太少了，下面的例子我是参考 Google 文档的：[Flow control in QUIC](https://docs.google.com/document/d/1F2YfdDXKpy20WVKJueEf4abn_LVZHhMUMS5gX6Pgjl4/mobilebasic)）：
 
 ![](https://img-blog.csdnimg.cn/f1070a6eccd24559904815297b07f789.png)
 
