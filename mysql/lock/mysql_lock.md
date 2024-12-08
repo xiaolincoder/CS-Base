@@ -208,7 +208,7 @@ InnoDB 存储引擎提供了个 innodb_autoinc_lock_mode 的系统变量，是�
 
 ![](https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/锁/innodb_autoinc_lock_mode=2.png)
 
-session A 往表 t 中插入了 4 行数据，然后创建了一个相同结构的表 t2，然后**两个 session 同时执行向表 t2 中插入数据**。
+session A 往表 t 中插入了 4 行数据，然后 session B 创建了一个相同结构的表 t2，然后**两个 session 同时执行向表 t2 中插入数据**。
 
 如果 innodb_autoinc_lock_mode = 2，意味着「申请自增主键后就释放锁，不必等插入语句执行完」。那么就可能出现这样的情况：
 
