@@ -220,7 +220,7 @@ net.ipv4.tcp_wmem = 4096    16384   4194304
 
 ![recv_buffer 丢包](https://img-blog.csdnimg.cn/img_convert/2df66c2e1d9f1245813e8d1de7482e0c.png)
 
-我们可以通过下面的命令里的`TCPRcvQDrop`查看到有没有发生过这种丢包现象。
+我们可以通过下面的命令里的 `TCPRcvQDrop` 查看到有没有发生过这种丢包现象。
 
 ```shell
 cat /proc/net/netstat
@@ -228,7 +228,7 @@ TcpExt: SyncookiesSent TCPRcvQDrop SyncookiesFailed
 TcpExt: 0              157              60116
 ```
 
-但是说个伤心的事情，我们一般也看不到这个`TCPRcvQDrop`，因为这个是`5.9版本`里引入的打点，而我们的服务器用的一般是`2.x~3.x`左右版本。你可以通过下面的命令查看下你用的是什么版本的 linux 内核。
+但是说个伤心的事情，我们一般也看不到这个 `TCPRcvQDrop`，因为这个是 `5.9版本` 里引入的打点，而我们的服务器用的一般是 `2.x~3.x` 左右版本。你可以通过下面的命令查看下你用的是什么版本的 Linux 内核。
 
 ```shell
 # cat /proc/version
