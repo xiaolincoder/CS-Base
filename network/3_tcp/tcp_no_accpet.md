@@ -1,4 +1,4 @@
-# 4.20 没有 accept，能建立 TCP 连接吗？
+# 4.21 没有 accept，能建立 TCP 连接吗？
 
 > 来源：公众号@小白 debug
 > 原文地址：[阿里二面：没有 accept，能建立 TCP 连接吗？](https://mp.weixin.qq.com/s/oPX_JoZUaLn6sW54yppfvA)
