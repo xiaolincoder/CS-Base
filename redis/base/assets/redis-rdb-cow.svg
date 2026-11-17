@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="969" height="707" viewBox="0 0 969 707" role="img" aria-labelledby="title desc">
+  <title id="title">RDB 快照时的写时复制</title>
+  <desc id="desc">父进程写入共享页后指向副本页，子进程仍指向 fork 时的原始页。</desc>
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff2c5"/>
+      <stop offset="1" stop-color="#ffdd75"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#222"/>
+    </marker>
+    <marker id="red-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#c84c42"/>
+    </marker>
+  </defs>
+  <rect width="969" height="707" fill="#fff"/>
+
+  <!-- 父进程和子进程的虚拟内存 -->
+  <rect x="23" y="16" width="150" height="225" fill="#fff" stroke="#111" stroke-width="2"/>
+  <rect x="23" y="90" width="150" height="61" fill="#d7e5f8" stroke="#75a3d7"/>
+  <rect x="23" y="421" width="150" height="225" fill="#fff" stroke="#111" stroke-width="2"/>
+  <rect x="23" y="495" width="150" height="61" fill="#d7e5f8" stroke="#75a3d7"/>
+
+  <!-- 父进程和子进程的页表 -->
+  <rect x="308" y="31" width="180" height="165" fill="#fff" stroke="#111" stroke-width="2"/>
+  <rect x="308" y="105" width="180" height="31" fill="#fff2cd" stroke="#e4aa4b"/>
+  <rect x="308" y="436" width="180" height="165" fill="#fff" stroke="#111" stroke-width="2"/>
+  <rect x="308" y="510" width="180" height="31" fill="#ffddbd" stroke="#ebaa6c"/>
+
+  <!-- 原始页保留给子进程，副本页分配给父进程 -->
+  <rect x="623" y="1" width="150" height="509" fill="#fff" stroke="#111" stroke-width="2"/>
+  <rect x="623" y="225" width="150" height="61" fill="url(#page)" stroke="#e4a333"/>
+  <rect x="623" y="360" width="150" height="61" fill="url(#page)" stroke="#e4a333"/>
+
+  <g fill="none" stroke="#222" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrow)">
+    <path d="M 173 120.5 H 306"/>
+    <path d="M 173 525.5 H 306"/>
+    <path d="M 488 120.5 L 622 390.5"/>
+  </g>
+  <!-- 用白色间隔区分交叉的两条映射线。 -->
+  <path d="M 488 525.5 L 622 255.5" fill="none" stroke="#fff" stroke-width="5"/>
+  <path d="M 488 525.5 L 622 255.5" fill="none" stroke="#222" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrow)"/>
+  <path d="M 774 255 C 850 255 850 390 775 390" fill="none" stroke="#c84c42" stroke-width="3" marker-end="url(#red-arrow)"/>
+
+  <g fill="#000" font-family="Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="24">
+    <text x="14" y="292">父进程虚拟内存</text>
+    <text x="14" y="697">子进程虚拟内存</text>
+    <text x="374" y="231">页表</text>
+    <text x="374" y="636">页表</text>
+    <text x="650" y="548">物理内存</text>
+  </g>
+  <g fill="#333" font-family="Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="20" text-anchor="middle">
+    <text x="698" y="263">原始页</text>
+    <text x="698" y="398">副本页</text>
+  </g>
+  <rect x="848" y="330" width="104" height="30" fill="#fff878" stroke="#111" stroke-width="1.5"/>
+  <text x="900" y="353" text-anchor="middle" fill="#000" font-family="Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="23">写时复制</text>
+</svg>

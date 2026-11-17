@@ -373,9 +373,9 @@ save 60 10000
 
 ![](https://img-blog.csdnimg.cn/img_convert/c34a9d1f58d602ff1fe8601f7270baa7.png)
 
-如果主线程执行写操作，则被修改的数据会复制一份副本，然后 bgsave 子进程会把该副本数据写入 RDB 文件，在这个过程中，主线程仍然可以直接修改原来的数据。
+主线程写入共享内存页时，操作系统通过写时复制为父进程创建该页的副本，父进程在副本上修改数据；bgsave 子进程仍读取 fork 时的原始页，并将快照数据写入 RDB 文件。写时复制以内存页为单位，不是只复制发生变化的键。
 
-![](https://img-blog.csdnimg.cn/img_convert/ebd620db8a1af66fbeb8f4d4ef6adc68.png)
+![父子进程写时复制后的页表映射](./assets/redis-rdb-cow.svg)
 
 ::: tip
 
